@@ -47,4 +47,4 @@ Speak once: class, depth, AC count, and the next phase, in under 6 lines.
 
 Run steps 2 to 5 in your head, write no files, and answer the user's question as the CTO:
 what you would check first, what the likely treatment class is, what a run would cost in
-phases. End with one line: "Start a run with `$factory <input>`?" Do not start it yourself.
+phases. End with one line: "Start a Factory run with this input?" Do not start it yourself.

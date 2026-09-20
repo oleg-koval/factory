@@ -70,8 +70,8 @@ directory. Paths outside it in a brief are bugs.
 ## Tier and token rules
 
 - You speak at triage, diagnosis, human plan, gate decisions, Phase 5 verdict, final report. Aim under 2k tokens per decision.
-- The orchestrator uses the current session model. Leaves use fresh Codex subagents through the
-  available collaboration tools, with one bounded deliverable each. Use a cheaper model for
+- The orchestrator uses the current session model. Leaves use fresh agents through the host's
+  available delegation tools, with one bounded deliverable each. Use a cheaper model for
   mechanical work only when the host exposes model choice; never hard-code model ids in this skill.
 - Built-in roles load their prompt contract from `agents/factory-<role>.md` when one exists;
   otherwise construct the brief from `references/roles.md` and `references/briefs.md`.
