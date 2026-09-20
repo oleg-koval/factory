@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "bindings": {
+    "ticket-reader": { "kind": "none", "name": "none", "source": "default" },
+    "ac-extractor": { "kind": "built-in", "name": "ac-extractor", "source": "default" },
+    "knowledge-lookup": { "kind": "built-in", "name": "knowledge-lookup", "source": "default" },
+    "investigator": { "kind": "built-in", "name": "investigator", "source": "default" },
+    "payload-reducer": { "kind": "built-in", "name": "payload-reducer", "source": "default" },
+    "repro-harness": { "kind": "built-in", "name": "repro-harness", "source": "default" },
+    "reuse-index": { "kind": "built-in", "name": "reuse-index", "source": "default" },
+    "implementer": { "kind": "built-in", "name": "implementer", "source": "default" },
+    "fixer": { "kind": "built-in", "name": "fixer", "source": "default" },
+    "e2e-tester": { "kind": "built-in", "name": "factory-e2e-tester", "source": "default" },
+    "teeth-check": { "kind": "built-in", "name": "teeth-check", "source": "default" },
+    "milestone-reviewer": { "kind": "built-in", "name": "factory-milestone-reviewer", "source": "default" },
+    "plan-equivalence": { "kind": "built-in", "name": "factory-plan-equivalence", "source": "default" },
+    "whole-change-review": { "kind": "built-in", "name": "factory-whole-change-reviewer", "source": "default" },
+    "polish": { "kind": "built-in", "name": "polish", "source": "default" },
+    "pr-opener": { "kind": "built-in", "name": "factory-pr-steps", "source": "default" },
+    "human-gate": { "kind": "none", "name": "none", "source": "default" },
+    "mechanical-leaf": { "kind": "built-in", "name": "mechanical-leaf", "source": "default" }
+  }
+}

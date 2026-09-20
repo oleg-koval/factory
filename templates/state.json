@@ -1,0 +1,52 @@
+{
+  "slug": "gic-1414-order-tags",
+  "source": "linear",
+  "input": "GIC-1414",
+  "class": "bug",
+  "depth": "full",
+  "phase": "4",
+  "milestone": 2,
+  "bindings_file": "~/.factory/roles.json",
+  "isolation": {
+    "mode": "worktree",
+    "repo": "<abs path to the main checkout>",
+    "worktree": "<abs path to the worktree>",
+    "branch": "gic-1414-order-tags",
+    "base": "staging",
+    "base_sha": "bb9035b6",
+    "notes": "node_modules symlinked from the main checkout; no install was run",
+    "accepted_by": null
+  },
+  "grill": { "rounds": 0, "rounds_max": 3 },
+  "budget": { "leaves_max": 40, "leaves_used": 0, "sessions_max": 16, "sessions_used": 0 },
+  "gaps": { "accepted_by": null },
+  "baseline": {
+    "sha": "bb9035b6",
+    "at": "2026-09-15T09:40:00Z",
+    "typecheck": { "cmd": "npx tsc --noEmit -p tsconfig.json", "failures": 138 },
+    "lint": { "cmd": "npm run lint", "failures": 0 },
+    "test": { "cmd": "npm test", "failures": null, "note": "needs a live Postgres; not runnable here" }
+  },
+  "open_questions": [
+    { "id": "B-1", "text": "Which product field defines the manufacturer?", "blocking": true, "owner": "client via Felix", "answer": null }
+  ],
+  "milestones": [
+    { "id": "M1", "status": "done", "sha": "4f1c9a20" },
+    { "id": "M2", "status": "in-progress", "sha": null }
+  ],
+  "files": {
+    "receipts": "receipts.md",
+    "intake": "intake.md",
+    "diagnosis": "diagnosis.md",
+    "human_plan": "human-plan.md",
+    "agent_plan": "agent-plan.md",
+    "ac_matrix": "ac-matrix.md",
+    "change_scan": "change-scan.txt",
+    "report": "report.md",
+    "grill": ".factory/gic-1414-order-tags/grill.md",
+    "pr_body": ".factory/gic-1414-order-tags/pr-body.md"
+  },
+  "loops": { "reproduce": 1, "plan_equivalence": 0, "fixer": { "M1": 0, "M2": 1 } },
+  "terminal": null,
+  "next": null
+}

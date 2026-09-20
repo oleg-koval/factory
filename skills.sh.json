@@ -1,0 +1,10 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "groupings": [
+    {
+      "title": "Software delivery",
+      "description": "Turn agent-written code into an inspectable delivery claim backed by acceptance criteria, tests, reviews, and executable gates.",
+      "skills": ["factory"]
+    }
+  ]
+}
