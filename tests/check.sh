@@ -433,4 +433,24 @@ bad_proof_rc=$?
 print -r -- "$bad_proof_out" | grep -q "duplicate claim id" || f "proof verifier did not name duplicate claim id"
 rm -f "$bad_manifest"
 
+seo_out=$(python3 $root/scripts/verify-seo-spec.py 2>&1)
+seo_rc=$?
+(( seo_rc == 0 )) || f "SEO spec verifier exited $seo_rc"
+print -r -- "$seo_out" | grep -q '^SEO SPEC: PASS routes=7 ' || f "SEO spec verifier did not pass seven routes"
+
+bad_seo=$(mktemp)
+python3 - "$root/docs/seo-routes.json" "$bad_seo" <<'BADSEO'
+import json, sys
+with open(sys.argv[1]) as handle:
+    spec = json.load(handle)
+spec["routes"][1]["title"] = spec["routes"][0]["title"]
+with open(sys.argv[2], "w") as handle:
+    json.dump(spec, handle)
+BADSEO
+bad_seo_out=$(python3 $root/scripts/verify-seo-spec.py "$bad_seo" 2>&1)
+bad_seo_rc=$?
+(( bad_seo_rc == 1 )) || f "SEO verifier accepted duplicate titles"
+print -r -- "$bad_seo_out" | grep -q "duplicate title" || f "SEO verifier did not name duplicate title"
+rm -f "$bad_seo"
+
 exit $fail

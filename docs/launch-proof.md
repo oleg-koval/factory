@@ -52,6 +52,8 @@ Initial public routes:
 
 Each route gets its own title, description, canonical URL, Open Graph metadata, and visible
 author/date when appropriate. The root links to every route with descriptive text.
+`docs/seo-routes.json` is the validated route and metadata source; `docs/seo-spec.md` defines the
+crawl, sitemap, structured-data, and launch-verification contract.
 
 ## Greg Isenberg outcome
 

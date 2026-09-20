@@ -5,10 +5,10 @@ outcomes stay marked `[TK]` until their authoritative sources exist.
 
 ## Metadata
 
-Title: Factory - Verified software delivery for Claude Code and Codex
+Title: Factory — Delivery gates for AI coding agents
 
-Description: Factory turns tickets and incidents into isolated, reviewed software changes with
-acceptance criteria, proof receipts, and honest terminal states.
+Description: Factory is the open-source delivery gate for Claude Code and Codex: acceptance
+criteria, test-first proof, review receipts, and honest terminal states.
 
 Canonical URL: `https://factory.olegkoval.com/`
 

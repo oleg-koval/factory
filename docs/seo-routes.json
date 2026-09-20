@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "status": "planned-not-deployed",
+  "base_url": "https://factory.olegkoval.com",
+  "routes": [
+    {
+      "path": "/",
+      "title": "Factory — Delivery gates for AI coding agents",
+      "description": "Factory is the open-source delivery gate for Claude Code and Codex: acceptance criteria, test-first proof, review receipts, and honest terminal states.",
+      "intent": "AI coding agent verification",
+      "schemas": ["WebSite", "SoftwareSourceCode"],
+      "evidence": ["docs/site-copy.md", "docs/product-brief.md", "proof/manifest.json"]
+    },
+    {
+      "path": "/proof/",
+      "title": "Factory Proof — Watch a false delivery claim fail",
+      "description": "Run Factory's public fixtures and inspect the exact state, acceptance criteria, receipts, and gate output behind every verified delivery claim.",
+      "intent": "proof for AI coding agent delivery claims",
+      "schemas": ["CollectionPage", "ItemList"],
+      "evidence": ["proof/manifest.json", "proof/terminal-gate/README.md", "proof/case-studies/terminal-state-mismatch/README.md"]
+    },
+    {
+      "path": "/how-it-works/",
+      "title": "How Factory verifies AI-written software",
+      "description": "See how Factory turns a ticket or incident into isolated work, testable acceptance criteria, reviewed milestones, and an executable delivery decision.",
+      "intent": "verified AI software delivery workflow",
+      "schemas": ["TechArticle"],
+      "evidence": ["SKILL.md", "references/phase-0-intake.md", "references/phase-5-proof.md", "references/phase-6-stop.md"]
+    },
+    {
+      "path": "/install/",
+      "title": "Install Factory for Claude Code and Codex",
+      "description": "Install one provider-neutral Factory skill for Claude Code or Codex, then run the same delivery contract with each host's native invocation.",
+      "intent": "install Factory skill for Claude Code or Codex",
+      "schemas": ["WebPage", "SoftwareSourceCode"],
+      "evidence": ["README.md", "docs/install-verification.md", "skills.sh.json"]
+    },
+    {
+      "path": "/changelog/",
+      "title": "Factory changelog — Every rule begins with a failure",
+      "description": "Read the failure behind each Factory rule, the regression that proves the fix, and the evidence boundary for every unreleased change.",
+      "intent": "Factory agent skill changelog",
+      "schemas": ["CollectionPage"],
+      "evidence": ["CHANGELOG.md", "proof/case-studies/terminal-state-mismatch/README.md"]
+    },
+    {
+      "path": "/oleg-koval/",
+      "title": "Oleg Koval — Reliable agent-driven software delivery",
+      "description": "Oleg Koval builds verifiable agent-driven delivery systems that turn AI-generated code into evidence another engineer can inspect.",
+      "intent": "Oleg Koval agent-driven software delivery",
+      "schemas": ["ProfilePage", "Person"],
+      "evidence": ["docs/site-copy.md", "docs/product-brief.md", "docs/podcast-brief.md"]
+    },
+    {
+      "path": "/essays/right-to-say-not-delivered/",
+      "title": "Your software factory needs the right to say not delivered",
+      "description": "Why AI software factories need explicit refusal states, executable completion gates, and agents that can say exactly why work is not delivered.",
+      "intent": "software factory delivery gates",
+      "schemas": ["TechArticle"],
+      "evidence": ["docs/product-brief.md", "docs/podcast-brief.md", "proof/manifest.json"]
+    }
+  ]
+}

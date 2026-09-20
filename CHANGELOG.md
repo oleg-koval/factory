@@ -13,6 +13,8 @@ not been published as a public release.
 - A runnable redacted specimen showing false delivery blocked and honest delivery accepted.
 - A machine-readable proof manifest and validator that map each public claim to its artifacts,
   expected executable output, and evidence boundary.
+- A validated seven-route search specification with unique metadata, local evidence sources,
+  crawl rules, structured-data boundaries, and a negative duplicate-title test.
 
 ### Fixed
 
