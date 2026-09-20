@@ -18,6 +18,8 @@ not been published as a public release.
 
 ### Fixed
 
+- The session runner now rejects traversal or shell syntax in slugs, rejects non-integer session
+  caps, and passes state paths and keys to Python without source interpolation.
 - The terminal gate now rejects a requested terminal state that disagrees with a terminal already
   recorded in `state.json`. Before this fix, the requested state controlled strictness without
   being compared with the recorded state.

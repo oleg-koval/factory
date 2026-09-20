@@ -18,6 +18,10 @@ EXTRA=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --max)
+      if [[ $# -lt 2 ]]; then
+        echo "run.sh: --max needs a positive integer" >&2
+        exit 2
+      fi
       MAX="$2"
       shift 2
       ;;
@@ -26,6 +30,10 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --runner)
+      if [[ $# -lt 2 ]]; then
+        echo "run.sh: --runner needs auto, codex, or claude" >&2
+        exit 2
+      fi
       RUNNER="$2"
       shift 2
       ;;
@@ -48,6 +56,16 @@ done
 
 if [[ -z "$SLUG" ]]; then
   echo "usage: run.sh <slug> [--runner auto|codex|claude] [--max N] [--dry-run] [-- <extra runner args>]" >&2
+  exit 2
+fi
+
+if [[ ! "$SLUG" =~ ^[a-z0-9][a-z0-9._-]{0,79}$ ]] || [[ "$SLUG" == *..* ]]; then
+  echo "run.sh: invalid slug; use 1-80 lowercase letters, digits, dots, underscores, or hyphens, without '..'" >&2
+  exit 2
+fi
+
+if [[ -n "$MAX" && ! "$MAX" =~ ^[1-9][0-9]*$ ]]; then
+  echo "run.sh: invalid --max; use a positive integer" >&2
   exit 2
 fi
 
@@ -83,41 +101,50 @@ if [[ ! -f "$STATE_FILE" ]]; then
 fi
 
 py_get() {
-  python3 -c "
+  python3 - "$STATE_FILE" "$1" <<'PY'
 import json, sys
-with open('${STATE_FILE}') as handle:
+path, dotted_key = sys.argv[1:3]
+with open(path) as handle:
     state = json.load(handle)
 value = state
-for key in '$1'.split('.'):
+for key in dotted_key.split('.'):
     if isinstance(value, dict):
         value = value.get(key)
     else:
         value = None
         break
 print(value if value is not None else '')
-"
+PY
 }
 
-py_set() {
-  python3 -c "
-import json
-path = '${STATE_FILE}'
+py_increment() {
+  python3 - "$STATE_FILE" "$1" <<'PY'
+import json, sys
+path, dotted_key = sys.argv[1:3]
 with open(path) as handle:
     state = json.load(handle)
-keys = '$1'.split('.')
+keys = dotted_key.split('.')
 target = state
 for key in keys[:-1]:
     target = target[key]
-target[keys[-1]] = $2
+value = target.get(keys[-1], 0)
+if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+    raise SystemExit(f"{dotted_key} must be a non-negative integer")
+target[keys[-1]] = value + 1
 with open(path, 'w') as handle:
     json.dump(state, handle, indent=2)
     handle.write('\n')
-"
+PY
 }
 
 if [[ -z "$MAX" ]]; then
   MAX="$(py_get budget.sessions_max)"
   [[ -z "$MAX" ]] && MAX=16
+fi
+
+if [[ ! "$MAX" =~ ^[1-9][0-9]*$ ]]; then
+  echo "run.sh: invalid --max or budget.sessions_max; use a positive integer" >&2
+  exit 2
 fi
 
 ITER=0
@@ -182,7 +209,7 @@ while true; do
     claude -p "$PROMPT" ${EXTRA[@]+"${EXTRA[@]}"}
   fi
 
-  py_set budget.sessions_used "$(($(py_get budget.sessions_used) + 1))"
+  py_increment budget.sessions_used
 
   NEW_PHASE="$(py_get phase)"
   NEW_MILESTONE="$(py_get milestone)"

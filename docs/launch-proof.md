@@ -21,6 +21,8 @@ Evidence status: planned work. Nothing in this file proves launch completion.
   package for Claude Code and Codex.
 - Replace every `[TK]` in the site copy with a verified artifact or delete the claim.
 - Run the package validator and installation check from the public commit for both hosts.
+- Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in
+  `SECURITY.md` before publishing the first supported version.
 - Publish one complete redacted Factory run and its terminal gate output.
 - Demonstrate one failure caught by Factory that a normal happy-path test missed.
 - Verify the site in a real browser at desktop and mobile widths.

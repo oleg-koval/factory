@@ -85,6 +85,8 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
   Greg Isenberg's recent software-factory episode; it is staged and has not been sent.
 - [`docs/seo-spec.md`](docs/seo-spec.md) and [`docs/seo-routes.json`](docs/seo-routes.json) define
   the validated search, metadata, crawl, and evidence contract for the future site.
+- [`SECURITY.md`](SECURITY.md) states the skill's real permission boundary, enforced controls, and
+  the private-reporting gate required before publication.
 - [`CHANGELOG.md`](CHANGELOG.md) ties product rules to the failures that changed them.
 
 Run the same gate used by CI:

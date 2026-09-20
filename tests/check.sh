@@ -172,6 +172,28 @@ json.dump({'slug': 'dryslug', 'source': 'linear', 'input': 'X-1', 'class': 'bug'
 dryrun_out=$(cd "$dryrun_dir" && bash $root/scripts/run.sh dryslug --runner codex --dry-run 2>&1)
 print -r -- "$dryrun_out" | grep -q "0b" || f "run.sh --dry-run output lacks 0b"
 print -r -- "$dryrun_out" | grep -q "configured_model=default" || f "run.sh --dry-run output lacks configured model"
+
+bad_slug_out=$(cd "$dryrun_dir" && bash $root/scripts/run.sh '../escape' --runner codex --dry-run 2>&1)
+bad_slug_rc=$?
+(( bad_slug_rc == 2 )) || f "run.sh accepted or misclassified a path-traversal slug"
+print -r -- "$bad_slug_out" | grep -q "invalid slug" || f "run.sh did not name the invalid slug"
+
+bad_max_out=$(cd "$dryrun_dir" && bash $root/scripts/run.sh dryslug --runner codex --max '1+1' --dry-run 2>&1)
+bad_max_rc=$?
+(( bad_max_rc == 2 )) || f "run.sh accepted a non-integer --max"
+print -r -- "$bad_max_out" | grep -q "invalid --max" || f "run.sh did not name the invalid --max"
+
+python3 -c "
+import json
+path='$dryrun_dir/.factory/dryslug/state.json'
+with open(path) as handle: state=json.load(handle)
+state['budget']['sessions_max']='1+1'
+with open(path, 'w') as handle: json.dump(state, handle)
+"
+bad_state_max_out=$(cd "$dryrun_dir" && bash $root/scripts/run.sh dryslug --runner codex --dry-run 2>&1)
+bad_state_max_rc=$?
+(( bad_state_max_rc == 2 )) || f "run.sh accepted a non-integer budget.sessions_max"
+print -r -- "$bad_state_max_out" | grep -q "budget.sessions_max" || f "run.sh did not name invalid budget.sessions_max"
 rm -rf "$dryrun_dir"
 # run.sh gates the phase that just closed (state.phase) before starting the next one
 gaterun_dir=$(mktemp -d)
