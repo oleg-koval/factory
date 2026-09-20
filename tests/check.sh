@@ -278,6 +278,13 @@ open_q = [{"id": "B-1", "text": "q", "blocking": True, "owner": "o", "answer": N
 bare = ["a bare string, the shape that broke the old gate"]
 
 with tempfile.TemporaryDirectory() as d:
+    write(d, answered, "met")
+    no_mode = subprocess.run([sys.executable, gate, d], capture_output=True, text=True)
+    assert no_mode.returncode == 2 and "choose exactly one mode" in no_mode.stdout, no_mode.stdout + no_mode.stderr
+
+    code, out = run(d, "victory")
+    assert code == 1 and "requested terminal" in out, out
+
     write(d, open_q, "met")
     code, out = run(d, "delivered")
     assert code == 1 and "blocking and unanswered" in out, out
@@ -303,6 +310,13 @@ with tempfile.TemporaryDirectory() as d:
     write(d, answered, "met")
     code, out = run(d, "delivered")
     assert code == 0 and "GATE: PASS" in out, out
+
+    # The requested terminal cannot disagree with a terminal already recorded in state.
+    state["terminal"] = "blocked"
+    write(d, answered, "met")
+    code, out = run(d, "delivered")
+    assert code == 1 and "does not match" in out, out
+    state["terminal"] = None
 
     # in-place isolation without accepted_by
     state["isolation"]["mode"] = "in-place"

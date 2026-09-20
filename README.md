@@ -77,6 +77,7 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
 - [`docs/install-verification.md`](docs/install-verification.md) records the tested local
   installation boundary for Claude Code and Codex.
 - [`docs/product-brief.md`](docs/product-brief.md) states the product claim and its evidence boundary.
+- [`CHANGELOG.md`](CHANGELOG.md) ties product rules to the failures that changed them.
 
 Run the same gate used by CI:
 

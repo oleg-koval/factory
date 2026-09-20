@@ -6,7 +6,7 @@ quoted. The rules it enforces used to live in prose, and prose gates do not fire
 GIC-1351 run set `terminal: delivered` while five open questions were unanswered and two
 acceptance criteria were marked "partly met", because nothing ever read the files.
 
-Usage:  python3 gate.py <run-dir> [--terminal delivered|delivered-with-gaps|blocked|...]
+Usage:  python3 gate.py <run-dir> (--terminal <state> | --phase <id>)
 
 Exit 0  GATE: PASS            the run may take the terminal state it asked for
 Exit 1  GATE: BLOCKED         reasons printed, one per line
@@ -447,6 +447,14 @@ def check_receipts(run_dir: str, reasons: list[str]) -> None:
 
 
 def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[str]) -> str:
+    recorded = state.get("terminal")
+
+    if wanted not in TERMINALS:
+        fail(reasons, f"requested terminal {wanted!r} is not one of {sorted(TERMINALS)}")
+
+    if recorded is not None and recorded != wanted:
+        fail(reasons, f"state.terminal {recorded!r} does not match requested terminal {wanted!r}")
+
     strict = wanted in {"delivered", "delivered-with-gaps"}
     check_questions(state, reasons, strict)
     check_isolation(state, reasons)
@@ -501,6 +509,10 @@ def main(argv: list[str]) -> int:
 
     if wanted is not None and phase is not None:
         print("GATE: BLOCKED\n  --terminal and --phase are mutually exclusive")
+        return 2
+
+    if wanted is None and phase is None:
+        print("GATE: BLOCKED\n  choose exactly one mode: --terminal <state> or --phase <id>")
         return 2
 
     reasons: list[str] = []
