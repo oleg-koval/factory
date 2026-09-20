@@ -31,5 +31,6 @@ run_case() {
 
 run_case false-delivery 1 "GATE: BLOCKED"
 run_case honest-delivery 0 "GATE: PASS"
+run_case mismatched-terminal 1 "does not match requested terminal"
 
 exit "$FAIL"

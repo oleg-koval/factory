@@ -411,5 +411,6 @@ proof_rc=$?
 (( proof_rc == 0 )) || f "terminal-gate proof runner exited $proof_rc"
 print -r -- "$proof_out" | grep -q '\[false-delivery\] exit=1' || f "proof did not block false delivery"
 print -r -- "$proof_out" | grep -q '\[honest-delivery\] exit=0' || f "proof did not pass honest delivery"
+print -r -- "$proof_out" | grep -q '\[mismatched-terminal\] exit=1' || f "proof did not block terminal mismatch"
 
 exit $fail

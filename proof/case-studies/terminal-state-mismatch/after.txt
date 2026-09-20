@@ -1,0 +1,9 @@
+$ python3 scripts/gate.py proof/terminal-gate/mismatched-terminal --terminal delivered
+GATE: BLOCKED
+  state.terminal 'blocked' does not match requested terminal 'delivered'
+$ echo $?
+1
+
+$ zsh tests/check.sh
+$ echo $?
+0

@@ -1,0 +1,5 @@
+$ git worktree add --detach <baseline-worktree> e0f8277804949502fda1134e75e4e6056c8478ae
+$ python3 <baseline-worktree>/scripts/gate.py <current-checkout>/proof/terminal-gate/mismatched-terminal --terminal delivered
+GATE: PASS  run=mismatched-terminal terminal=delivered matrix=clean
+$ echo $?
+0

@@ -8,6 +8,8 @@ Evidence status: planned work. Nothing in this file proves launch completion.
 - Its runner proves the current gate blocks that state and passes the corrected state.
 - `tests/check.sh` executes that runner, so the public specimen cannot silently stop
   discriminating between those outcomes.
+- `proof/case-studies/terminal-state-mismatch/` reproduces a real bypass against the pre-fix
+  commit and records the fixed output without presenting it as a full Factory run.
 - This is one mechanical gate specimen, not the complete redacted run still required below.
 
 ## Public proof before promotion

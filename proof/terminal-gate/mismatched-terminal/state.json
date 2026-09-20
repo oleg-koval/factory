@@ -1,0 +1,25 @@
+{
+  "slug": "mismatched-terminal",
+  "source": "text",
+  "input": "Regression fixture for a recorded/requested terminal mismatch",
+  "class": "bug",
+  "depth": "full",
+  "phase": "6",
+  "bindings_file": ".factory/roles.json",
+  "isolation": {
+    "mode": "worktree",
+    "repo": ".",
+    "worktree": ".",
+    "branch": "proof/mismatched-terminal",
+    "base": "main",
+    "accepted_by": null
+  },
+  "open_questions": [
+    { "id": "B-1", "text": "Is the requested terminal consistent with the record?", "blocking": true, "owner": "factory", "answer": "No: recorded blocked, requested delivered" }
+  ],
+  "loops": { "reproduce": 1, "plan_equivalence": 0, "fixer": {} },
+  "budget": { "leaves_max": 40, "leaves_used": 1, "sessions_max": 16, "sessions_used": 1 },
+  "gaps": { "accepted_by": null },
+  "terminal": "blocked",
+  "next": null
+}

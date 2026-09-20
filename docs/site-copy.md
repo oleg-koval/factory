@@ -88,6 +88,15 @@ the fix and runs it again before accepting the proof.
 An earlier run fell back to editing the active checkout and recorded its own approval. Factory
 now creates an external worktree by default. Only the user can accept an in-place fallback.
 
+### The gate could validate a terminal the run did not record
+
+While preparing the public proof, we found the gate trusted `--terminal delivered` without
+comparing it with `state.terminal`. The pre-fix gate returned `PASS` against a fixture already
+recorded as `blocked`. A regression test failed against the old commit; the fixed gate exits 1
+and names both conflicting states.
+
+Action: Inspect the before-and-after case study
+
 ## Comparison
 
 Heading: Coding is one phase of delivery.

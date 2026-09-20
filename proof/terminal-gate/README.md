@@ -20,6 +20,8 @@ Expected result:
 - `false-delivery` exits 1 with `GATE: BLOCKED`, naming all five unanswered questions and both
   invalid acceptance-criterion rows.
 - `honest-delivery` exits 0 with `GATE: PASS`.
+- `mismatched-terminal` exits 1 when the file records `blocked` but the caller asks the gate to
+  validate `delivered`. The pre-fix gate incorrectly passed this fixture.
 
 The script fails if either case produces the wrong exit code or omits its expected verdict. This
 proves the executable rule discriminates between the two states. It does not prove faster

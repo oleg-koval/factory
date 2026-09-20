@@ -1,0 +1,13 @@
+diff --git a/tests/check.sh b/tests/check.sh
+index e0bc181..b2ae784 100755
+--- a/tests/check.sh
++++ b/tests/check.sh
+@@ -307,1 +307,8 @@
++    # The requested terminal cannot disagree with a terminal already recorded in state.
++    state["terminal"] = "blocked"
++    write(d, answered, "met")
++    code, out = run(d, "delivered")
++    assert code == 1 and "does not match" in out, out
++    state["terminal"] = None
++
+     # in-place isolation without accepted_by
