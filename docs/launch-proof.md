@@ -5,10 +5,10 @@ Evidence status: planned work. Nothing in this file proves launch completion.
 ## Public proof before promotion
 
 - Publish one canonical repository only after current private changes are reconciled.
-- Generate Claude and Codex adapters from that canonical source rather than maintaining two
-  hand-edited products.
+- Publish one provider-neutral skill and verify that the installer resolves the same canonical
+  package for Claude Code and Codex.
 - Replace every `[TK]` in the site copy with a verified artifact or delete the claim.
-- Run the package validators for both adapters on the public commit.
+- Run the package validator and installation check from the public commit for both hosts.
 - Publish one complete redacted Factory run and its terminal gate output.
 - Demonstrate one failure caught by Factory that a normal happy-path test missed.
 - Verify the site in a real browser at desktop and mobile widths.

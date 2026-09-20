@@ -101,7 +101,7 @@ Claude Code: `[TK: public install command]`
 
 Codex: `[TK: public install command]`
 
-Supporting line: The same delivery contract, adapted to each host's native skill and subagent model.
+Supporting line: One delivery contract, using each host's native invocation and runner.
 
 ## Author
 

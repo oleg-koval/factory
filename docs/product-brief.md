@@ -43,10 +43,9 @@ These are not generic best practices. They are scars turned into gates.
 
 ## Product shape
 
-The first release is an open-source skill with two adapters:
-
-1. Claude Code: the current local `/factory` workflow.
-2. Codex: the installed `$factory` workflow.
+The first release is one provider-neutral open-source skill installed into both hosts. Claude
+Code invokes it as `/factory`; Codex invokes it as `$factory`. The runner selects the host's
+native CLI while both hosts read the same delivery contract and `.factory/roles.json`.
 
 The website is the product's proof surface, not a brochure. Its primary interaction is a
 redacted example run that visitors can inspect phase by phase: source, plan, acceptance-criteria
@@ -56,8 +55,8 @@ evidence exists.
 
 ## What the first release includes
 
-- A public repository containing the canonical skill, generated provider adapters, scripts,
-  tests, license, and evaluation fixtures.
+- A public repository containing the canonical skill, scripts, tests, license, and evaluation
+  fixtures.
 - A one-command install path for both Claude Code and Codex.
 - One redacted, reproducible demo run with real artifacts.
 - A searchable marketing site at `factory.olegkoval.com`.
