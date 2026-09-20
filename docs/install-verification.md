@@ -1,6 +1,6 @@
 # Installer verification
 
-Evidence status: verified locally on 2026-09-21 against commit `761951d`. This proves local
+Evidence status: verified locally on 2026-09-21 against commit `92145ba`. This proves local
 package discovery and installation with `skills` CLI 1.7.0. It does not prove that a public
 repository or public install command exists.
 
@@ -19,7 +19,10 @@ npx --yes skills add <local-factory-repository> \
 - The canonical package was installed at `.agents/skills/factory` for Codex.
 - Claude Code received `.claude/skills/factory` as a symlink to that canonical copy.
 - Both resolved to the same `SKILL.md`.
-- `zsh tests/check.sh` passed from the installed package.
+- The installed copy reported `PROOF: PASS claims=3 artifacts=13 executable_cases=3`.
+- The installed copy reported `SEO SPEC: PASS routes=7 evidence_links=21`.
+- `zsh tests/check.sh`, `shellcheck scripts/run.sh`, and the Codex skill validator passed from
+  the installed package.
 - The disposable repository was moved to Trash after verification.
 
 ## Still unproven
