@@ -63,6 +63,12 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
 - [`tests/check.sh`](tests/check.sh) watches the gates fail as well as pass.
 - [`docs/product-brief.md`](docs/product-brief.md) states the product claim and its evidence boundary.
 
+Run the same gate used by CI:
+
+```bash
+zsh tests/check.sh
+```
+
 ## Evidence status
 
 The local structural suite passes on the current working tree. Public installation, adoption,
