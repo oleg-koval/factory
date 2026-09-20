@@ -55,6 +55,11 @@ author/date when appropriate. The root links to every route with descriptive tex
 
 The pitch is earned only after the public proof exists.
 
+Greg published a software-factory episode with Ras Mic on 2026-09-14. Do not pitch Factory as
+another orchestration workflow. Position it as the executable completion and refusal layer that
+the existing category still needs. The sourced angle and unsent draft live in
+`docs/podcast-brief.md`.
+
 Episode idea: **Your coding agent needs the right to say not delivered.**
 
 Three-minute demo:

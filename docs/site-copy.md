@@ -26,6 +26,8 @@ Give Factory a ticket, a Sentry issue, or a rough request. It isolates the work,
 into testable acceptance criteria, proves each milestone, and stops with receipts. When it
 cannot prove the change, it says exactly why.
 
+Category line: The verification layer for AI software factories.
+
 Primary action: Watch a run
 
 Secondary action: Inspect the skill

@@ -41,6 +41,15 @@ Factory is built from observed delivery failures rather than an imagined ideal w
 
 These are not generic best practices. They are scars turned into gates.
 
+## Category position
+
+“Software factory” already describes workflows that isolate work, build with agents, capture
+before/after proof, and ship through review. Factory should not compete on that broad claim.
+
+Factory is the verification layer for those workflows: the executable contract that decides
+whether a run may say `delivered`. Its wedge is not more agents or more throughput. It is
+falsifiable completion, explicit refusal states, and evidence another engineer can inspect.
+
 ## Product shape
 
 The first release is one provider-neutral open-source skill installed into both hosts. Claude
