@@ -72,6 +72,8 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
 - [`scripts/gate.py`](scripts/gate.py) decides whether a phase or terminal claim is allowed.
 - [`scripts/change-scan.sh`](scripts/change-scan.sh) expands review beyond diff hunks.
 - [`tests/check.sh`](tests/check.sh) watches the gates fail as well as pass.
+- [`proof/terminal-gate/`](proof/terminal-gate/) is a runnable redacted specimen showing a false
+  delivery claim blocked and the corrected state passing.
 - [`docs/install-verification.md`](docs/install-verification.md) records the tested local
   installation boundary for Claude Code and Codex.
 - [`docs/product-brief.md`](docs/product-brief.md) states the product claim and its evidence boundary.

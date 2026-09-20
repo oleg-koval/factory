@@ -1,0 +1,29 @@
+{
+  "slug": "honest-delivery",
+  "source": "text",
+  "input": "Redacted reconstruction after satisfying the terminal contract",
+  "class": "bug",
+  "depth": "full",
+  "phase": "6",
+  "bindings_file": ".factory/roles.json",
+  "isolation": {
+    "mode": "worktree",
+    "repo": ".",
+    "worktree": ".",
+    "branch": "proof/honest-delivery",
+    "base": "main",
+    "accepted_by": null
+  },
+  "open_questions": [
+    { "id": "B-1", "text": "[redacted blocking question 1]", "blocking": true, "owner": "redacted", "answer": "resolved" },
+    { "id": "B-2", "text": "[redacted blocking question 2]", "blocking": true, "owner": "redacted", "answer": "resolved" },
+    { "id": "B-3", "text": "[redacted blocking question 3]", "blocking": true, "owner": "redacted", "answer": "resolved" },
+    { "id": "B-4", "text": "[redacted blocking question 4]", "blocking": true, "owner": "redacted", "answer": "resolved" },
+    { "id": "B-5", "text": "[redacted blocking question 5]", "blocking": true, "owner": "redacted", "answer": "resolved" }
+  ],
+  "loops": { "reproduce": 1, "plan_equivalence": 0, "fixer": {} },
+  "budget": { "leaves_max": 40, "leaves_used": 4, "sessions_max": 16, "sessions_used": 6 },
+  "gaps": { "accepted_by": null },
+  "terminal": "delivered",
+  "next": null
+}

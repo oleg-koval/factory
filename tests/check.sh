@@ -390,4 +390,12 @@ grep -q 'codex exec' $root/scripts/run.sh || f "run.sh lacks Codex runner"
 grep -q 'claude -p' $root/scripts/run.sh || f "run.sh lacks Claude Code runner"
 grep -q -- '--runner' $root/scripts/run.sh || f "run.sh lacks explicit provider override"
 
+# T12 public proof specimen: the same gate must reject false delivery and accept honest delivery.
+[[ -x $root/proof/terminal-gate/run.sh ]] || f "terminal-gate proof runner missing or not executable"
+proof_out=$(bash $root/proof/terminal-gate/run.sh 2>&1)
+proof_rc=$?
+(( proof_rc == 0 )) || f "terminal-gate proof runner exited $proof_rc"
+print -r -- "$proof_out" | grep -q '\[false-delivery\] exit=1' || f "proof did not block false delivery"
+print -r -- "$proof_out" | grep -q '\[honest-delivery\] exit=0' || f "proof did not pass honest delivery"
+
 exit $fail
