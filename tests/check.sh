@@ -413,4 +413,24 @@ print -r -- "$proof_out" | grep -q '\[false-delivery\] exit=1' || f "proof did n
 print -r -- "$proof_out" | grep -q '\[honest-delivery\] exit=0' || f "proof did not pass honest delivery"
 print -r -- "$proof_out" | grep -q '\[mismatched-terminal\] exit=1' || f "proof did not block terminal mismatch"
 
+proof_manifest_out=$(python3 $root/scripts/verify-proof.py 2>&1)
+proof_manifest_rc=$?
+(( proof_manifest_rc == 0 )) || f "proof manifest verifier exited $proof_manifest_rc"
+print -r -- "$proof_manifest_out" | grep -q '^PROOF: PASS claims=3 ' || f "proof manifest verifier did not pass three claims"
+
+bad_manifest=$(mktemp)
+python3 - "$root/proof/manifest.json" "$bad_manifest" <<'BADPROOF'
+import json, sys
+with open(sys.argv[1]) as handle:
+    manifest = json.load(handle)
+manifest["claims"][1]["id"] = manifest["claims"][0]["id"]
+with open(sys.argv[2], "w") as handle:
+    json.dump(manifest, handle)
+BADPROOF
+bad_proof_out=$(python3 $root/scripts/verify-proof.py "$bad_manifest" 2>&1)
+bad_proof_rc=$?
+(( bad_proof_rc == 1 )) || f "proof verifier accepted duplicate claim ids"
+print -r -- "$bad_proof_out" | grep -q "duplicate claim id" || f "proof verifier did not name duplicate claim id"
+rm -f "$bad_manifest"
+
 exit $fail

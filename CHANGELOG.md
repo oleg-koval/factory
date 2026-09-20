@@ -11,6 +11,8 @@ not been published as a public release.
 - A current `skills` CLI installation check for both hosts.
 - A CI workflow that runs the structural and behavioral gate suite.
 - A runnable redacted specimen showing false delivery blocked and honest delivery accepted.
+- A machine-readable proof manifest and validator that map each public claim to its artifacts,
+  expected executable output, and evidence boundary.
 
 ### Fixed
 

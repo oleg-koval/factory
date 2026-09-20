@@ -10,6 +10,8 @@ Evidence status: planned work. Nothing in this file proves launch completion.
   discriminating between those outcomes.
 - `proof/case-studies/terminal-state-mismatch/` reproduces a real bypass against the pre-fix
   commit and records the fixed output without presenting it as a full Factory run.
+- `proof/manifest.json` maps each local claim to its artifacts, executable output, and explicit
+  limit; `scripts/verify-proof.py` rejects missing artifacts or output drift.
 - This is one mechanical gate specimen, not the complete redacted run still required below.
 
 ## Public proof before promotion
