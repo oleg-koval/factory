@@ -2,6 +2,14 @@
 
 Evidence status: planned work. Nothing in this file proves launch completion.
 
+## Local proof already staged
+
+- `proof/terminal-gate/` reconstructs the historical false-completion shape with redacted text.
+- Its runner proves the current gate blocks that state and passes the corrected state.
+- `tests/check.sh` executes that runner, so the public specimen cannot silently stop
+  discriminating between those outcomes.
+- This is one mechanical gate specimen, not the complete redacted run still required below.
+
 ## Public proof before promotion
 
 - Publish one canonical repository only after current private changes are reconciled.

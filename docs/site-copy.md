@@ -49,6 +49,24 @@ required.
 
 Run CTA: Inspect the acceptance-criteria matrix
 
+## Runnable proof
+
+Heading: Watch Factory reject a false delivery.
+
+The redacted fixture has the same failure shape that caused the gate to be written: five
+blocking questions have no answer, two acceptance criteria say `partly met`, and the requested
+terminal state is still `delivered`.
+
+Run it and Factory exits 1. It names every unanswered question, rejects both invalid statuses,
+and refuses `delivered`. Run the corrected fixture and the same gate exits 0.
+
+Primary action: Run the specimen locally
+
+Secondary action: Compare the two states
+
+Evidence note: This is a runnable redacted reconstruction, not the original private run or a
+complete Factory delivery.
+
 ## Failure stories
 
 Heading: Every hard rule has a body behind it.
