@@ -97,9 +97,9 @@ Heading: "Done" is too vague to ship.
 
 Heading: Bring your own agent. Keep the gates.
 
-Claude Code: `[TK: public install command]`
+Claude Code: `[TK until repository is public: npx skills add oleg-koval/factory -g -a claude-code -y]`
 
-Codex: `[TK: public install command]`
+Codex: `[TK until repository is public: npx skills add oleg-koval/factory -g -a codex -y]`
 
 Supporting line: One delivery contract, using each host's native invocation and runner.
 

@@ -41,8 +41,19 @@ Terminal states are `delivered`, `delivered-with-gaps`, `blocked`, and
 
 ## Install
 
-The public install command will be added when the repository is published. Until then, this
-working tree is a release candidate, not a public package.
+The intended public source is `oleg-koval/factory`. That repository has not been published, so
+the following commands are staged and are not live yet:
+
+```bash
+# Claude Code
+npx skills add oleg-koval/factory -g -a claude-code -y
+
+# Codex
+npx skills add oleg-koval/factory -g -a codex -y
+```
+
+The same command shape has been verified against this local package; see
+[`docs/install-verification.md`](docs/install-verification.md).
 
 Once installed:
 
