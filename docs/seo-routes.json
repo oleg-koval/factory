@@ -57,7 +57,7 @@
       "description": "Why AI software factories need explicit refusal states, executable completion gates, and agents that can say exactly why work is not delivered.",
       "intent": "software factory delivery gates",
       "schemas": ["TechArticle"],
-      "evidence": ["docs/product-brief.md", "docs/podcast-brief.md", "proof/manifest.json"]
+      "evidence": ["docs/essay-right-to-say-not-delivered.md", "docs/product-brief.md", "docs/podcast-brief.md", "proof/manifest.json"]
     }
   ]
 }

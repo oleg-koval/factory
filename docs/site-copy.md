@@ -14,7 +14,7 @@ Canonical URL: `https://factory.olegkoval.com/`
 
 ## Navigation
 
-Factory / How it works / Proof / Install / Built by Oleg Koval
+Factory / How it works / Proof / Essay / Install / Built by Oleg Koval
 
 ## Hero
 
@@ -121,6 +121,16 @@ Heading: "Done" is too vague to ship.
 - `delivered-with-gaps`: the change landed, but named checks could not run here; the user accepted the gaps.
 - `blocked`: a bounded loop, missing fact, or unanswered decision prevents correct delivery.
 - `intentionally-unchanged`: diagnosis showed that code was not the right treatment.
+
+## Essay
+
+Heading: Your software factory needs the right to say "not delivered"
+
+More agents create more output. Without an executable delivery contract, they can also create
+unsupported completion claims faster. The durable advantage is not another orchestration loop;
+it is a quality system that can refuse shipment and show its evidence.
+
+Action: Read the argument and inspect the proof
 
 ## Install
 
