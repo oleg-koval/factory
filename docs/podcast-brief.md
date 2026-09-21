@@ -69,15 +69,15 @@ satisfied, and it blocks when the decision frontier remains open.
 
 ## Three-minute demo
 
-1. Open `false-delivery/state.json`: five blocking questions have no answer while the requested
-   terminal is `delivered`.
-2. Open its AC matrix: two rows say `partly met`, a status the delivery contract does not allow.
-3. Run the gate. It exits 1 and names all seven defects instead of summarizing them away.
-4. Run `honest-delivery`. The same executable gate exits 0.
-5. Show the self-hosted case study: the gate itself once failed to compare the requested state
-   with the recorded state.
-6. Run that fixture against the pre-fix commit (`PASS`) and current gate (`BLOCKED`). End on the
-   before/after outputs, not a claim about future potential.
+Run `bash scripts/demo.sh` and follow [`docs/demo-script.md`](demo-script.md):
+
+1. The runner derives five unanswered blocking questions and two invalid acceptance-criterion
+   statuses from the false-delivery artifacts.
+2. The current gate exits 1 and names all seven defects instead of summarizing them away.
+3. The honest fixture passes through the same gate.
+4. The committed before-and-after receipts show the gate's own historical bypass: the baseline
+   passed a terminal mismatch and the fixed gate blocks it.
+5. End on the explicit evidence boundary, not a claim about future potential.
 
 ## Outreach draft — do not send yet
 

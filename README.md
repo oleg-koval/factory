@@ -78,6 +78,8 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
   reproduces a real gate bypass against the pre-fix commit and preserves its before/after output.
 - [`proof/manifest.json`](proof/manifest.json) is the machine-readable claim-to-artifact map used
   by `python3 scripts/verify-proof.py`.
+- [`docs/demo-script.md`](docs/demo-script.md) and [`scripts/demo.sh`](scripts/demo.sh) turn the
+  committed gate artifacts into a deterministic three-minute guest-demo path.
 - [`docs/install-verification.md`](docs/install-verification.md) records the tested local
   installation boundary for Claude Code and Codex.
 - [`docs/product-brief.md`](docs/product-brief.md) states the product claim and its evidence boundary.

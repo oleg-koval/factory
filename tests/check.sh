@@ -435,6 +435,18 @@ print -r -- "$proof_out" | grep -q '\[false-delivery\] exit=1' || f "proof did n
 print -r -- "$proof_out" | grep -q '\[honest-delivery\] exit=0' || f "proof did not pass honest delivery"
 print -r -- "$proof_out" | grep -q '\[mismatched-terminal\] exit=1' || f "proof did not block terminal mismatch"
 
+# T13 guest demo: preserve the exact inspectable story used for a live walkthrough.
+[[ -x $root/scripts/demo.sh ]] || f "guest demo runner missing or not executable"
+[[ -f $root/docs/demo-script.md ]] || f "guest demo operator script missing"
+demo_out=$(bash $root/scripts/demo.sh 2>&1)
+demo_rc=$?
+(( demo_rc == 0 )) || f "guest demo runner exited $demo_rc"
+print -r -- "$demo_out" | grep -q 'DEMO INPUT: terminal=delivered unanswered_blocking=5 invalid_ac_statuses=2' || f "guest demo did not derive the false-delivery counts"
+print -r -- "$demo_out" | grep -q '\[false-delivery\] exit=1' || f "guest demo did not show false delivery blocked"
+print -r -- "$demo_out" | grep -q '\[honest-delivery\] exit=0' || f "guest demo did not show honest delivery accepted"
+print -r -- "$demo_out" | grep -q 'BEFORE FIX: exit=0 verdict=PASS' || f "guest demo did not show the historical bypass"
+print -r -- "$demo_out" | grep -q 'AFTER FIX: exit=1 verdict=BLOCKED' || f "guest demo did not show the fixed gate"
+
 proof_manifest_out=$(python3 $root/scripts/verify-proof.py 2>&1)
 proof_manifest_rc=$?
 (( proof_manifest_rc == 0 )) || f "proof manifest verifier exited $proof_manifest_rc"
