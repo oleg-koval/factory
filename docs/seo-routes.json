@@ -49,7 +49,7 @@
       "description": "Oleg Koval builds verifiable agent-driven delivery systems that turn AI-generated code into evidence another engineer can inspect.",
       "intent": "Oleg Koval agent-driven software delivery",
       "schemas": ["ProfilePage", "Person"],
-      "evidence": ["docs/site-copy.md", "docs/product-brief.md", "docs/podcast-brief.md"]
+      "evidence": ["docs/author-profile.md", "docs/site-copy.md", "docs/product-brief.md", "docs/podcast-brief.md"]
     },
     {
       "path": "/essays/right-to-say-not-delivered/",

@@ -87,7 +87,9 @@ Greg — your September 14 software factory episode with Ras Mic mapped the oper
 isolate, build, prove, ship. I have been working on the layer underneath that loop: what must be
 true before an agent is allowed to call the work delivered.
 
-[TK: one concrete sentence from Oleg about the software or agent workload he personally runs]
+[TK: Oleg must write or approve a first-person version of this public-profile fact: more than ten
+years shipping across fintech, e-commerce, mobility, automation, AI, and open source. The public
+source does not establish his current agent workload.]
 
 A real run reached `delivered` with five unanswered questions and two acceptance criteria marked
 `partly met`. I turned that failure into an executable gate. While preparing the public proof, I

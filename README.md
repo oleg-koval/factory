@@ -87,6 +87,8 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
   Greg Isenberg's recent software-factory episode; it is staged and has not been sent.
 - [`docs/essay-right-to-say-not-delivered.md`](docs/essay-right-to-say-not-delivered.md) is the
   evidence-backed source for the launch essay promised by the product brief.
+- [`docs/author-profile.md`](docs/author-profile.md) stages a source-bounded personal-brand page
+  from Oleg's public portfolio while keeping first-person outreach claims approval-gated.
 - [`docs/seo-spec.md`](docs/seo-spec.md) and [`docs/seo-routes.json`](docs/seo-routes.json) define
   the validated search, metadata, crawl, and evidence contract for the future site.
 - [`SECURITY.md`](SECURITY.md) states the skill's real permission boundary, enforced controls, and

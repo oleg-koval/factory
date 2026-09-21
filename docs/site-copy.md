@@ -146,8 +146,10 @@ Supporting line: One delivery contract, using each host's native invocation and 
 
 Heading: Built from the failures I no longer wanted to supervise twice.
 
-I am Oleg Koval. I build software and the operating systems around the agents that build it with
-me. Factory is the part that turns agent output into a claim another engineer can inspect.
+Oleg Koval is a lead engineer and fractional CTO with more than ten years of experience across
+fintech, e-commerce, mobility, automation, AI, and open source. His work emphasizes explicit
+contracts, observable failures, and automation people can audit. Factory applies those principles
+to agent delivery: it turns output into a claim another engineer can inspect.
 
 Action: More from Oleg
 
