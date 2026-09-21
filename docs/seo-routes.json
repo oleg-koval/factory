@@ -25,7 +25,7 @@
       "description": "See how Factory turns a ticket or incident into isolated work, testable acceptance criteria, reviewed milestones, and an executable delivery decision.",
       "intent": "verified AI software delivery workflow",
       "schemas": ["TechArticle"],
-      "evidence": ["SKILL.md", "references/phase-0-intake.md", "references/phase-5-proof.md", "references/phase-6-stop.md"]
+      "evidence": ["docs/how-it-works.md", "SKILL.md", "references/phase-0-intake.md", "references/phase-5-proof.md", "references/phase-6-stop.md"]
     },
     {
       "path": "/install/",

@@ -470,7 +470,7 @@ rm -f "$bad_manifest"
 seo_out=$(python3 $root/scripts/verify-seo-spec.py 2>&1)
 seo_rc=$?
 (( seo_rc == 0 )) || f "SEO spec verifier exited $seo_rc"
-print -r -- "$seo_out" | grep -q '^SEO SPEC: PASS routes=7 evidence_links=23$' || f "SEO spec verifier did not pass seven routes and 23 evidence links"
+print -r -- "$seo_out" | grep -q '^SEO SPEC: PASS routes=7 evidence_links=24$' || f "SEO spec verifier did not pass seven routes and 24 evidence links"
 
 bad_seo=$(mktemp)
 python3 - "$root/docs/seo-routes.json" "$bad_seo" <<'BADSEO'

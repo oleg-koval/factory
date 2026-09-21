@@ -83,6 +83,8 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
 - [`docs/install-verification.md`](docs/install-verification.md) records the tested local
   installation boundary for Claude Code and Codex.
 - [`docs/product-brief.md`](docs/product-brief.md) states the product claim and its evidence boundary.
+- [`docs/how-it-works.md`](docs/how-it-works.md) is the canonical public narrative for Factory's
+  seven delivery gates and four terminal states.
 - [`docs/podcast-brief.md`](docs/podcast-brief.md) positions the proof as a timely follow-up to
   Greg Isenberg's recent software-factory episode; it is staged and has not been sent.
 - [`docs/essay-right-to-say-not-delivered.md`](docs/essay-right-to-say-not-delivered.md) is the
