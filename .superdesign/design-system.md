@@ -74,7 +74,7 @@ pages can inherit.
 
 Adapt Superdesign library prompt `high-contrast-landing-page` as the single visual source.
 
-Use a Swiss editorial, typography-first system:
+Use a restrained technical-editorial, typography-first system:
 
 - Off-white canvas `#F2F2F0` and near-black text `#111111`.
 - Gray depth scale: `#B6B5B2`, `#C8C7C3`, `#D9D8D4`, `#E7E6E2`.
@@ -87,25 +87,32 @@ Use a Swiss editorial, typography-first system:
 
 ## Typography
 
-- Display: Clash Display, weight 700, with Arial Black as a safe fallback. Oversized headings use
-  tight tracking around `-0.05em` and line height around `0.88` to `0.95`.
-- Body and interface: Satoshi, weight 450-600, with Inter and system sans-serif fallbacks.
-- Evidence and commands: IBM Plex Mono or ui-monospace. Preserve exact punctuation and line
+- Use one curated family: IBM Plex Sans for display, body, navigation, and interface text. Load
+  weights 400, 500, 600, and 700 only. The family should feel engineered and editorial, not like
+  a fashion grotesk or an AI-template headline.
+- Evidence and commands use IBM Plex Mono or `ui-monospace`. Preserve exact punctuation and line
   wrapping where gate output is shown.
-- Use sentence case for headings. Use uppercase sparingly for eyebrows, state labels, and proof
-  metadata.
+- Hero weight is 600, never 800 or 900. Desktop hero size is 72-88px with line height `0.98` and
+  tracking between `-0.035em` and `-0.02em`. It must fit the 1240px content width without clipped
+  letters, collisions, or text extending beyond the viewport.
+- Use this deliberate three-line rhythm: `Your agent can write code.` / `Factory makes it earn` /
+  `the word delivered.` Keep the period and use sentence case.
+- Body copy uses 18-21px with generous line height. Use uppercase sparingly for eyebrows, state
+  labels, and proof metadata.
+- Do not use Clash Display, Satoshi, Arial Black, an echo stack, outlined duplicate text, warped
+  letterforms, or extra-black display weights.
 
-The hero may adapt the source prompt's echo-stack technique, but use it once and meaningfully:
-layer the word `DELIVERED` in receding grays behind the foreground word, then visibly interrupt
-one layer with a small red `BLOCKED` stamp. The main product claim must remain easy to read and
-must not become a decorative word cloud.
+The hero contains no `BLOCKED` stamp. `Blocked` is a terminal state, not the product's status or a
+brand slogan, and must appear only where the page explains what evidence caused the gate to refuse
+delivery.
 
 ## Layout
 
 - Desktop design width: 1440px, content max-width 1240px, 32px side gutters.
 - Use a 12-column grid. Alternate dense proof bands with generous editorial whitespace.
 - Sticky header: 72-80px, off-white at 92% opacity, subtle backdrop blur, bottom hairline.
-- Hero: minimum 760px high but keep the first proof cue above the fold.
+- Hero: 620-720px high. Keep the complete headline, CTA pair, and first proof cue above the fold on
+  a 1440x900 viewport.
 - Do not use a repetitive grid of identical cards. The proof stage is wide and dominant; the
   seven-gate sequence reads like a process rail; failure stories use asymmetrical editorial
   blocks; terminal states use a precise four-row ledger.
@@ -132,10 +139,13 @@ Compact wordmark `Factory` in bold display type. A small outlined status lozenge
 Treat the proof as the product hero, not a decorative code sample.
 
 - Split view: left column summarizes the recorded input; right column shows exact gate output.
-- Tabs or segmented control: `FALSE DELIVERY`, `HONEST DELIVERY`, `GATE BUG`.
+- Tabs or segmented control: `REFUSED DELIVERY`, `HONEST DELIVERY`, `GATE BUG`.
 - False state headline: `5 unanswered + 2 invalid = not delivered`.
 - Use monospace output with line numbers or artifact labels. Preserve `exit=1`, `GATE: BLOCKED`,
   `exit=0`, and `GATE: PASS` exactly.
+- Immediately explain the verdict in plain language: `BLOCKED means the evidence is insufficient.
+  Factory refuses to call the work delivered and names what is missing.` This explanation belongs
+  beside the gate output, never over the hero.
 - Include visible links for `state.json`, `ac-matrix.md`, receipts, manifest, and case study.
 - Always show: `Redacted reconstruction. Not the original private run or a complete Phase 0-6
   delivery.`
@@ -155,7 +165,8 @@ Include one small receipt fragment per story. No generic warning icons.
 
 Use a structured four-row table or ledger. Each state has: state name, when it is permitted, and
 what the handoff contains. Red is reserved for `blocked`; green is reserved for `delivered`.
-Neutral treatment for `delivered-with-gaps` and `intentionally-unchanged`.
+Neutral treatment for `delivered-with-gaps` and `intentionally-unchanged`. The `blocked` row must
+say: `Evidence or a required decision is missing. The run stops without claiming delivery.`
 
 ### Author block
 

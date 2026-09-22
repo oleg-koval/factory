@@ -17,7 +17,7 @@
         "proof/manifest.json"
       ],
       "fingerprints": {
-        ".superdesign/design-system.md": "9e2745e4d606dee0d7b9320f8386deb04c494ec82ace508cedfb9ab9064c6eaa",
+        ".superdesign/design-system.md": "95e1ecbc9e49ab31180333a53238e3700be8dd7049560697ede9cc66a43190ab",
         "docs/site-copy.md": "b5e1335a6b373627af998d5f50dd169d6f89412b3b3d43e113b76a0d76190e4b",
         "docs/product-brief.md": "4929d8b22ba1c705c13beb8b32d8785e6eb2093b08d343bb66d875d63097aa92",
         "docs/how-it-works.md": "16956c6b6fc0ef1d9812c5371bea4c90c68186ed9400b252a9ea9a3d1a364b54",
@@ -28,12 +28,12 @@
       "components": [],
       "drafts": {
         "1b709480-80a5-4f0b-8894-f7f9542f5040": {
-          "title": "Factory - Delivery Gates",
-          "visualDirection": "Swiss high-contrast editorial, proof-first; v1 contains the hero only and requires structural completion",
-          "currentVersion": 1
+          "title": "Factory — Complete Delivery Gates Homepage",
+          "visualDirection": "Restrained technical editorial; IBM Plex typography; proof-first complete homepage; blocked explained only as a gate verdict",
+          "currentVersion": 2
         }
       },
-      "updatedAt": "2026-09-22T16:37:21Z"
+      "updatedAt": "2026-09-22T16:49:20Z"
     }
   }
 }
