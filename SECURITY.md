@@ -1,7 +1,6 @@
 # Security policy
 
-Evidence status: policy for an unreleased local release candidate. No public release or supported
-version exists yet.
+Evidence status: policy for the public repository. No tagged supported version exists yet.
 
 ## Permission boundary
 
@@ -40,12 +39,12 @@ and the default branch will receive security fixes; the table will be updated wi
 
 ## Reporting
 
-Before public release, security findings stay local to the owner. Public release is blocked until
-GitHub private vulnerability reporting is enabled for `oleg-koval/factory` and this section links
-to that live channel.
+Use [GitHub private vulnerability reporting](https://github.com/oleg-koval/factory/security/advisories/new)
+for security findings. Do not include exploit details, credentials, private repository content,
+or customer data in a public issue. If private reporting is unavailable, open a public issue asking
+for a private contact without disclosing the finding.
 
-After that channel exists, report vulnerabilities privately. Do not include exploit details,
-credentials, private repository content, or customer data in a public issue. If private reporting
-is unavailable, open a public issue asking for a private contact without disclosing the finding.
-
-The initial response target and disclosure timeline remain `[TK: decide before public release]`.
+The initial target is to acknowledge a report within five business days and provide a status
+update within ten business days. Disclosure is coordinated with the reporter after a fix or
+mitigation is available; complex findings may require a longer timeline, which will be stated in
+the private advisory.

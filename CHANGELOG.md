@@ -1,7 +1,7 @@
 # Changelog
 
-Evidence status: repository history. `Unreleased` describes committed local behavior that has
-not been published as a public release.
+Evidence status: public repository history. `Unreleased` describes behavior on the default branch
+that has not been packaged as a tagged version.
 
 ## Unreleased
 

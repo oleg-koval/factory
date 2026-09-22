@@ -9,6 +9,8 @@ explicit terminal state. It runs on Claude Code and Codex.
 Factory does not make an agent type faster. It changes what the agent must prove before it can
 claim the work is finished.
 
+[Website](https://factory.olegkoval.com/) · [Runnable proof](https://factory.olegkoval.com/proof/) · [Install](https://factory.olegkoval.com/install/)
+
 ## Why it exists
 
 Factory is built from delivery failures that ordinary agent loops did not catch:
@@ -104,8 +106,8 @@ zsh tests/check.sh
 
 ## Evidence status
 
-The structural suite passes on the current working tree, and public-source installation was
-verified on 2026-09-22 against commit `54d2cc0`. Adoption, performance, production outcomes,
-fresh-session invocation, and a complete cross-provider run are not claimed yet.
+The structural suite passes on the current working tree, public-source installation was verified
+on 2026-09-22, and `factory.olegkoval.com` was deployed from public commit `d9af26b`. Adoption,
+performance outcomes, fresh-session invocation, and a complete cross-provider run are not claimed.
 
 Built by [Oleg Koval](https://olegkoval.com/).

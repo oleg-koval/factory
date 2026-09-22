@@ -88,7 +88,7 @@ export default function Home() {
         <section className="hero" id="top">
           <div className="hero-studio-meta">
             <p className="eyebrow">Open-source agent skill for Claude Code + Codex</p>
-            <span>Factory / run 001 / local specimen</span>
+            <span>Factory / run 001 / public specimen</span>
           </div>
           <div className="hero-studio-layout">
             <div className="hero-message">

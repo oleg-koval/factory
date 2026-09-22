@@ -23,9 +23,9 @@ export default function ChangelogPage() {
     <>
       <SiteHeader />
       <main className="inner-page">
-        <header className="page-hero page-hero-short"><p className="eyebrow">Changelog / unreleased</p><h1>Every rule begins with a failure.</h1><p className="page-deck">Repository history, not release theatre. Everything here is committed local behavior; no public release is claimed yet.</p></header>
+        <header className="page-hero page-hero-short"><p className="eyebrow">Changelog / unreleased</p><h1>Every rule begins with a failure.</h1><p className="page-deck">Repository history, not release theatre. Everything here is committed and publicly inspectable; no tagged package version is claimed yet.</p></header>
         <section className="change-release">
-          <div className="release-title"><span>Unreleased</span><p>Release candidate / local</p></div>
+          <div className="release-title"><span>Unreleased</span><p>Default branch / public source</p></div>
           <div className="change-list">
             {changes.map(([kind, title, body], index) => <article key={title}><span className={`change-kind change-${kind.toLowerCase()}`}>{kind}</span><div><h2>{title}</h2><p>{body}</p></div><span className="change-index">0{index + 1}</span></article>)}
           </div>

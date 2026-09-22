@@ -24,5 +24,6 @@ manifest matches the canonical repository manifest.
 
 ## Evidence boundary
 
-The site reports local proof exactly as recorded in the parent repository. Deployment, DNS,
-public installation, and indexation are separate release gates.
+The site reports proof exactly as recorded in the parent repository. Public-source installation,
+Cloudflare deployment, DNS, and TLS are verified. Global installation, fresh-session invocation,
+browser acceptance, search indexation, adoption, and performance outcomes remain separate gates.

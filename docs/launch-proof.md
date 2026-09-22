@@ -1,6 +1,7 @@
 # Factory launch proof plan
 
-Evidence status: planned work. Nothing in this file proves launch completion.
+Evidence status: launch checkpoint updated 2026-09-22. The public repository, public-source install,
+and Cloudflare deployment are verified; the remaining promotion gates stay open below.
 
 ## Local proof already staged
 
@@ -16,18 +17,18 @@ Evidence status: planned work. Nothing in this file proves launch completion.
 
 ## Public proof before promotion
 
-- Publish one canonical repository only after current private changes are reconciled.
-- Publish one provider-neutral skill and verify that the installer resolves the same canonical
+- [x] Publish one canonical repository only after current private changes are reconciled.
+- [x] Publish one provider-neutral skill and verify that the installer resolves the same canonical
   package for Claude Code and Codex.
-- Replace every `[TK]` in the site copy with a verified artifact or delete the claim.
-- Run the package validator and installation check from the public commit for both hosts.
-- Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in
+- [x] Replace every `[TK]` in the rendered site copy with a verified artifact or delete the claim.
+- [x] Run the package validator and installation check from the public source for both hosts.
+- [x] Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in
   `SECURITY.md` before publishing the first supported version.
-- Publish one complete redacted Factory run and its terminal gate output.
-- Demonstrate one failure caught by Factory that a normal happy-path test missed.
-- Verify the site in a real browser at desktop and mobile widths.
-- Verify title, description, canonical URL, robots, sitemap, Open Graph image, and structured data.
-- Submit the sitemap to Google Search Console after deployment.
+- [ ] Publish one complete redacted Factory run and its terminal gate output.
+- [x] Demonstrate one failure caught by Factory that a normal happy-path test missed.
+- [ ] Verify the site in a real browser at desktop and mobile widths.
+- [x] Verify title, description, canonical URL, robots, sitemap, Open Graph image, and structured data.
+- [ ] Submit the sitemap to Google Search Console after deployment.
 
 ## Search architecture
 
@@ -89,10 +90,9 @@ approval. Stage the draft and evidence bundle first.
 
 ## Cloudflare delivery
 
-Use a Cloudflare Worker with Static Assets and a Worker Custom Domain. The Worker is the origin,
-so Cloudflare can create the DNS record and certificate for `factory.olegkoval.com` during
-deployment. The current public DNS lookup returns no A, AAAA, or CNAME record for that hostname.
+Factory is deployed as a Cloudflare Worker with Static Assets and a Worker Custom Domain. The
+Worker is the origin; Cloudflare created the DNS record and certificate for
+`factory.olegkoval.com` during deployment from public commit `d9af26b` on 2026-09-22.
 
-Deployment remains a separate gate: successful local build, source commit, remote SHA, Worker
-deployment, custom-domain activation, public HTTP response, and browser acceptance are reported
-independently.
+Successful local build, source commit, remote SHA, Worker deployment, custom-domain activation,
+and public HTTP response are verified separately. Browser acceptance remains open.

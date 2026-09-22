@@ -101,7 +101,7 @@ refusal, corrected state, then the gate catching its own bug. It is not another 
 framework. It is the quality system that gives a software factory the right to say “not
 delivered.”
 
-[TK: public proof URL]
+Public proof: https://factory.olegkoval.com/proof/
 
 Would that make a useful follow-up for your audience? I can demonstrate the failure and the fix
 live, using the public artifacts rather than a slide deck.
@@ -110,11 +110,11 @@ live, using the public artifacts rather than a slide deck.
 
 ## Release gate before outreach
 
-- Public repository and immutable commit URL exist.
-- `factory.olegkoval.com/proof/` renders the same fixtures and before/after receipts.
-- Install commands work from the public repository on Claude Code and Codex.
-- The complete public demo takes less than three minutes when timed.
-- Oleg reviews the wording in his own voice and replaces or approves the first-person claims.
-- Oleg explicitly approves the recipient, channel, and final message before anything is sent.
+- [x] Public repository and immutable commit URL exist.
+- [x] `factory.olegkoval.com/proof/` renders the same fixtures and before/after receipts.
+- [x] The public source resolves to one canonical skill for Claude Code and Codex.
+- [ ] The complete public demo takes less than three minutes when timed.
+- [ ] Oleg reviews the wording in his own voice and replaces or approves the first-person claims.
+- [ ] Oleg explicitly approves the recipient, channel, and final message before anything is sent.
 
 No outreach should be sent merely because these checks become green.

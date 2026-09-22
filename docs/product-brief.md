@@ -1,7 +1,7 @@
 # Factory product brief
 
-Evidence status: product direction based on the Factory skill, its passing structural test suite,
-and a verified install from the public repository. Production deployment, user adoption,
+Evidence status: product direction backed by the public Factory repository, its passing structural
+suite, a verified public-source install, and a live Cloudflare deployment. User adoption,
 fresh-session invocation, and performance claims are not yet proven.
 
 ## The claim
