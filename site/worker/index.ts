@@ -2,20 +2,20 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 
-interface Env {
-  ASSETS: Fetcher;
-  IMAGES: {
-    input(stream: ReadableStream): {
-      transform(options: Record<string, unknown>): {
-        output(options: { format: string; quality: number }): Promise<{ response(): Response }>;
-      };
-    };
-  };
-}
+type ImageOutputFormat = "image/avif" | "image/webp" | "image/jpeg" | "image/png" | "image/gif" | "rgb" | "rgba";
 
-interface ExecutionContext {
-  waitUntil(promise: Promise<unknown>): void;
-  passThroughOnException(): void;
+const imageOutputFormats = new Set<ImageOutputFormat>([
+  "image/avif",
+  "image/webp",
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "rgb",
+  "rgba",
+]);
+
+function isImageOutputFormat(format: string): format is ImageOutputFormat {
+  return imageOutputFormats.has(format as ImageOutputFormat);
 }
 
 // Image security config. SVG sources with .svg extension auto-skip the
@@ -33,6 +33,9 @@ const worker = {
       return handleImageOptimization(request, {
         fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
         transformImage: async (body, { width, format, quality }) => {
+          if (!isImageOutputFormat(format)) {
+            throw new Error(`Unsupported optimized image format: ${format}`);
+          }
           const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
           return result.response();
         },
@@ -41,6 +44,6 @@ const worker = {
 
     return handler.fetch(request, env, ctx);
   },
-};
+} satisfies ExportedHandler<Env>;
 
 export default worker;
