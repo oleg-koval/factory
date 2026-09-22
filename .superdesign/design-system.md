@@ -85,6 +85,40 @@ Use a restrained technical-editorial, typography-first system:
 - No glassmorphism, neon glow, purple-blue gradients, fake 3D objects, robot imagery, abstract AI
   brains, stock portraits, or dashboard mockups.
 
+## Silver Workshop layer — Andy Warhol's Factory, translated
+
+The landing page should carry unmistakable inspiration from Andy Warhol's Factory as a creative
+workshop, but it must not reproduce Warhol artworks, celebrity portraits, soup cans, copyrighted
+screen prints, or period logos. Translate the place and production method—not the paintings.
+
+- Treat the page as an evidence studio: silver work surfaces, taped labels, registration marks,
+  contact-sheet repetition, screen-print misregistration, flash-white exposure, and industrial
+  sequence numbers.
+- Add a flat silver-paper family: `#D8D8D3`, `#C5C6C2`, `#AEB0AC`, and flash white `#FFFDF8`.
+  Avoid chrome gradients. Create material through halftone dots, hard-edged blocks, hairlines,
+  small scuffs, and alternating matte/silver planes.
+- Add three process-print accents for expressive bands only: studio blue `#1557FF`, screen pink
+  `#EF3A8B`, and process yellow `#F2D52C`. Never use them to encode gate status. Red and green
+  remain the only failure/pass colors inside proof surfaces.
+- Hero composition: keep the approved three-line headline readable on the left. On the right or
+  behind its lower edge, use a four-frame contact sheet that repeats one abstract delivery
+  specimen with controlled CMYK-like offsets. The four frames are labeled `CLAIM`, `EVIDENCE`,
+  `GATE`, `STATE`; the last frame resolves to `DELIVERED` only when proof passes. This is an
+  editorial diagram, not a dashboard.
+- Introduce one horizontal screen-print ticker using the real product vocabulary—`INTAKE / ISOLATE
+  / DIAGNOSE / PLAN / BUILD / PROVE / STOP`—with alternating ink blocks and deliberate registration
+  ticks. Keep the same words crawlable in HTML.
+- Use serial marks such as `FACTORY / RUN 001`, `PROOF EDITION`, and `LOCAL SPECIMEN` only when
+  truthful. Do not imply edition scarcity, customers, or production usage.
+- Repetition is purposeful: repeat a proof motif three or four times to show progression, never
+  repeat the main headline as a generic echo effect.
+- Preserve IBM Plex Sans and IBM Plex Mono. The period energy comes from scale, crop, registration,
+  and material—not from novelty typefaces or extra-black AI-template typography.
+- Photography is optional and should be omitted for launch unless Oleg supplies an approved
+  portrait or studio asset. Type, proof artifacts, and print-process geometry are sufficient.
+- The overall feeling is a 1960s downtown production studio rebuilt as a rigorous open-source
+  verification lab: alive, collectible, and slightly raw, while remaining accessible and credible.
+
 ## Typography
 
 - Use one curated family: IBM Plex Sans for display, body, navigation, and interface text. Load

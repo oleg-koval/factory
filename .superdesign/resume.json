@@ -9,21 +9,22 @@
       "referenceIds": [],
       "contextFiles": [
         ".superdesign/design-system.md",
-        "docs/site-copy.md",
-        "docs/product-brief.md",
-        "docs/how-it-works.md",
-        "docs/author-profile.md",
-        "docs/essay-right-to-say-not-delivered.md",
-        "proof/manifest.json"
+        ".superdesign/init/theme.md",
+        "site/app/page.tsx",
+        "site/app/_components/SiteHeader.tsx",
+        "site/app/_components/SiteFooter.tsx",
+        "site/app/_components/ProofExplorer.tsx",
+        "site/app/globals.css:1:1073",
+        "site/app/globals.css:1653:1761"
       ],
       "fingerprints": {
-        ".superdesign/design-system.md": "95e1ecbc9e49ab31180333a53238e3700be8dd7049560697ede9cc66a43190ab",
-        "docs/site-copy.md": "b5e1335a6b373627af998d5f50dd169d6f89412b3b3d43e113b76a0d76190e4b",
-        "docs/product-brief.md": "4929d8b22ba1c705c13beb8b32d8785e6eb2093b08d343bb66d875d63097aa92",
-        "docs/how-it-works.md": "16956c6b6fc0ef1d9812c5371bea4c90c68186ed9400b252a9ea9a3d1a364b54",
-        "docs/author-profile.md": "3c79e838d2aea92d70938dfeb93c349186652f98bee8124b0e37b88ee98ddd41",
-        "docs/essay-right-to-say-not-delivered.md": "4e7a20be9005cfac07250ab6fb8d276b3ee95ea925202a1d590999e953e08943",
-        "proof/manifest.json": "9b9f443bbadd0fbe8e87f3dd11e9fccf7d087e488e2e896cfed303904a7fd0ef"
+        ".superdesign/design-system.md": "1f7ba55ae6d27cf4145d8b4ab61a895afb1df5315c7353f50367394f5d911b92",
+        ".superdesign/init/theme.md": "ce93d4bedfa53b67516ae6fab3e01616cf49f2254c5defc996e988f513a91b73",
+        "site/app/page.tsx": "6d6b77f1f868aa417ac53d279ee9474b26b454fd5e8d390c6ebca094a5ed1a5f",
+        "site/app/_components/SiteHeader.tsx": "9ad3f4f0b190ebf2fcd69a853868245959c970471fbff488e4d503b2a6b6c957",
+        "site/app/_components/SiteFooter.tsx": "4669ebd5be4269fd57ef2e2992d09bd81bbaebf40456d589b4c112ecec5cdab0",
+        "site/app/_components/ProofExplorer.tsx": "4b6739451d680a178f3deec9758acd6ddc8bb510923b98b1acf7caeed00b74b0",
+        "site/app/globals.css": "1b2d70964c60d812043ab893c6afa1fc95d5b0bc34707ceeb2f3498f4864102d"
       },
       "components": [],
       "drafts": {
@@ -33,7 +34,7 @@
           "currentVersion": 2
         }
       },
-      "updatedAt": "2026-09-22T16:49:20Z"
+      "updatedAt": "2026-09-22T19:42:00Z"
     }
   }
 }

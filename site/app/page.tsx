@@ -67,22 +67,52 @@ export default function Home() {
       <SiteHeader />
       <main>
         <section className="hero" id="top">
-          <p className="eyebrow">Open-source agent skill for Claude Code + Codex</p>
-          <h1>
-            <span>Your agent can write code.</span>
-            <span>Factory makes it earn</span>
-            <span>the word delivered.</span>
-          </h1>
-          <div className="hero-lower">
-            <p className="hero-copy">
-              Give Factory a ticket, a Sentry issue, or a rough request. It isolates the work,
-              turns the ask into testable acceptance criteria, proves each milestone, and stops
-              with receipts. When it cannot prove the change, it says exactly why.
-            </p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="#proof">Watch a run <span aria-hidden="true">↓</span></a>
-              <a className="text-link" href="/install/">Inspect the skill <span aria-hidden="true">↗</span></a>
+          <div className="hero-studio-meta">
+            <p className="eyebrow">Open-source agent skill for Claude Code + Codex</p>
+            <span>Factory / run 001 / local specimen</span>
+          </div>
+          <div className="hero-studio-layout">
+            <div className="hero-message">
+              <h1>
+                <span>Your agent can write code.</span>
+                <span>Factory makes it earn</span>
+                <span>the word delivered.</span>
+              </h1>
+              <div className="hero-lower">
+                <p className="hero-copy">
+                  Give Factory a ticket, a Sentry issue, or a rough request. It isolates the work,
+                  turns the ask into testable acceptance criteria, proves each milestone, and stops
+                  with receipts. When it cannot prove the change, it says exactly why.
+                </p>
+                <div className="hero-actions">
+                  <a className="button button-primary" href="#proof">Watch a run <span aria-hidden="true">↓</span></a>
+                  <a className="text-link" href="/install/">Inspect the skill <span aria-hidden="true">↗</span></a>
+                </div>
+              </div>
             </div>
+            <aside className="studio-contact-sheet" aria-label="The four parts of a Factory delivery decision">
+              <div className="studio-tape">Proof edition</div>
+              <div className="specimen-frame specimen-claim">
+                <div className="specimen-meta"><span>01</span><strong>Claim</strong></div>
+                <div className="specimen-mark" aria-hidden="true"><i /><i /><i /></div>
+                <p>Agent reports done</p>
+              </div>
+              <div className="specimen-frame specimen-evidence">
+                <div className="specimen-meta"><span>02</span><strong>Evidence</strong></div>
+                <div className="specimen-mark" aria-hidden="true"><i /><i /><i /></div>
+                <p>Receipts are inspected</p>
+              </div>
+              <div className="specimen-frame specimen-gate">
+                <div className="specimen-meta"><span>03</span><strong>Gate</strong></div>
+                <div className="specimen-mark" aria-hidden="true"><i /><i /><i /></div>
+                <p>The record decides</p>
+              </div>
+              <div className="specimen-frame specimen-state">
+                <div className="specimen-meta"><span>04</span><strong>State</strong></div>
+                <div className="specimen-question" aria-hidden="true">?</div>
+                <p>Await the gate</p>
+              </div>
+            </aside>
           </div>
           <dl className="proof-strip" aria-label="Factory properties">
             <div><dt>Isolated worktree</dt><dd>Consent stays explicit</dd></div>
@@ -91,6 +121,11 @@ export default function Home() {
             <div><dt>Executable gates</dt><dd>Claims answer to evidence</dd></div>
           </dl>
         </section>
+
+        <div className="process-ticker" aria-label="Factory delivery phases">
+          <span>Intake</span><span>Isolate</span><span>Diagnose</span><span>Plan</span>
+          <span>Build</span><span>Prove</span><span>Stop</span>
+        </div>
 
         <section className="proof-section" id="proof">
           <div className="section-heading">
