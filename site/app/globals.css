@@ -1045,7 +1045,6 @@ button:focus-visible {
 }
 
 .gate-list li > span,
-.phase-number,
 .claim-index,
 .change-index {
   color: var(--red);
@@ -1547,51 +1546,6 @@ button:focus-visible {
   line-height: 1.5;
 }
 
-.phase-stack {
-  padding: 0 var(--page-pad);
-}
-
-.phase-row {
-  display: grid;
-  grid-template-columns: 5rem minmax(12rem, 0.8fr) 1.5fr;
-  gap: 2rem;
-  padding: clamp(3rem, 6vw, 6rem) 0;
-  border-bottom: 1px solid var(--rule);
-}
-
-.phase-row h2 {
-  margin: 0.7rem 0 0;
-  font-size: clamp(2rem, 4vw, 4rem);
-  font-weight: 500;
-  letter-spacing: -0.05em;
-}
-
-.phase-copy > p {
-  max-width: 42rem;
-  margin: 0;
-  font-size: 1.03rem;
-  line-height: 1.65;
-}
-
-.phase-copy aside {
-  max-width: 42rem;
-  margin-top: 2rem;
-  padding: 1rem 0 0 1rem;
-  border-top: 1px solid var(--ink);
-  border-left: 3px solid var(--red);
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-.phase-copy aside span {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--red);
-  font-family: var(--font-plex-mono), monospace;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-}
-
 .content-callout {
   margin: clamp(3rem, 6vw, 6rem) var(--page-pad);
   padding: clamp(2rem, 5vw, 5rem);
@@ -1963,14 +1917,6 @@ button:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .phase-row {
-    grid-template-columns: 4rem 1fr;
-  }
-
-  .phase-copy {
-    grid-column: 2;
-  }
-
   .article-pullquote {
     margin-inline: 0;
   }
@@ -2029,14 +1975,9 @@ button:focus-visible {
   }
 
   .release-banner,
-  .phase-row,
   .link-ledger a,
   .elsewhere-section {
     grid-template-columns: 1fr;
-  }
-
-  .phase-copy {
-    grid-column: 1;
   }
 
   .profile-monogram {

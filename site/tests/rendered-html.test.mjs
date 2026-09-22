@@ -5,7 +5,7 @@ import test from "node:test";
 const routes = [
   ["/", "Factory — Delivery gates for AI coding agents", "Your agent can write code."],
   ["/proof/", "Factory Proof — Watch a false delivery claim fail", "A delivery claim should survive inspection."],
-  ["/how-it-works/", "How Factory verifies AI-written software", "Seven gates between a request and an honest terminal state."],
+  ["/how-it-works/", "Factory run map — A verified AI coding agent workflow", "The complete run—from ticket to verified draft PR."],
   ["/install/", "Install Factory for Claude Code and Codex", "Bring your own agent. Keep the gates."],
   ["/changelog/", "Factory changelog — Every rule begins with a failure", "Every rule begins with a failure."],
   ["/oleg-koval/", "Oleg Koval — Reliable agent-driven software delivery", "I build systems that have to show their work."],
@@ -57,6 +57,26 @@ test("proof page contains parseable structured data and visible boundaries", asy
   assert.equal(JSON.parse(jsonLd[1])["@type"], "CollectionPage");
   assert.match(html, /Public-source installation was verified in a disposable repository/);
   assert.match(html, /href="\/proof\/manifest\.json"/);
+});
+
+test("run map exposes the complete phase contract and both PDF editions", async () => {
+  const response = await render("/how-it-works/");
+  const html = await response.text();
+
+  for (const phase of ["Intake", "Isolate", "Diagnosis", "Human plan", "Grill", "Agent plan", "Milestones", "Proof", "Stop"]) {
+    assert.ok(html.includes(phase), `missing ${phase} phase`);
+  }
+  assert.match(html, /Only <code>state\.json<\/code> crosses sessions/);
+  assert.match(html, /href="\/downloads\/factory-run-flow-onepage\.pdf"/);
+  assert.match(html, /href="\/downloads\/factory-run-flow-a4\.pdf"/);
+});
+
+test("run-map downloads are published as non-empty PDF files", async () => {
+  for (const file of ["factory-run-flow-onepage.pdf", "factory-run-flow-a4.pdf"]) {
+    const pdf = await readFile(new URL(`../public/downloads/${file}`, import.meta.url));
+    assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
+    assert.ok(pdf.byteLength > 10_000, `${file} is unexpectedly small`);
+  }
 });
 
 test("unknown routes return the custom 404", async () => {

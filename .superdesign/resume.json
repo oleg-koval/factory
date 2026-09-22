@@ -14,27 +14,33 @@
         "site/app/_components/SiteHeader.tsx",
         "site/app/_components/SiteFooter.tsx",
         "site/app/_components/ProofExplorer.tsx",
+        "site/app/_components/RunMap.tsx",
+        "site/app/layout.tsx",
+        "site/app/run-map.css",
         "site/app/globals.css:1:1073",
         "site/app/globals.css:1653:1761"
       ],
       "fingerprints": {
         ".superdesign/design-system.md": "1f7ba55ae6d27cf4145d8b4ab61a895afb1df5315c7353f50367394f5d911b92",
         ".superdesign/init/theme.md": "ce93d4bedfa53b67516ae6fab3e01616cf49f2254c5defc996e988f513a91b73",
-        "site/app/page.tsx": "75d8e945d12a33fc04526acfa53cb73fb7c2bc47d1932268f0b43e398baa5d72",
-        "site/app/_components/SiteHeader.tsx": "84ebd7fad23bb0d104e32ac60f0e16762b90ac6d06c134c61f42d9055f970928",
-        "site/app/_components/SiteFooter.tsx": "613be854a081eefedc23ef0953123f73bf7ea5444c51fa415b75a45ea3b74698",
+        "site/app/page.tsx": "b7e6154cd78e4a19e660f0c0e131ca1d3451e943ec454edc490c01fde1d01991",
+        "site/app/_components/SiteHeader.tsx": "5e4dd13d48b08b57bf0028c1f568f1274480a2b7ab182b067187c34722e95aed",
+        "site/app/_components/SiteFooter.tsx": "a33959335d910a31a45b274275538bc394b0418971e6c8d51bb0bcc8168c2f2b",
         "site/app/_components/ProofExplorer.tsx": "4b6739451d680a178f3deec9758acd6ddc8bb510923b98b1acf7caeed00b74b0",
-        "site/app/globals.css": "1b2d70964c60d812043ab893c6afa1fc95d5b0bc34707ceeb2f3498f4864102d"
+        "site/app/_components/RunMap.tsx": "9ff5981386ae6626835ac9e8adff6a9aa96fc9b8bee314958cfa315474bf0459",
+        "site/app/layout.tsx": "2e4acdcffd4a075f54ef3fcfe8bb91320655313391762ba94213b33a75199bcc",
+        "site/app/run-map.css": "d20b6377ca9c879882091eb0e7947f99b9407f9edf86727024e19eac8a6feb9a",
+        "site/app/globals.css": "1bc198452e08f565819dd539260149c7adc49ed4c5314a5653e546f528086281"
       },
       "components": [],
       "drafts": {
         "1b709480-80a5-4f0b-8894-f7f9542f5040": {
           "title": "Factory — Complete Delivery Gates Homepage",
           "visualDirection": "Restrained technical editorial; IBM Plex typography; proof-first complete homepage; blocked explained only as a gate verdict",
-          "currentVersion": 2
+          "currentVersion": 3
         }
       },
-      "updatedAt": "2026-09-22T20:12:00Z"
+      "updatedAt": "2026-09-22T21:47:43Z"
     }
   }
 }

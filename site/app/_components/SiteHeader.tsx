@@ -11,7 +11,7 @@ export function SiteHeader() {
         Open source / public proof
       </div>
       <nav aria-label="Primary navigation">
-        <a href="/how-it-works/">How</a>
+        <a href="/how-it-works/">Run map</a>
         <a href="/proof/">Proof</a>
         <a href="/essays/right-to-say-not-delivered/">Essay</a>
         <a href="/install/">Install</a>

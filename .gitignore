@@ -1,3 +1,4 @@
 .factory/
+.superdesign/tmp/
 __pycache__/
 *.pyc

@@ -20,7 +20,7 @@ export function SiteFooter() {
       <div className="footer-meta">
         <span>MIT licensed</span>
         <span>Built for Claude Code + Codex</span>
-        <span>Evidence updated 2026-09-22</span>
+        <span>Evidence updated 2026-09-23</span>
       </div>
     </footer>
   );

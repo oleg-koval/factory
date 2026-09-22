@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ProofExplorer } from "./_components/ProofExplorer";
+import { RunMapOverview } from "./_components/RunMap";
 import { SiteFooter } from "./_components/SiteFooter";
 import { SiteHeader } from "./_components/SiteHeader";
 import { StructuredData } from "./_components/StructuredData";
@@ -145,6 +146,8 @@ export default function Home() {
           <span>Intake</span><span>Isolate</span><span>Diagnose</span><span>Plan</span>
           <span>Build</span><span>Prove</span><span>Stop</span>
         </div>
+
+        <RunMapOverview />
 
         <section className="proof-section" id="proof">
           <div className="section-heading">
