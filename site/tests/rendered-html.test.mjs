@@ -64,3 +64,11 @@ test("unknown routes return the custom 404", async () => {
   assert.equal(response.status, 404);
   assert.match(await response.text(), /This route did not earn “delivered.”/);
 });
+
+test("Cloudflare serves built assets before falling back to the SSR worker", async () => {
+  const config = JSON.parse(
+    await readFile(new URL("../wrangler.jsonc", import.meta.url), "utf8"),
+  );
+
+  assert.notEqual(config.assets?.run_worker_first, true);
+});
