@@ -1,0 +1,13 @@
+# Factory
+
+Factory is an open-source agent skill that adds evidence-gated delivery to Claude Code and Codex.
+
+Canonical site: https://factory.olegkoval.com/
+How it works: https://factory.olegkoval.com/how-it-works/
+Proof surface: https://factory.olegkoval.com/proof/
+Machine-readable proof: https://factory.olegkoval.com/proof/manifest.json
+Install status: https://factory.olegkoval.com/install/
+Author: https://factory.olegkoval.com/oleg-koval/
+
+Evidence boundary: the current artifacts are verified locally. Public installation, adoption,
+performance improvement, and a complete redacted Phase 0–6 delivery are not yet claimed.

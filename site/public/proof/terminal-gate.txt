@@ -1,0 +1,17 @@
+[false-delivery] exit=1
+GATE: BLOCKED
+  state.open_questions[0] is blocking and unanswered: '[redacted blocking question 1]'
+  state.open_questions[1] is blocking and unanswered: '[redacted blocking question 2]'
+  state.open_questions[2] is blocking and unanswered: '[redacted blocking question 3]'
+  state.open_questions[3] is blocking and unanswered: '[redacted blocking question 4]'
+  state.open_questions[4] is blocking and unanswered: '[redacted blocking question 5]'
+  ac-matrix.md row 'AC-1' has status 'partly met'; allowed: met, unrunnable, failed
+  ac-matrix.md row 'AC-2' has status 'partly met'; allowed: met, unrunnable, failed
+  terminal 'delivered' needs every acceptance criterion met; use 'delivered-with-gaps' and name each gap and its owner
+
+[honest-delivery] exit=0
+GATE: PASS  run=honest-delivery terminal=delivered matrix=clean
+
+[mismatched-terminal] exit=1
+GATE: BLOCKED
+  state.terminal 'blocked' does not match requested terminal 'delivered'
