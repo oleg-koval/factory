@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "new-ui",
+      "projectId": "d10666b3-1b07-46c4-bf42-cc47a123c781",
+      "activeDraftId": "1b709480-80a5-4f0b-8894-f7f9542f5040",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [],
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "docs/site-copy.md",
+        "docs/product-brief.md",
+        "docs/how-it-works.md",
+        "docs/author-profile.md",
+        "docs/essay-right-to-say-not-delivered.md",
+        "proof/manifest.json"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "9e2745e4d606dee0d7b9320f8386deb04c494ec82ace508cedfb9ab9064c6eaa",
+        "docs/site-copy.md": "b5e1335a6b373627af998d5f50dd169d6f89412b3b3d43e113b76a0d76190e4b",
+        "docs/product-brief.md": "4929d8b22ba1c705c13beb8b32d8785e6eb2093b08d343bb66d875d63097aa92",
+        "docs/how-it-works.md": "16956c6b6fc0ef1d9812c5371bea4c90c68186ed9400b252a9ea9a3d1a364b54",
+        "docs/author-profile.md": "3c79e838d2aea92d70938dfeb93c349186652f98bee8124b0e37b88ee98ddd41",
+        "docs/essay-right-to-say-not-delivered.md": "4e7a20be9005cfac07250ab6fb8d276b3ee95ea925202a1d590999e953e08943",
+        "proof/manifest.json": "9b9f443bbadd0fbe8e87f3dd11e9fccf7d087e488e2e896cfed303904a7fd0ef"
+      },
+      "components": [],
+      "drafts": {
+        "1b709480-80a5-4f0b-8894-f7f9542f5040": {
+          "title": "Factory - Delivery Gates",
+          "visualDirection": "Swiss high-contrast editorial, proof-first; v1 contains the hero only and requires structural completion",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-22T16:37:21Z"
+    }
+  }
+}
