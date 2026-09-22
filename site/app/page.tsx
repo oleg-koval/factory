@@ -58,11 +58,30 @@ export default function Home() {
     <>
       <StructuredData data={{
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: "Factory",
-        url: "https://factory.olegkoval.com/",
-        description: "Evidence-gated delivery for Claude Code and Codex.",
-        author: { "@type": "Person", name: "Oleg Koval", url: "https://factory.olegkoval.com/oleg-koval/" },
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://factory.olegkoval.com/#website",
+            name: "Factory",
+            url: "https://factory.olegkoval.com/",
+            description: "Evidence-gated delivery for Claude Code and Codex.",
+            author: { "@id": "https://factory.olegkoval.com/oleg-koval/#person" },
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            name: "Factory",
+            codeRepository: "https://github.com/oleg-koval/factory",
+            license: "https://opensource.org/license/mit",
+            programmingLanguage: ["Markdown", "Python", "Shell"],
+            runtimePlatform: ["Claude Code", "Codex"],
+            author: {
+              "@type": "Person",
+              "@id": "https://factory.olegkoval.com/oleg-koval/#person",
+              name: "Oleg Koval",
+              url: "https://factory.olegkoval.com/oleg-koval/",
+            },
+          },
+        ],
       }} />
       <SiteHeader />
       <main>
@@ -237,9 +256,9 @@ export default function Home() {
             <h2>Bring your own agent.<br />Keep the gates.</h2>
           </div>
           <div className="install-preview">
-            <p className="release-note"><span>Pre-release</span> Public repository commands are staged, not live.</p>
+            <p className="release-note"><span>Public source</span> Verified from a clean repository on 2026-09-22.</p>
             <pre><code>{`# Claude Code\nnpx skills add oleg-koval/factory -g -a claude-code -y\n\n# Codex\nnpx skills add oleg-koval/factory -g -a codex -y`}</code></pre>
-            <a className="text-link" href="/install/">See verified local installation <span aria-hidden="true">↗</span></a>
+            <a className="text-link" href="/install/">See the verification boundary <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 

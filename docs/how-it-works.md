@@ -143,9 +143,10 @@ same provider-neutral skill, phase files, role configuration, state, and executa
 runner selects the host's native CLI, but switching providers does not change the delivery
 contract.
 
-The current public-install commands remain staged until the canonical repository is published.
-The local installation shape has been verified for both hosts; public installation is not yet
-claimed.
+The canonical repository is public at `oleg-koval/factory`. A disposable repository verified
+public-source discovery, canonical installation for Codex, the Claude Code symlink, and the
+installed proof suite on 2026-09-22. Fresh-session invocation, a second-machine install, and a
+complete cross-provider run remain unproven.
 
 ## Inspect the implementation
 

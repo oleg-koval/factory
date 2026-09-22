@@ -16,10 +16,10 @@ export default function InstallPage() {
         <header className="page-hero page-hero-short">
           <p className="eyebrow">Install Factory</p>
           <h1>Bring your own agent. Keep the gates.</h1>
-          <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. The public repository is not live yet; the command shape below is staged, not an install claim.</p>
+          <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. The canonical repository is public and the source has passed a clean installation check.</p>
         </header>
 
-        <aside className="release-banner"><strong>Pre-release boundary</strong><p>Local package discovery and installation passed on 2026-09-21. Installation from <code>oleg-koval/factory</code> remains unproven until the repository is public.</p></aside>
+        <aside className="release-banner"><strong>Public source / verified</strong><p>A disposable repository installed from <code>oleg-koval/factory</code> on 2026-09-22. Global installation and fresh-session invocation remain unproven.</p></aside>
 
         <section className="install-grid">
           <article>
@@ -37,15 +37,15 @@ export default function InstallPage() {
         <section className="verification-section">
           <div className="section-heading">
             <p className="eyebrow">What has actually been verified</p>
-            <h2>The local install shape works for both hosts.</h2>
-            <p>A disposable Git repository was used to test package discovery, canonical installation, the Claude Code symlink, structural checks, proof verification, and the Codex skill validator.</p>
+            <h2>The public source resolves for both hosts.</h2>
+            <p>A disposable Git repository installed from the public GitHub source to test package discovery, canonical installation, the Claude Code symlink, structural checks, proof verification, and the Codex skill validator.</p>
           </div>
           <ul className="check-list">
             <li><span>✓</span>The CLI discovered exactly one root skill named <code>factory</code>.</li>
             <li><span>✓</span>Claude Code and Codex resolved to the same <code>SKILL.md</code>.</li>
             <li><span>✓</span>The installed proof suite reported 3 claims, 13 artifacts, and 3 executable cases.</li>
             <li><span>✓</span>The seven-route search specification passed locally.</li>
-            <li><span>—</span>Public installation and fresh-session invocation remain release gates.</li>
+            <li><span>—</span>Global installation and fresh-session invocation remain release gates.</li>
           </ul>
         </section>
 

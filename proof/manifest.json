@@ -63,8 +63,8 @@
     "runner": "bash proof/terminal-gate/run.sh"
   },
   "boundaries": [
-    "No public repository or public install is claimed yet.",
+    "Public-source installation was verified in a disposable repository on 2026-09-22; global installation and fresh-session invocation remain unproven.",
     "No production adoption, time saving, defect reduction, or benchmark result is claimed.",
-    "A complete redacted Phase 0-6 Factory run remains required before launch."
+    "A complete redacted Phase 0-6 Factory run remains required before claiming end-to-end Factory validation."
   ]
 }

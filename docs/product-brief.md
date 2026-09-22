@@ -1,8 +1,8 @@
 # Factory product brief
 
-Evidence status: product direction based on the local Factory skill and its passing structural
-test suite. Public installation, production deployment, user adoption, and performance claims
-are not yet proven.
+Evidence status: product direction based on the Factory skill, its passing structural test suite,
+and a verified install from the public repository. Production deployment, user adoption,
+fresh-session invocation, and performance claims are not yet proven.
 
 ## The claim
 

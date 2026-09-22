@@ -41,8 +41,7 @@ Terminal states are `delivered`, `delivered-with-gaps`, `blocked`, and
 
 ## Install
 
-The intended public source is `oleg-koval/factory`. That repository has not been published, so
-the following commands are staged and are not live yet:
+The canonical public source is [`oleg-koval/factory`](https://github.com/oleg-koval/factory):
 
 ```bash
 # Claude Code
@@ -52,7 +51,7 @@ npx skills add oleg-koval/factory -g -a claude-code -y
 npx skills add oleg-koval/factory -g -a codex -y
 ```
 
-The same command shape has been verified against this local package; see
+Public-source discovery and installation have been verified in a disposable repository; see
 [`docs/install-verification.md`](docs/install-verification.md).
 
 Once installed:
@@ -92,7 +91,7 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
 - [`docs/author-profile.md`](docs/author-profile.md) stages a source-bounded personal-brand page
   from Oleg's public portfolio while keeping first-person outreach claims approval-gated.
 - [`docs/seo-spec.md`](docs/seo-spec.md) and [`docs/seo-routes.json`](docs/seo-routes.json) define
-  the validated search, metadata, crawl, and evidence contract for the future site.
+  the validated search, metadata, crawl, and evidence contract for the site.
 - [`SECURITY.md`](SECURITY.md) states the skill's real permission boundary, enforced controls, and
   the private-reporting gate required before publication.
 - [`CHANGELOG.md`](CHANGELOG.md) ties product rules to the failures that changed them.
@@ -105,8 +104,8 @@ zsh tests/check.sh
 
 ## Evidence status
 
-The local structural suite passes on the current working tree. Public installation, adoption,
-performance, and production outcomes are not claimed yet. The release plan requires a complete
-redacted run, cross-provider validation, and a public commit before those claims appear.
+The structural suite passes on the current working tree, and public-source installation was
+verified on 2026-09-22 against commit `54d2cc0`. Adoption, performance, production outcomes,
+fresh-session invocation, and a complete cross-provider run are not claimed yet.
 
 Built by [Oleg Koval](https://olegkoval.com/).

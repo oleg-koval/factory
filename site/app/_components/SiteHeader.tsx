@@ -8,13 +8,14 @@ export function SiteHeader() {
       </Link>
       <div className="header-status">
         <span className="status-dot" aria-hidden="true" />
-        Open source / local proof
+        Open source / public proof
       </div>
       <nav aria-label="Primary navigation">
         <a href="/how-it-works/">How</a>
         <a href="/proof/">Proof</a>
         <a href="/essays/right-to-say-not-delivered/">Essay</a>
         <a href="/install/">Install</a>
+        <a href="https://github.com/oleg-koval/factory">GitHub</a>
         <a href="/oleg-koval/">Built by Oleg</a>
       </nav>
       <a className="header-cta" href="/proof/">

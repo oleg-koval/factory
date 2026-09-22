@@ -55,7 +55,7 @@ test("proof page contains parseable structured data and visible boundaries", asy
   const jsonLd = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
   assert.ok(jsonLd);
   assert.equal(JSON.parse(jsonLd[1])["@type"], "CollectionPage");
-  assert.match(html, /No public repository or public install is claimed yet/);
+  assert.match(html, /Public-source installation was verified in a disposable repository/);
   assert.match(html, /href="\/proof\/manifest\.json"/);
 });
 

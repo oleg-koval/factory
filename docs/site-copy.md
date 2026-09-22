@@ -136,9 +136,9 @@ Action: Read the argument and inspect the proof
 
 Heading: Bring your own agent. Keep the gates.
 
-Claude Code: `[TK until repository is public: npx skills add oleg-koval/factory -g -a claude-code -y]`
+Claude Code: `npx skills add oleg-koval/factory -g -a claude-code -y`
 
-Codex: `[TK until repository is public: npx skills add oleg-koval/factory -g -a codex -y]`
+Codex: `npx skills add oleg-koval/factory -g -a codex -y`
 
 Supporting line: One delivery contract, using each host's native invocation and runner.
 

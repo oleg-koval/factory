@@ -14,12 +14,13 @@ export function SiteFooter() {
         <a href="/proof/">Proof</a>
         <a href="/install/">Install</a>
         <a href="/changelog/">Changelog</a>
+        <a href="https://github.com/oleg-koval/factory">GitHub source</a>
         <a href="/oleg-koval/">Oleg Koval</a>
       </nav>
       <div className="footer-meta">
         <span>MIT licensed</span>
         <span>Built for Claude Code + Codex</span>
-        <span>Evidence updated 2026-09-21</span>
+        <span>Evidence updated 2026-09-22</span>
       </div>
     </footer>
   );

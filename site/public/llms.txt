@@ -9,5 +9,6 @@ Machine-readable proof: https://factory.olegkoval.com/proof/manifest.json
 Install status: https://factory.olegkoval.com/install/
 Author: https://factory.olegkoval.com/oleg-koval/
 
-Evidence boundary: the current artifacts are verified locally. Public installation, adoption,
-performance improvement, and a complete redacted Phase 0–6 delivery are not yet claimed.
+Evidence boundary: the public source and local installation into a disposable repository were
+verified on 2026-09-22. Global installation, fresh-session invocation, adoption, performance
+improvement, and a complete redacted Phase 0–6 delivery are not yet claimed.
