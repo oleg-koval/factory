@@ -476,6 +476,19 @@ print -r -- "$demo_out" | grep -q '\[honest-delivery\] exit=0' || f "guest demo 
 print -r -- "$demo_out" | grep -q 'BEFORE FIX: exit=0 verdict=PASS' || f "guest demo did not show the historical bypass"
 print -r -- "$demo_out" | grep -q 'AFTER FIX: exit=1 verdict=BLOCKED' || f "guest demo did not show the fixed gate"
 
+# A failed live gate must not be masked by the demo's later receipt narration.
+demo_fail_root=$(mktemp -d)
+mkdir -p "$demo_fail_root/scripts" "$demo_fail_root/proof/terminal-gate/false-delivery"
+cp "$root/scripts/demo.sh" "$demo_fail_root/scripts/demo.sh"
+cp "$root/proof/terminal-gate/false-delivery/state.json" "$demo_fail_root/proof/terminal-gate/false-delivery/state.json"
+cp "$root/proof/terminal-gate/false-delivery/ac-matrix.md" "$demo_fail_root/proof/terminal-gate/false-delivery/ac-matrix.md"
+printf '#!/usr/bin/env bash\nexit 7\n' > "$demo_fail_root/proof/terminal-gate/run.sh"
+demo_fail_out=$(bash "$demo_fail_root/scripts/demo.sh" 2>&1)
+demo_fail_rc=$?
+(( demo_fail_rc == 7 )) || f "guest demo masked a failed live gate (exit $demo_fail_rc, expected 7)"
+[[ "$demo_fail_out" != *'DEMO BOUNDARY:'* ]] || f "guest demo continued after a failed live gate"
+rm -rf "$demo_fail_root"
+
 proof_manifest_out=$(python3 $root/scripts/verify-proof.py 2>&1)
 proof_manifest_rc=$?
 (( proof_manifest_rc == 0 )) || f "proof manifest verifier exited $proof_manifest_rc"

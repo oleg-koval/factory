@@ -1,8 +1,9 @@
 # Factory product brief
 
 Evidence status: product direction backed by the public Factory repository, its passing structural
-suite, a verified public-source install, and a live Cloudflare deployment. User adoption,
-fresh-session invocation, and performance claims are not yet proven.
+suite, a verified public-source install, fresh project-local consult invocations in Claude Code
+and Codex, and a live Cloudflare deployment. Global installs, a complete Phase 0-6 delivery run,
+user adoption, and performance claims are not yet proven.
 
 ## The claim
 
@@ -56,11 +57,12 @@ The first release is one provider-neutral open-source skill installed into both 
 Code invokes it as `/factory`; Codex invokes it as `$factory`. The runner selects the host's
 native CLI while both hosts read the same delivery contract and `.factory/roles.json`.
 
-The website is the product's proof surface, not a brochure. Its primary interaction is a
-redacted example run that visitors can inspect phase by phase: source, plan, acceptance-criteria
-matrix, test failure, implementation checkpoint, teeth check, whole-change review, and final
-gate. Every claim on the page should link to an artifact or remain visibly marked `[TK]` until
-evidence exists.
+The website is the product's proof surface, not a brochure. Today it exposes an inspectable,
+redacted terminal-gate reconstruction; it does not yet show a complete Phase 0-6 delivery run.
+The next proof surface should let visitors inspect such a run phase by phase: source, plan,
+acceptance-criteria matrix, test failure, implementation checkpoint, teeth check, whole-change
+review, and final gate. Every claim on the page should link to an artifact or stay visibly
+unproven until evidence exists.
 
 ## What the first release includes
 
