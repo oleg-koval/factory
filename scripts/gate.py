@@ -36,6 +36,7 @@ ALLOWED_KEYS = REQUIRED_KEYS | {
     "grill",
     "budget",
     "gaps",
+    "source_evidence",
 }
 # Keys that carried prose in earlier runs and pushed state.json to 43KB. They are not a
 # matter of taste: state.json is the one file carried across every compaction, so anything
@@ -312,6 +313,12 @@ def check_phase(state: dict, run_dir: str, phase: str, reasons: list[str]) -> No
     if phase == "0":
         path = artifact_path(state, run_dir, "intake", "intake.md")
         check_file_present(path, reasons)
+
+        if state.get("source") == "text":
+            evidence = state.get("source_evidence")
+
+            if not isinstance(evidence, str) or not evidence.strip():
+                fail(reasons, "state.source_evidence is not a non-empty string for text intake")
 
         for key in ("class", "depth"):
             value = state.get(key)

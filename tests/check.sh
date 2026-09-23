@@ -157,6 +157,35 @@ grep -q "change-scan.sh" $f5 || f "phase 5 does not run the change scan"
 python3 -c "import ast;ast.parse(open('$root/scripts/gate.py').read())" || f "gate.py does not parse"
 python3 -c "import ast;ast.parse(open('$root/scripts/hard-rules.py').read())" || f "hard-rules.py does not parse"
 bash -n $root/scripts/change-scan.sh || f "change-scan.sh does not parse"
+# Phase 0 text intake records source provenance in state.json; the gate schema must accept it.
+source_evidence_dir=$(mktemp -d)
+mkdir -p "$source_evidence_dir/run"
+python3 - "$source_evidence_dir/run/state.json" <<'SOURCEEVIDENCE'
+import json, sys
+json.dump({'slug': 'evidence', 'source': 'text', 'input': 'example',
+           'source_evidence': 'Observed by the user in a failing test.',
+           'class': 'bug', 'depth': 'full', 'phase': '0', 'bindings_file': 'x',
+           'loops': {'reproduce': 0, 'plan_equivalence': 0, 'fixer': {}},
+           'terminal': None}, open(sys.argv[1], 'w'))
+SOURCEEVIDENCE
+print -r -- 'Intake evidence was recorded.' > "$source_evidence_dir/run/intake.md"
+source_evidence_out=$(python3 $root/scripts/gate.py "$source_evidence_dir/run" --phase 0 2>&1)
+source_evidence_rc=$?
+(( source_evidence_rc == 0 )) || f "phase 0 gate rejected source_evidence: $source_evidence_out"
+print -r -- "$source_evidence_out" | grep -q '^GATE: PASS' || f "phase 0 gate did not pass text intake with source_evidence"
+python3 - "$source_evidence_dir/run/state.json" <<'NOEVIDENCE'
+import json, sys
+with open(sys.argv[1]) as handle:
+    state = json.load(handle)
+state['source_evidence'] = '  '
+with open(sys.argv[1], 'w') as handle:
+    json.dump(state, handle)
+NOEVIDENCE
+missing_evidence_out=$(python3 $root/scripts/gate.py "$source_evidence_dir/run" --phase 0 2>&1)
+missing_evidence_rc=$?
+(( missing_evidence_rc == 1 )) || f "phase 0 gate accepted blank source_evidence"
+print -r -- "$missing_evidence_out" | grep -q 'source_evidence is not a non-empty string for text intake' || f "phase 0 gate did not explain blank source_evidence"
+rm -rf "$source_evidence_dir"
 [[ -x $root/scripts/run.sh ]] || f "run.sh missing or not executable"
 bash -n $root/scripts/run.sh || f "run.sh does not parse"
 dryrun_dir=$(mktemp -d)
