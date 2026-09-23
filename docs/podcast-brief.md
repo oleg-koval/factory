@@ -1,7 +1,7 @@
 # Factory podcast brief
 
 Evidence status: internal positioning and outreach draft based on public sources checked on
-2026-09-21 and the committed Factory proof artifacts. Nothing here has been sent or published.
+2026-09-23 and the committed Factory proof artifacts. Nothing here has been sent or published.
 
 ## The strategic correction
 
@@ -32,7 +32,7 @@ agent's completion claim trustworthy?
 
 Sources:
 
-- [Software Factory episode](https://www.youtube.com/watch?v=_LCeJZFIsd4), published 2026-09-14.
+- [Software Factory episode](https://podcasts.apple.com/us/podcast/building-a-software-factory-that-actually-works/id1593424985?i=1000789595921), published 2026-09-14.
 - [Greg Isenberg Skills Suite](https://www.gregisenberg.com/skills-suite), checked 2026-09-21.
 - [Greg Isenberg YouTube channel](https://www.youtube.com/@GregIsenberg), checked 2026-09-21.
 
@@ -81,30 +81,26 @@ Run `bash scripts/demo.sh` and follow [`docs/demo-script.md`](demo-script.md):
 
 ## Outreach draft — do not send yet
 
-Subject: Follow-up to your software factory episode: the delivery gate
+Subject: Your software factory episode missed one gate
 
 Greg — your September 14 software factory episode with Ras Mic mapped the operating loop:
-isolate, build, prove, ship. I have been working on the layer underneath that loop: what must be
-true before an agent is allowed to call the work delivered.
+isolate, build, prove, ship. I built Factory, an MIT-licensed agent skill for Claude Code and
+Codex with executable delivery gates. Its public regression caught a false pass in Factory's
+own gate.
 
-[TK: Oleg must write or approve a first-person version of this public-profile fact: more than ten
-years shipping across fintech, e-commerce, mobility, automation, AI, and open source. The public
-source does not establish his current agent workload.]
+The old gate could accept `delivered` even when the run's recorded state was `blocked`. The same
+fixture now exits 1, names the contradiction, and links to the before-and-after source. Another
+fixture shows the gate refusing five unanswered questions and two invalid acceptance-criterion
+statuses.
 
-A real run reached `delivered` with five unanswered questions and two acceptance criteria marked
-`partly met`. I turned that failure into an executable gate. While preparing the public proof, I
-found the gate itself could validate `delivered` against a run recorded as `blocked`; the
-regression now shows the old commit passing and the fixed gate refusing it.
-
-The demo is designed to fit in three minutes and remain inspectable end to end: bad state, exact
-refusal, corrected state, then the gate catching its own bug. It is not another orchestration
-framework. It is the quality system that gives a software factory the right to say “not
-delivered.”
+I have a three-minute demo script built around those public artifacts. The idea for your
+audience: a software factory needs a quality system that can refuse shipment and say exactly
+why. Factory's proof page is explicit about its limits; this is a gate demonstration, not a claim
+of production adoption or a complete multi-phase run.
 
 Public proof: https://factory.olegkoval.com/proof/
 
-Would that make a useful follow-up for your audience? I can demonstrate the failure and the fix
-live, using the public artifacts rather than a slide deck.
+Would that make a useful follow-up for your audience?
 
 — Oleg
 
@@ -113,8 +109,9 @@ live, using the public artifacts rather than a slide deck.
 - [x] Public repository and immutable commit URL exist.
 - [x] `factory.olegkoval.com/proof/` renders the same fixtures and before/after receipts.
 - [x] The public source resolves to one canonical skill for Claude Code and Codex.
+- [x] The non-interactive CLI demo exited 0 in 0.17 seconds on 2026-09-23; this does not time the narration.
 - [ ] The complete public demo takes less than three minutes when timed.
-- [ ] Oleg reviews the wording in his own voice and replaces or approves the first-person claims.
+- [ ] Oleg reviews the unsent wording in his own voice.
 - [ ] Oleg explicitly approves the recipient, channel, and final message before anything is sent.
 
 No outreach should be sent merely because these checks become green.
