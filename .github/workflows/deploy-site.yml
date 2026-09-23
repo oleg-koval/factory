@@ -1,0 +1,51 @@
+name: Deploy Factory site
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: factory-site-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
+      - name: Lint site
+        working-directory: site
+        run: npm run lint
+      - name: Build and verify site
+        working-directory: site
+        run: npm test
+
+  deploy:
+    needs: validate
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Deploy production Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.136.3"
+          workingDirectory: site
+          command: deploy --config wrangler.jsonc

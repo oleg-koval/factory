@@ -24,9 +24,13 @@ manifest matches the canonical repository manifest.
 
 ## Production deployment
 
-Deployment is manual by owner choice. GitHub Actions validates changes but does not have
-Cloudflare credentials or deploy the Worker. From a clean `main` checkout, after the source
-commit is pushed and validation passes:
+GitHub Actions deploys the site Worker to `factory.olegkoval.com` after each push or merge to
+`main`. The workflow runs `npm ci`, lint, and the complete site build and rendered-route checks
+before deployment. It uses the repository secrets `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID`; the token should be scoped to the Cloudflare account and Worker deploy
+permissions required for this project.
+
+For a manual deployment from a clean `main` checkout, run:
 
 ```bash
 cd site
