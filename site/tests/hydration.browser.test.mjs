@@ -80,7 +80,7 @@ async function stopDevServer(server) {
 }
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
-test(`AC-1 baseline receipt / AC-2 ${viewport.width}x${viewport.height} case study has visible H1 and no hydration warning`, { timeout: 150_000 }, async () => {
+test(`AC-1 baseline receipt / AC-2 ${viewport.width}x${viewport.height} case study has visible H1, no hydration warning, and Analytics page_view request`, { timeout: 150_000 }, async () => {
   const { chromium } = process.env.PLAYWRIGHT_MODULE_PATH
     ? await import(pathToFileURL(resolve(process.env.PLAYWRIGHT_MODULE_PATH)).href)
     : await import("playwright");
@@ -94,6 +94,18 @@ test(`AC-1 baseline receipt / AC-2 ${viewport.width}x${viewport.height} case stu
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
     const diagnostics = [];
+    const analyticsRequests = [];
+    const analyticsFailures = [];
+    page.on("request", (request) => {
+      if (/google-analytics\.com|googletagmanager\.com/.test(new URL(request.url()).hostname)) {
+        analyticsRequests.push(request.url());
+      }
+    });
+    page.on("requestfailed", (request) => {
+      if (/google-analytics\.com|googletagmanager\.com/.test(new URL(request.url()).hostname)) {
+        analyticsFailures.push(`${request.url()}: ${request.failure()?.errorText}`);
+      }
+    });
     page.on("console", (message) => {
       if (message.type() === "warning" || message.type() === "error") {
         diagnostics.push(`console.${message.type()}: ${message.text()}`);
@@ -122,6 +134,14 @@ test(`AC-1 baseline receipt / AC-2 ${viewport.width}x${viewport.height} case stu
       (globalThis.dataLayer ?? []).some((entry) => entry[0] === "config" && entry[1] === "G-0RRTME2WMJ"),
     );
     assert.equal(analyticsConfig, true, "Analytics config must reach dataLayer");
+    const pageViewRequest = analyticsRequests.find((requestUrl) => {
+      const url = new URL(requestUrl);
+      return url.hostname.endsWith("google-analytics.com")
+        && url.pathname.endsWith("/collect")
+        && url.searchParams.get("en") === "page_view"
+        && url.searchParams.get("tid") === "G-0RRTME2WMJ";
+    });
+    assert.ok(pageViewRequest, `Analytics page_view collection request must be attempted; requests: ${JSON.stringify(analyticsRequests)}; failures: ${JSON.stringify(analyticsFailures)}`);
 
     const hydrationMessages = diagnostics.filter((message) => hydrationDiagnostic.test(message));
     assert.deepEqual(hydrationMessages, [], `React hydration diagnostics after HTTP 200 and visible H1:\n${hydrationMessages.join("\n")}`);
