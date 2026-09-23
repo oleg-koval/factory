@@ -11,9 +11,9 @@ const siteDir = fileURLToPath(new URL("..", import.meta.url));
 const route = "/case-studies/terminal-state-mismatch/";
 const expectedH1 = "A blocked run passed the delivery gate.";
 const hydrationDiagnostic = /hydration|hydrated|server rendered HTML didn't match|server-rendered HTML did not match/i;
-// AC-1 receipt: baseline 7a774c4 returned HTTP 200 with this H1; React compared
-// the TechArticle JSON-LD script with the inline google-analytics script.
-// AC-2 keeps the same browser path and requires that diagnostic to disappear.
+// AC-1 receipt: baseline 7a774c4 returned HTTP 200 with this H1 at 1440x900
+// and 390x844; React compared TechArticle JSON-LD with inline google-analytics.
+// AC-2 keeps both browser paths and requires that diagnostic to disappear.
 
 async function unusedPort() {
   const listener = createServer();
@@ -79,7 +79,8 @@ async function stopDevServer(server) {
   }
 }
 
-test("AC-1 baseline receipt / AC-2 desktop case study has visible H1 and no hydration warning", { timeout: 150_000 }, async () => {
+for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+test(`AC-1 baseline receipt / AC-2 ${viewport.width}x${viewport.height} case study has visible H1 and no hydration warning`, { timeout: 150_000 }, async () => {
   const { chromium } = process.env.PLAYWRIGHT_MODULE_PATH
     ? await import(pathToFileURL(resolve(process.env.PLAYWRIGHT_MODULE_PATH)).href)
     : await import("playwright");
@@ -90,7 +91,7 @@ test("AC-1 baseline receipt / AC-2 desktop case study has visible H1 and no hydr
   let browser;
   try {
     browser = await chromium.launch({ ...(executablePath && { executablePath }), headless: true });
-    const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const context = await browser.newContext({ viewport });
     const page = await context.newPage();
     const diagnostics = [];
     page.on("console", (message) => {
@@ -130,3 +131,4 @@ test("AC-1 baseline receipt / AC-2 desktop case study has visible H1 and no hydr
     await stopDevServer(server);
   }
 });
+}

@@ -24,3 +24,23 @@ jobs:
           sudo apt-get install --yes --no-install-recommends zsh
       - name: Run structural and behavioral gates
         run: zsh tests/check.sh
+
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Install site dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run case-study browser regression
+        run: npm run test:hydration

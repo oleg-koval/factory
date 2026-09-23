@@ -90,12 +90,24 @@ test("install and changelog publish structured data matching visible content", a
   assert.match(changelog, /Eight-route discovery contract/);
 });
 
-test("gate failure case study exposes exact receipts, source links, and evidence limits", async () => {
+test("AC-2 case-study initial HTML retains Analytics and TechArticle matching visible content", async () => {
   const response = await render("/case-studies/terminal-state-mismatch/");
   const html = await response.text();
+  assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-0RRTME2WMJ/);
+  assert.match(html, /gtag\('config', 'G-0RRTME2WMJ'\)/);
   const jsonLd = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
-  assert.ok(jsonLd);
-  assert.equal(JSON.parse(jsonLd[1])["@type"], "TechArticle");
+  assert.ok(jsonLd, "TechArticle must be in the initial response");
+  const article = JSON.parse(jsonLd[1]);
+  assert.equal(article["@type"], "TechArticle");
+  assert.equal(article.headline, "Factory case study — When a blocked run passed delivery");
+  assert.ok(html.includes(`<title>${article.headline}</title>`));
+  assert.equal(article.description, "A real Factory gate defect: a blocked run passed a delivered check. Inspect the baseline output, failing regression, fix, and exact refusal receipt.");
+  assert.ok(html.includes(`<meta name="description" content="${article.description}"`));
+  assert.equal(article.mainEntityOfPage, "https://factory.olegkoval.com/case-studies/terminal-state-mismatch/");
+  assert.ok(html.includes(`<link rel="canonical" href="${article.mainEntityOfPage}"`));
+  assert.equal(article.author.name, "Oleg Koval");
+  assert.match(html, /<span>By <a href="\/oleg-koval\/">Oleg Koval<\/a><\/span>/);
+  assert.match(html, /<h1>A blocked run passed the delivery gate\.<\/h1>/);
   assert.match(html, /<meta property="og:title" content="Factory case study — When a blocked run passed delivery"/);
   assert.match(html, /<meta property="og:description" content="A real Factory gate defect:/);
   assert.match(html, /<meta name="twitter:title" content="Factory case study — When a blocked run passed delivery"/);
@@ -107,6 +119,15 @@ test("gate failure case study exposes exact receipts, source links, and evidence
   assert.match(html, /regression-test\.patch/);
   assert.match(html, /e0f8277804949502fda1134e75e4e6056c8478ae/);
   assert.match(html, /fd1cd03381451bc610e7424123132cb2f6a12aba/);
+});
+
+test("AC-2 CI runs read-only browser validation without deployment credentials", async () => {
+  const workflow = await readFile(new URL("../../.github/workflows/validate.yml", import.meta.url), "utf8");
+  assert.match(workflow, /npm (?:--prefix site run|run) test:hydration\b/, "CI must run the case-study browser regression");
+  assert.match(workflow, /playwright install(?:\s+--with-deps)?\s+chromium\b/, "CI must install Chromium for browser validation");
+  assert.match(workflow, /npm (?:--prefix site )?ci\b/, "CI must install the site's declared dependencies");
+  assert.match(workflow, /contents:\s*read\b/, "CI token must stay read-only");
+  assert.doesNotMatch(workflow, /(?:wrangler|cloudflare)\s+(?:deploy|publish)\b|(?:CLOUDFLARE_API_TOKEN|CLOUDFLARE_ACCOUNT_ID|DEPLOY_TOKEN)/i);
 });
 
 test("displayed gate results match the published executable receipt", async () => {
