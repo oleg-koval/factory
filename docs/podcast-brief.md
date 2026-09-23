@@ -81,6 +81,13 @@ Run `bash scripts/demo.sh` and follow [`docs/demo-script.md`](demo-script.md):
 
 ## Outreach draft — do not send yet
 
+Booking-route evidence (checked 2026-09-23): [Greg's official site](https://www.gregisenberg.com/)
+links his [X profile](https://twitter.com/gregisenberg) and
+[LinkedIn profile](https://www.linkedin.com/in/gisenberg/), but does not publish a guest
+application or a podcast-booking email. Third-party podcast directories list possible contacts;
+none was verified on the official site, so this draft has no selected recipient or channel.
+Oleg must choose and approve those details before outreach.
+
 Subject: Your software factory episode missed one gate
 
 Greg — your September 14 software factory episode with Ras Mic mapped the operating loop:
@@ -112,6 +119,8 @@ Would that make a useful follow-up for your audience?
 - [x] The non-interactive CLI demo exited 0 in 0.17 seconds on 2026-09-23; this does not time the narration.
 - [ ] The complete public demo takes less than three minutes when timed.
 - [ ] Oleg reviews the unsent wording in his own voice.
+- [ ] Select a recipient and channel using a verified route; no official guest form or booking
+  email was found on Greg's site on 2026-09-23.
 - [ ] Oleg explicitly approves the recipient, channel, and final message before anything is sent.
 
 No outreach should be sent merely because these checks become green.
