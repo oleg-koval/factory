@@ -37,5 +37,6 @@ With boost badge.
 ## Evidence boundary
 
 The site reports proof exactly as recorded in the parent repository. Public-source installation,
-Cloudflare deployment, DNS, and TLS are verified. Global installation, fresh-session invocation,
-browser acceptance, search indexation, adoption, and performance outcomes remain separate gates.
+Cloudflare deployment, DNS, TLS, browser acceptance, and a project-local fresh Codex consult
+invocation are verified. Global installation, fresh Claude Code invocation, a complete Factory
+run, search indexation, adoption, and performance outcomes remain separate gates.

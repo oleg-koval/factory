@@ -29,7 +29,7 @@ export default function InstallPage() {
           <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. The canonical repository is public and the source has passed a clean installation check.</p>
         </header>
 
-        <aside className="release-banner"><strong>Public source / verified</strong><p>A disposable repository installed from <code>oleg-koval/factory</code> on 2026-09-22. Global installation and fresh-session invocation remain unproven.</p></aside>
+        <aside className="release-banner"><strong>Public source / verified</strong><p>A disposable repository installed from <code>oleg-koval/factory</code> on 2026-09-22. A fresh Codex session invoked the project-local skill in read-only <code>consult</code> mode on 2026-09-23. Global installation and fresh Claude Code invocation remain unproven. <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the verification record ↗</a></p></aside>
 
         <section className="install-grid">
           <article>
@@ -55,7 +55,8 @@ export default function InstallPage() {
             <li><span>✓</span>Claude Code and Codex resolved to the same <code>SKILL.md</code>.</li>
             <li><span>✓</span>The installed proof suite reported 3 claims, 13 artifacts, and 3 executable cases.</li>
             <li><span>✓</span>The eight-route search specification passed locally.</li>
-            <li><span>—</span>Global installation and fresh-session invocation remain release gates.</li>
+            <li><span>✓</span>A fresh Codex session discovered <code>$factory</code> and used <code>consult</code> without writing files.</li>
+            <li><span>—</span>Global installation, fresh Claude Code invocation, and a complete run remain release gates.</li>
           </ul>
         </section>
 

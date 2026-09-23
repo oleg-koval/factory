@@ -22,6 +22,8 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
   package for Claude Code and Codex.
 - [x] Replace every `[TK]` in the rendered site copy with a verified artifact or delete the claim.
 - [x] Run the package validator and installation check from the public source for both hosts.
+- [x] Verify a fresh, project-local Codex `consult` invocation from the public skill source;
+  [record](install-verification.md). Global install and Claude Code invocation remain open.
 - [x] Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in
   `SECURITY.md` before publishing the first supported version.
 - [ ] Publish one complete redacted Factory run and its terminal gate output.

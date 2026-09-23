@@ -150,11 +150,14 @@ test("run-map downloads are published as non-empty PDF files", async () => {
   }
 });
 
-test("install page states the current search-route count", async () => {
+test("install page states verified counts and invocation limits", async () => {
   const response = await render("/install/");
   const html = await response.text();
   assert.match(html, /The eight-route search specification passed locally/);
   assert.doesNotMatch(html, /seven-route search specification/);
+  assert.match(html, /A fresh Codex session discovered/);
+  assert.match(html, /Global installation, fresh Claude Code invocation, and a complete run remain release gates/);
+  assert.match(html, /docs\/install-verification\.md/);
 });
 
 test("wide proof receipts and comparison tables are keyboard-accessible", async () => {

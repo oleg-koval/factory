@@ -109,7 +109,8 @@ zsh tests/check.sh
 ## Evidence status
 
 The structural suite passes on the current working tree, public-source installation was verified
-on 2026-09-22, and `factory.olegkoval.com` was deployed from public commit `d9af26b`. Adoption,
-performance outcomes, fresh-session invocation, and a complete cross-provider run are not claimed.
+on 2026-09-22, and a project-local fresh Codex `consult` invocation was verified on 2026-09-23.
+`factory.olegkoval.com` is live. Global installation, fresh Claude Code invocation, adoption,
+performance outcomes, and a complete cross-provider run are not claimed.
 
 Built by [Oleg Koval](https://olegkoval.com/).
