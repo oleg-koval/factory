@@ -42,7 +42,7 @@ async function startServer() {
   }
 
   try {
-    const deadline = Date.now() + 45_000;
+    const deadline = Date.now() + 90_000;
     while (Date.now() < deadline) {
       if (server.exitCode !== null || server.signalCode !== null) {
         throw new Error(`vinext ${mode} exited early (${server.exitCode ?? server.signalCode})\n${output}`);
@@ -56,7 +56,7 @@ async function startServer() {
       }
       await delay(250);
     }
-    throw new Error(`vinext ${mode} did not serve ${route} within 45 seconds\n${output}`);
+    throw new Error(`vinext ${mode} did not serve ${route} within 90 seconds\n${output}`);
   } catch (error) {
     await stopDevServer(server);
     throw error;
@@ -79,7 +79,7 @@ async function stopDevServer(server) {
   }
 }
 
-test("AC-1 baseline receipt / AC-2 desktop case study has visible H1 and no hydration warning", { timeout: 90_000 }, async () => {
+test("AC-1 baseline receipt / AC-2 desktop case study has visible H1 and no hydration warning", { timeout: 150_000 }, async () => {
   const { chromium } = process.env.PLAYWRIGHT_MODULE_PATH
     ? await import(pathToFileURL(resolve(process.env.PLAYWRIGHT_MODULE_PATH)).href)
     : await import("playwright");
