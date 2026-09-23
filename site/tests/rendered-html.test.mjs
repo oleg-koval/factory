@@ -73,6 +73,14 @@ test("displayed gate results match the published executable receipt", async () =
   }
 });
 
+test("built proof receipt matches the committed public asset", async () => {
+  const [source, built] = await Promise.all([
+    readFile(new URL("../public/proof/terminal-gate.txt", import.meta.url)),
+    readFile(new URL("../dist/client/proof/terminal-gate.txt", import.meta.url)),
+  ]);
+  assert.deepEqual(built, source);
+});
+
 test("run map exposes the complete phase contract and both PDF editions", async () => {
   const response = await render("/how-it-works/");
   const html = await response.text();
