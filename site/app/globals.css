@@ -1863,6 +1863,19 @@ button:focus-visible,
   font-size: inherit;
 }
 
+.article-proof pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.article-proof pre::selection,
+.article-proof pre *::selection {
+  background: #f2d648;
+  color: #111;
+}
+
 .dropcap::first-letter {
   float: left;
   margin: 0.05em 0.12em 0 0;
