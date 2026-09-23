@@ -105,7 +105,7 @@ export default function Home() {
                   with receipts. When it cannot prove the change, it says exactly why.
                 </p>
                 <div className="hero-actions">
-                  <a className="button button-primary" href="#proof">Watch a run <span aria-hidden="true">↓</span></a>
+                  <a className="button button-primary" href="#run-flow">Run the flow <span aria-hidden="true">↓</span></a>
                   <a className="text-link" href="/install/">Inspect the skill <span aria-hidden="true">↗</span></a>
                 </div>
               </div>

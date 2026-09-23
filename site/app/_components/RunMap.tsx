@@ -1,3 +1,5 @@
+import { RunSequence } from "./RunSequence";
+
 const macroStages = [
   {
     number: "01",
@@ -167,6 +169,7 @@ export function RunMapOverview() {
           the record—not the chat—decides what may happen next.
         </p>
       </div>
+      <RunSequence />
       <ol className="macro-flow">
         {macroStages.map((stage) => (
           <li className={`macro-stage macro-${stage.tone}`} key={stage.title}>
