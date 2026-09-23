@@ -58,12 +58,12 @@ async function startServer() {
     }
     throw new Error(`vinext ${mode} did not serve ${route} within 90 seconds\n${output}`);
   } catch (error) {
-    await stopDevServer(server);
+    await stopServer(server);
     throw error;
   }
 }
 
-async function stopDevServer(server) {
+async function stopServer(server) {
   if (server.exitCode !== null || server.signalCode !== null) return;
   try { process.kill(-server.pid, "SIGTERM"); } catch (error) {
     if (error.code !== "ESRCH") throw error;
@@ -148,7 +148,7 @@ test(`AC-1 baseline receipt / AC-2 ${viewport.width}x${viewport.height} case stu
     await context.close();
   } finally {
     await browser?.close();
-    await stopDevServer(server);
+    await stopServer(server);
   }
 });
 }
