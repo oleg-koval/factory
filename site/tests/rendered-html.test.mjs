@@ -19,14 +19,28 @@ async function loadWorker() {
   return (await import(workerUrl.href)).default;
 }
 
-async function render(path) {
+async function render(path, host = "localhost") {
   const builtWorker = await loadWorker();
   return builtWorker.fetch(
-    new Request(`http://localhost${path}`, { headers: { accept: "text/html" } }),
+    new Request(`http://${host}${path}`, { headers: { accept: "text/html" } }),
     { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
     { waitUntil() {}, passThroughOnException() {} },
   );
 }
+
+test("alternate-host HTML is noindex while the canonical host stays indexable", async () => {
+  for (const [path] of routes) {
+    const [mirror, canonical] = await Promise.all([
+      render(path, "factory.olkokoval.chatgpt.site"),
+      render(path, "factory.olegkoval.com"),
+    ]);
+
+    assert.equal(mirror.status, 200, `mirror ${path}`);
+    assert.match(mirror.headers.get("x-robots-tag") ?? "", /\bnoindex\b/i, `mirror ${path}`);
+    assert.equal(canonical.status, 200, `canonical ${path}`);
+    assert.equal(canonical.headers.get("x-robots-tag"), null, `canonical ${path}`);
+  }
+});
 
 for (const [path, title, h1] of routes) {
   test(`${path} renders unique metadata and meaningful HTML`, async () => {
