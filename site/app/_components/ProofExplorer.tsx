@@ -75,7 +75,7 @@ export function ProofExplorer() {
 
   return (
     <div className="proof-explorer">
-      <div className="proof-tabs" aria-label="Choose an executable gate fixture">
+      <div className="proof-tabs" role="group" aria-label="Choose an executable gate fixture">
         {cases.map((item) => (
           <button
             key={item.id}
@@ -98,7 +98,7 @@ export function ProofExplorer() {
             <strong>{active.verdict}</strong>
             <span className="state-code">{active.code}</span>
           </div>
-          <div className="proof-counts" aria-label="Gate result counts">
+          <div className="proof-counts" role="group" aria-label="Gate result counts">
             {active.counts.map((count) => <span key={count}>{count}</span>)}
           </div>
         </div>
@@ -109,7 +109,7 @@ export function ProofExplorer() {
               <span>terminal</span>
               <span>factory gate</span>
             </div>
-            <pre><code>{gateResults[active.id]}</code></pre>
+            <pre role="region" aria-label="Factory gate output" tabIndex={0}><code>{gateResults[active.id]}</code></pre>
           </div>
           <div className="reason-panel">
             <p className="panel-kicker">Why this verdict</p>

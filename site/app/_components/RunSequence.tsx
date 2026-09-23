@@ -73,7 +73,7 @@ export function RunSequence() {
   const progress = step < 0 ? 0 : step === 4 ? 1 : step / scenes.length;
 
   return (
-    <div className="run-sequence" id="run-flow" aria-label="Illustrated Factory delivery flow">
+    <div className="run-sequence" id="run-flow" role="region" aria-label="Illustrated Factory delivery flow">
       <div className="run-sequence-topline">
         <div>
           <p className="eyebrow">Run the ticket / interactive specimen</p>

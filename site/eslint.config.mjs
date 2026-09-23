@@ -24,6 +24,10 @@ const eslintConfig = defineConfig([
   jsxA11y.flatConfigs.recommended,
   next.configs["core-web-vitals"],
   {
+    rules: {
+      // Named scroll regions must receive focus so keyboard users can pan them.
+      "jsx-a11y/no-noninteractive-tabindex": ["error", { roles: ["region"] }],
+    },
     languageOptions: {
       globals: {
         ...globals.browser,

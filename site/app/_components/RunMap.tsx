@@ -142,7 +142,7 @@ const terminalStates = [
 
 export function RunDownloads({ showExplore = true }: { showExplore?: boolean }) {
   return (
-    <div className="run-downloads" aria-label="Factory run-map downloads">
+    <div className="run-downloads" role="group" aria-label="Factory run-map downloads">
       {showExplore ? (
         <a className="button button-primary" href="/how-it-works/">
           Explore the complete run <span aria-hidden="true">↗</span>
@@ -180,7 +180,7 @@ export function RunMapOverview() {
           </li>
         ))}
       </ol>
-      <div className="run-invariants" aria-label="Factory run invariants">
+      <div className="run-invariants" role="group" aria-label="Factory run invariants">
         <p>One phase per fresh session</p>
         <p>Only <code>state.json</code> crosses sessions</p>
         <p>Stops whenever a human is needed</p>
@@ -209,7 +209,7 @@ export function CompleteRunMap() {
           <p>Only <code>state.json</code> crosses sessions</p>
           <p>Every closed phase must pass its gate</p>
         </div>
-        <div className="run-legend" aria-label="Run map legend">
+        <div className="run-legend" role="group" aria-label="Run map legend">
           <span><i className="legend-autonomous" />Autonomous phase</span>
           <span><i className="legend-human" />Needs you</span>
           <span><i className="legend-leaf" />Leaf agents</span>
@@ -278,7 +278,7 @@ export function CompleteRunMap() {
           <p className="eyebrow">Bounded autonomy</p>
           <h2 id="stop-loop-heading">What stops the loop.</h2>
         </div>
-        <div className="table-wrap run-stop-table">
+        <div className="table-wrap run-stop-table" role="region" aria-label="Factory stop signals table" tabIndex={0}>
           <table>
             <thead><tr><th scope="col">Signal</th><th scope="col"><code>run.sh</code> does</th></tr></thead>
             <tbody>

@@ -142,6 +142,17 @@ test("install page states the current search-route count", async () => {
   assert.doesNotMatch(html, /seven-route search specification/);
 });
 
+test("wide proof receipts and comparison tables are keyboard-accessible", async () => {
+  const [home, proof, caseStudy] = await Promise.all([
+    render("/").then((response) => response.text()),
+    render("/proof/").then((response) => response.text()),
+    render("/case-studies/terminal-state-mismatch/").then((response) => response.text()),
+  ]);
+  assert.match(home, /class="table-wrap" role="region" aria-label="Factory comparison table" tabindex="0"/);
+  assert.match(proof, /role="region" aria-label="Factory gate output" tabindex="0"/);
+  assert.match(caseStudy, /role="region" aria-label="Baseline false-pass receipt" tabindex="0"/);
+});
+
 test("unknown routes return the custom 404", async () => {
   const response = await render("/does-not-exist/");
   assert.equal(response.status, 404);

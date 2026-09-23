@@ -444,6 +444,10 @@
   line-height: 1.65;
 }
 
+.run-contract-heading .eyebrow {
+  color: var(--proof-muted);
+}
+
 .run-contract-heading code {
   color: var(--process-yellow);
 }

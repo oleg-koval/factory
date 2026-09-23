@@ -57,7 +57,7 @@ export default function TerminalStateMismatchPage() {
 
           <h2>The contradiction</h2>
           <p>The fixture recorded <code>state.terminal: blocked</code>. The caller requested a check for <code>delivered</code>. The old gate checked the requested terminal but did not compare it with the state already recorded by the run. All its other delivery checks were clean, so it exited successfully.</p>
-          <div className="article-proof"><span>Baseline gate / false pass</span><pre><code>{before}</code></pre><a href={source + "before.txt"}>Read the preserved baseline receipt ↗</a></div>
+          <div className="article-proof"><span>Baseline gate / false pass</span><pre role="region" aria-label="Baseline false-pass receipt" tabIndex={0}><code>{before}</code></pre><a href={source + "before.txt"}>Read the preserved baseline receipt ↗</a></div>
           <p>This was a real defect in Factory&apos;s gate, reproduced against baseline commit <a href="https://github.com/oleg-koval/factory/tree/e0f8277804949502fda1134e75e4e6056c8478ae"><code>e0f8277</code></a>. The fixture is public, so the claim does not depend on a polished demo.</p>
 
           <h2>The test that made the rule executable</h2>
@@ -66,7 +66,7 @@ export default function TerminalStateMismatchPage() {
 
           <h2>The fixed gate says why</h2>
           <p>The fixed gate rejects a requested terminal that disagrees with the non-null terminal in the run state. The same fixture now exits 1 and names both sides of the contradiction.</p>
-          <div className="article-proof"><span>Fixed gate / honest refusal</span><pre><code>{after}</code></pre><a href={source + "after.txt"}>Read the preserved fixed receipt ↗</a></div>
+          <div className="article-proof"><span>Fixed gate / honest refusal</span><pre role="region" aria-label="Fixed refusal receipt" tabIndex={0}><code>{after}</code></pre><a href={source + "after.txt"}>Read the preserved fixed receipt ↗</a></div>
           <p>The fix landed in <a href="https://github.com/oleg-koval/factory/commit/fd1cd03381451bc610e7424123132cb2f6a12aba"><code>fd1cd03</code></a>. The public <a href="/proof/">proof surface</a> also runs the current gate against three different records: unsupported delivery, supported delivery, and this terminal mismatch.</p>
 
           <h2>What this proves—and what it does not</h2>

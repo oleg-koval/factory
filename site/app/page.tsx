@@ -142,7 +142,7 @@ export default function Home() {
           </dl>
         </section>
 
-        <div className="process-ticker" aria-label="Factory delivery phases">
+        <div className="process-ticker" role="region" aria-label="Factory delivery phases" tabIndex={0}>
           <span>Intake</span><span>Isolate</span><span>Diagnose</span><span>Plan</span>
           <span>Build</span><span>Prove</span><span>Stop</span>
         </div>
@@ -211,7 +211,7 @@ export default function Home() {
             <p className="eyebrow">The difference</p>
             <h2>Coding is one phase of delivery.</h2>
           </div>
-          <div className="table-wrap">
+          <div className="table-wrap" role="region" aria-label="Factory comparison table" tabIndex={0}>
             <table>
               <thead><tr><th scope="col">Decision</th><th scope="col">Ordinary coding agent</th><th scope="col">Factory</th></tr></thead>
               <tbody>

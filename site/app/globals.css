@@ -4,7 +4,7 @@
   --canvas: #f2f2f0;
   --surface: #fcfcfa;
   --ink: #111111;
-  --muted: #62625f;
+  --muted: #595955;
   --rule: #cececa;
   --soft-rule: #dfdfdb;
   --red: #c9342f;
@@ -56,7 +56,8 @@ a {
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+[tabindex="0"]:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 4px;
 }
@@ -1217,7 +1218,7 @@ button:focus-visible {
 }
 
 .essay-promo .eyebrow {
-  color: #f4c8c6;
+  color: var(--surface);
 }
 
 .essay-promo blockquote {
@@ -1853,6 +1854,13 @@ button:focus-visible {
   background: var(--soft-rule);
   font-family: var(--font-plex-mono), monospace;
   font-size: 0.86em;
+}
+
+.article-proof pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
 }
 
 .dropcap::first-letter {
