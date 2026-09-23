@@ -44,7 +44,7 @@ export default function InstallPage() {
             <li><span>✓</span>The CLI discovered exactly one root skill named <code>factory</code>.</li>
             <li><span>✓</span>Claude Code and Codex resolved to the same <code>SKILL.md</code>.</li>
             <li><span>✓</span>The installed proof suite reported 3 claims, 13 artifacts, and 3 executable cases.</li>
-            <li><span>✓</span>The seven-route search specification passed locally.</li>
+            <li><span>✓</span>The eight-route search specification passed locally.</li>
             <li><span>—</span>Global installation and fresh-session invocation remain release gates.</li>
           </ul>
         </section>

@@ -1266,6 +1266,7 @@ button:focus-visible {
 
 .install-preview {
   align-self: end;
+  min-width: 0;
 }
 
 .release-note {
@@ -1294,6 +1295,12 @@ button:focus-visible {
   font-family: var(--font-plex-mono), monospace;
   font-size: 0.78rem;
   line-height: 1.7;
+}
+
+.install-preview pre,
+.install-grid pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .author-promo {
@@ -1584,6 +1591,7 @@ button:focus-visible {
 }
 
 .install-grid article {
+  min-width: 0;
   padding: 2rem;
   background: var(--surface);
 }
@@ -1608,6 +1616,10 @@ button:focus-visible {
 
 .install-grid p {
   color: var(--muted);
+}
+
+.install-grid p code {
+  overflow-wrap: anywhere;
 }
 
 .check-list {

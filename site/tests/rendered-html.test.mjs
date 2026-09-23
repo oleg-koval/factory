@@ -135,6 +135,13 @@ test("run-map downloads are published as non-empty PDF files", async () => {
   }
 });
 
+test("install page states the current search-route count", async () => {
+  const response = await render("/install/");
+  const html = await response.text();
+  assert.match(html, /The eight-route search specification passed locally/);
+  assert.doesNotMatch(html, /seven-route search specification/);
+});
+
 test("unknown routes return the custom 404", async () => {
   const response = await render("/does-not-exist/");
   assert.equal(response.status, 404);
