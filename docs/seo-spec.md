@@ -1,13 +1,24 @@
 # Factory search and discovery specification
 
-Evidence status: implementation contract. The routes and metadata are validated locally but no
-page, sitemap, structured data, indexation, ranking, or search traffic is claimed yet.
+Evidence status: eight canonical routes, metadata, structured data, robots, and sitemap are
+deployed and have passed local rendering and live-browser checks as of 2026-09-23.
+Google Search Console sitemap acceptance, indexation, ranking, and search traffic are not yet
+verified. Browser results and limits are recorded in [browser-acceptance.md](browser-acceptance.md).
 
 The machine-readable route source is [`seo-routes.json`](seo-routes.json). Run:
 
 ```bash
 python3 scripts/verify-seo-spec.py
 ```
+
+After publishing, compare the live pages and crawl files with the same route source:
+
+```bash
+node scripts/verify-live-seo.mjs
+```
+
+This verifies published HTTP status, title, description, canonical URL, one H1, declared
+structured-data types, robots, and the exact sitemap URL set. It does not prove indexing.
 
 ## Search promise
 

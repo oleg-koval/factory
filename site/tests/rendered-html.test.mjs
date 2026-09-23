@@ -75,6 +75,21 @@ test("proof page contains parseable structured data and visible boundaries", asy
   assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/blob\/main\/proof\/terminal-gate\/false-delivery\/state\.json"/);
 });
 
+test("install and changelog publish structured data matching visible content", async () => {
+  const [install, changelog] = await Promise.all([
+    render("/install/").then((response) => response.text()),
+    render("/changelog/").then((response) => response.text()),
+  ]);
+  const jsonLd = /<script type="application\/ld\+json">([^<]+)<\/script>/;
+  const installData = JSON.parse(install.match(jsonLd)?.[1] ?? "null");
+  const changelogData = JSON.parse(changelog.match(jsonLd)?.[1] ?? "null");
+  assert.deepEqual(installData["@graph"].map((entry) => entry["@type"]), ["WebPage", "SoftwareSourceCode"]);
+  assert.match(install, /npx skills add oleg-koval\/factory/);
+  assert.equal(changelogData["@type"], "CollectionPage");
+  assert.equal(changelogData.mainEntity.itemListElement.length, 7);
+  assert.match(changelog, /Eight-route discovery contract/);
+});
+
 test("gate failure case study exposes exact receipts, source links, and evidence limits", async () => {
   const response = await render("/case-studies/terminal-state-mismatch/");
   const html = await response.text();

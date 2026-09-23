@@ -26,7 +26,8 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
   `SECURITY.md` before publishing the first supported version.
 - [ ] Publish one complete redacted Factory run and its terminal gate output.
 - [x] Demonstrate one failure caught by Factory that a normal happy-path test missed.
-- [ ] Verify the site in a real browser at desktop and mobile widths.
+- [x] Verify the site in a real browser at desktop and mobile widths; see
+  [browser acceptance](browser-acceptance.md).
 - [x] Verify title, description, canonical URL, robots, sitemap, Open Graph image, and structured data.
 - [ ] Submit the sitemap to Google Search Console after deployment.
 
@@ -52,6 +53,8 @@ Initial public routes:
 - `/install/` - Claude Code and Codex installation and first run
 - `/changelog/` - versioned improvements and the failure behind each new rule
 - `/oleg-koval/` - why Oleg built it and links to his other work
+- `/essays/right-to-say-not-delivered/` - the delivery-gate argument
+- `/case-studies/terminal-state-mismatch/` - a reproduced gate defect and its fix
 
 Each route gets its own title, description, canonical URL, Open Graph metadata, and visible
 author/date when appropriate. The root links to every route with descriptive text.
@@ -92,7 +95,9 @@ approval. Stage the draft and evidence bundle first.
 
 Factory is deployed as a Cloudflare Worker with Static Assets and a Worker Custom Domain. The
 Worker is the origin; Cloudflare created the DNS record and certificate for
-`factory.olegkoval.com` during deployment from public commit `d9af26b` on 2026-09-22.
+`factory.olegkoval.com` during the initial deployment on 2026-09-22. The browser and
+accessibility pass was deployed from site commit `619dd28` on 2026-09-23.
 
 Successful local build, source commit, remote SHA, Worker deployment, custom-domain activation,
-and public HTTP response are verified separately. Browser acceptance remains open.
+and public HTTP response are verified separately. Browser acceptance is recorded in
+[browser-acceptance.md](browser-acceptance.md); Search Console acceptance remains open.

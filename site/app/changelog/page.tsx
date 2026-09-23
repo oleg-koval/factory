@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import { SiteFooter } from "../_components/SiteFooter";
 import { SiteHeader } from "../_components/SiteHeader";
+import { StructuredData } from "../_components/StructuredData";
 
 export const metadata: Metadata = {
   title: "Factory changelog — Every rule begins with a failure",
   description: "Read the failure behind each Factory rule, the regression that proves the fix, and the evidence boundary for every unreleased change.",
   alternates: { canonical: "/changelog/" },
+  openGraph: { title: "Factory changelog — Every rule begins with a failure", description: "The public record of Factory's failure-driven rules and fixes.", url: "/changelog/", type: "website", images: [] },
+  twitter: { title: "Factory changelog — Every rule begins with a failure", description: "The public record of Factory's failure-driven rules and fixes.", images: [] },
 };
 
 const changes = [
   ["Added", "One provider-neutral skill", "Claude Code and Codex use the same contract while retaining native invocation and runners."],
   ["Added", "Runnable refusal specimen", "A redacted fixture shows false delivery blocked, honest delivery accepted, and terminal mismatch rejected."],
   ["Added", "Machine-readable proof manifest", "Every public claim maps to artifacts, expected output, and a visible evidence boundary."],
-  ["Added", "Seven-route discovery contract", "Unique metadata, canonical URLs, crawl rules, structured-data boundaries, and evidence sources are validated locally."],
+  ["Added", "Eight-route discovery contract", "Unique metadata, canonical URLs, crawl rules, and evidence boundaries are checked locally and on the public site. Indexation remains unverified."],
   ["Fixed", "Terminal-state mismatch bypass", "The gate now rejects a requested terminal that conflicts with the state already recorded by the run."],
   ["Fixed", "Ambiguous gate invocation", "Calls without exactly one phase or terminal now fail with a usage error."],
   ["Fixed", "Unsafe runner inputs", "The runner rejects path traversal, shell syntax in slugs, and non-integer session caps."],
@@ -21,6 +24,15 @@ const changes = [
 export default function ChangelogPage() {
   return (
     <>
+      <StructuredData data={{
+        "@context": "https://schema.org", "@type": "CollectionPage",
+        name: "Factory changelog — Every rule begins with a failure",
+        url: "https://factory.olegkoval.com/changelog/",
+        mainEntity: {
+          "@type": "ItemList",
+          itemListElement: changes.map(([, title], index) => ({ "@type": "ListItem", position: index + 1, name: title })),
+        },
+      }} />
       <SiteHeader />
       <main className="inner-page">
         <header className="page-hero page-hero-short"><p className="eyebrow">Changelog / unreleased</p><h1>Every rule begins with a failure.</h1><p className="page-deck">Repository history, not release theatre. Everything here is committed and publicly inspectable; no tagged package version is claimed yet.</p></header>

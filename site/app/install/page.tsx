@@ -1,16 +1,26 @@
 import type { Metadata } from "next";
 import { SiteFooter } from "../_components/SiteFooter";
 import { SiteHeader } from "../_components/SiteHeader";
+import { StructuredData } from "../_components/StructuredData";
 
 export const metadata: Metadata = {
   title: "Install Factory for Claude Code and Codex",
   description: "Install one provider-neutral Factory skill for Claude Code or Codex, then run the same delivery contract with each host's native invocation.",
   alternates: { canonical: "/install/" },
+  openGraph: { title: "Install Factory for Claude Code and Codex", description: "Install the same evidence-gated Factory skill for Claude Code or Codex.", url: "/install/", type: "website", images: [] },
+  twitter: { title: "Install Factory for Claude Code and Codex", description: "Install the same evidence-gated Factory skill for Claude Code or Codex.", images: [] },
 };
 
 export default function InstallPage() {
   return (
     <>
+      <StructuredData data={{
+        "@context": "https://schema.org",
+        "@graph": [
+          { "@type": "WebPage", name: metadata.title, description: metadata.description, url: "https://factory.olegkoval.com/install/" },
+          { "@type": "SoftwareSourceCode", name: "Factory", codeRepository: "https://github.com/oleg-koval/factory", license: "https://opensource.org/license/mit", runtimePlatform: ["Claude Code", "Codex"] },
+        ],
+      }} />
       <SiteHeader />
       <main className="inner-page">
         <header className="page-hero page-hero-short">

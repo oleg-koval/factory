@@ -21,8 +21,8 @@
     },
     {
       "path": "/how-it-works/",
-      "title": "How Factory verifies AI-written software",
-      "description": "See how Factory turns a ticket or incident into isolated work, testable acceptance criteria, reviewed milestones, and an executable delivery decision.",
+      "title": "Factory run map — A verified AI coding agent workflow",
+      "description": "Explore Factory's complete human-in-the-loop workflow: nine gated phases, fresh sessions, bounded agent loops, proof receipts, and an honest terminal state.",
       "intent": "verified AI software delivery workflow",
       "schemas": ["TechArticle"],
       "evidence": ["docs/how-it-works.md", "SKILL.md", "references/phase-0-intake.md", "references/phase-5-proof.md", "references/phase-6-stop.md"]
