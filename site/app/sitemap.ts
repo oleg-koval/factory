@@ -8,6 +8,7 @@ const routes = [
   "/changelog/",
   "/oleg-koval/",
   "/essays/right-to-say-not-delivered/",
+  "/case-studies/terminal-state-mismatch/",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

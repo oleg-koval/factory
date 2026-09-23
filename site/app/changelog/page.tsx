@@ -30,7 +30,7 @@ export default function ChangelogPage() {
             {changes.map(([kind, title, body], index) => <article key={title}><span className={`change-kind change-${kind.toLowerCase()}`}>{kind}</span><div><h2>{title}</h2><p>{body}</p></div><span className="change-index">0{index + 1}</span></article>)}
           </div>
         </section>
-        <section className="content-callout"><p className="eyebrow">Most useful change</p><h2>The gate learned to distrust itself.</h2><p>A regression preserved a contradiction the original terminal check incorrectly passed. The fixed gate now names both states and exits 1.</p><a className="button button-primary" href="/proof/#case-study">Inspect before and after <span aria-hidden="true">↗</span></a></section>
+        <section className="content-callout"><p className="eyebrow">Most useful change</p><h2>The gate learned to distrust itself.</h2><p>A regression preserved a contradiction the original terminal check incorrectly passed. The fixed gate now names both states and exits 1.</p><a className="button button-primary" href="/case-studies/terminal-state-mismatch/">Inspect before and after <span aria-hidden="true">↗</span></a></section>
       </main>
       <SiteFooter />
     </>

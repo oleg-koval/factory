@@ -39,7 +39,7 @@ export default function OlegPage() {
           <div className="section-heading"><p className="eyebrow">Proof before personality</p><h2>Start with the work.</h2><p>The author page leads back to inspectable artifacts instead of asking a biography to carry the product claim.</p></div>
           <div className="link-ledger">
             <a href="/proof/"><span>01</span><strong>Runnable terminal gate</strong><em>False completion rejected; corrected record accepted</em><b>↗</b></a>
-            <a href="/proof/#case-study"><span>02</span><strong>Gate bypass case study</strong><em>Regression, before state, and fixed refusal</em><b>↗</b></a>
+            <a href="/case-studies/terminal-state-mismatch/"><span>02</span><strong>Gate bypass case study</strong><em>Regression, before state, and fixed refusal</em><b>↗</b></a>
             <a href="/how-it-works/"><span>03</span><strong>Delivery contract</strong><em>Seven gates shared by Claude Code and Codex</em><b>↗</b></a>
             <a href="/essays/right-to-say-not-delivered/"><span>04</span><strong>The argument</strong><em>Why a software factory needs refusal states</em><b>↗</b></a>
           </div>

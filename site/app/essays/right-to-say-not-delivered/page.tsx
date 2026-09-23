@@ -60,7 +60,7 @@ export default function EssayPage() {
           <h2>The gate must be allowed to fail too</h2>
           <p>An executable gate is not automatically trustworthy. It is software, and software can encode the wrong rule.</p>
           <p>While preparing Factory’s public proof, the gate exposed its own defect. It validated the terminal requested on the command line but did not compare that request with the terminal already recorded in the run state. A caller could ask it to validate <code>delivered</code> against a run recorded as <code>blocked</code>. If the other checks were clean, the old gate returned <code>PASS</code>.</p>
-          <p>The <a href="/proof/#case-study">terminal-state mismatch case study</a> preserves the baseline output, the regression, and the fixed refusal. That bug is part of the product story, not an embarrassment edited out of it. A quality system earns trust by making its claims falsifiable—including claims about itself.</p>
+          <p>The <a href="/case-studies/terminal-state-mismatch/">terminal-state mismatch case study</a> preserves the baseline output, the regression, and the fixed refusal. That bug is part of the product story, not an embarrassment edited out of it. A quality system earns trust by making its claims falsifiable—including claims about itself.</p>
 
           <h2>Proof should survive the demo</h2>
           <p>A polished video can make almost any agent workflow look reliable. The more useful standard is whether another engineer can inspect the record after the presentation ends.</p>

@@ -5,6 +5,7 @@ Factory is an open-source agent skill that adds evidence-gated delivery to Claud
 Canonical site: https://factory.olegkoval.com/
 How it works: https://factory.olegkoval.com/how-it-works/
 Proof surface: https://factory.olegkoval.com/proof/
+Gate failure case study: https://factory.olegkoval.com/case-studies/terminal-state-mismatch/
 Machine-readable proof: https://factory.olegkoval.com/proof/manifest.json
 Install status: https://factory.olegkoval.com/install/
 Author: https://factory.olegkoval.com/oleg-koval/

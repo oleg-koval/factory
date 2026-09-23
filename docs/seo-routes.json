@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "planned-not-deployed",
+  "status": "deployed",
   "base_url": "https://factory.olegkoval.com",
   "routes": [
     {
@@ -58,6 +58,14 @@
       "intent": "software factory delivery gates",
       "schemas": ["TechArticle"],
       "evidence": ["docs/essay-right-to-say-not-delivered.md", "docs/product-brief.md", "docs/podcast-brief.md", "proof/manifest.json"]
+    },
+    {
+      "path": "/case-studies/terminal-state-mismatch/",
+      "title": "Factory case study — When a blocked run passed delivery",
+      "description": "A real Factory gate defect: a blocked run passed a delivered check. Inspect the baseline output, failing regression, fix, and exact refusal receipt.",
+      "intent": "AI coding agent delivery gate failure case study",
+      "schemas": ["TechArticle"],
+      "evidence": ["proof/case-studies/terminal-state-mismatch/README.md", "proof/case-studies/terminal-state-mismatch/before.txt", "proof/case-studies/terminal-state-mismatch/after.txt", "proof/case-studies/terminal-state-mismatch/regression-test.patch"]
     }
   ]
 }

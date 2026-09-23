@@ -10,6 +10,7 @@ const routes = [
   ["/changelog/", "Factory changelog — Every rule begins with a failure", "Every rule begins with a failure."],
   ["/oleg-koval/", "Oleg Koval — Reliable agent-driven software delivery", "I build systems that have to show their work."],
   ["/essays/right-to-say-not-delivered/", "Your software factory needs the right to say not delivered", "Your software factory needs the right to say “not delivered.”"],
+  ["/case-studies/terminal-state-mismatch/", "Factory case study — When a blocked run passed delivery", "A blocked run passed the delivery gate."],
 ];
 
 async function loadWorker() {
@@ -58,6 +59,25 @@ test("proof page contains parseable structured data and visible boundaries", asy
   assert.match(html, /Public-source installation was verified in a disposable repository/);
   assert.match(html, /href="\/proof\/manifest\.json"/);
   assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/blob\/main\/proof\/terminal-gate\/false-delivery\/state\.json"/);
+});
+
+test("gate failure case study exposes exact receipts, source links, and evidence limits", async () => {
+  const response = await render("/case-studies/terminal-state-mismatch/");
+  const html = await response.text();
+  const jsonLd = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
+  assert.ok(jsonLd);
+  assert.equal(JSON.parse(jsonLd[1])["@type"], "TechArticle");
+  assert.match(html, /<meta property="og:title" content="Factory case study — When a blocked run passed delivery"/);
+  assert.match(html, /<meta property="og:description" content="A real Factory gate defect:/);
+  assert.match(html, /<meta name="twitter:title" content="Factory case study — When a blocked run passed delivery"/);
+  assert.match(html, /<meta name="twitter:description" content="A real Factory gate defect:/);
+  assert.doesNotMatch(html, /<meta (?:property="og:image"|name="twitter:image")/);
+  assert.match(html, /GATE: PASS {2}run=mismatched-terminal terminal=delivered matrix=clean/);
+  assert.match(html, /state\.terminal &#x27;blocked&#x27; does not match requested terminal &#x27;delivered&#x27;/);
+  assert.match(html, /not<\/strong> a complete Phase 0–6 Factory-orchestrated run/);
+  assert.match(html, /regression-test\.patch/);
+  assert.match(html, /e0f8277804949502fda1134e75e4e6056c8478ae/);
+  assert.match(html, /fd1cd03381451bc610e7424123132cb2f6a12aba/);
 });
 
 test("displayed gate results match the published executable receipt", async () => {
