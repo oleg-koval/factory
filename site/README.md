@@ -24,15 +24,28 @@ manifest matches the canonical repository manifest.
 
 ## Production deployment
 
-Changes under `site/` are deployed to the Cloudflare Worker by
-`.github/workflows/deploy-worker.yml` after they reach `main`. Configure these repository Actions
-secrets before the workflow can deploy:
+Deployment is manual by owner choice. GitHub Actions validates changes but does not have
+Cloudflare credentials or deploy the Worker. From a clean `main` checkout, after the source
+commit is pushed and validation passes:
 
-- `CLOUDFLARE_API_TOKEN` with permission to edit Workers in the target account.
-- `CLOUDFLARE_ACCOUNT_ID` for the account hosting `factory-olegkoval`.
+```bash
+cd site
+npm ci
+npm run lint
+npm test
+npx wrangler deploy --dry-run --config wrangler.jsonc
+npx wrangler deploy --config wrangler.jsonc
+cd ..
+node scripts/verify-live-seo.mjs
+```
 
-After deployment, the workflow checks that the live home page includes the Google tag and Sell
-With boost badge.
+Confirm the deploy output names `factory.olegkoval.com` and records a Worker version ID. Verify
+the changed route on the live domain before calling the release delivered. The separate Sites
+mirror is published through its own saved-version flow; a Worker deploy does not update it.
+
+For rollback, list Worker versions with `npx wrangler versions list` from `site/`, then use
+`npx wrangler rollback <known-good-version-id>` and rerun the live verifier. Do not assume a
+successful command alone proves the custom domain serves the intended version.
 
 ## Evidence boundary
 
