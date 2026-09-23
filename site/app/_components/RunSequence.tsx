@@ -33,7 +33,7 @@ const scenes = [
   },
 ] as const;
 
-type Ending = "delivered" | "blocked" | null;
+type Ending = "delivered" | "blocked" | "intentionally-unchanged" | null;
 
 export function RunSequence() {
   const [step, setStep] = useState(-1);
@@ -63,9 +63,9 @@ export function RunSequence() {
     setStep(0);
   }
 
-  function block() {
+  function stop(outcome: Exclude<Ending, null>) {
     setPaused(false);
-    setEnding("blocked");
+    setEnding(outcome);
     setStep(4);
   }
 
@@ -104,10 +104,10 @@ export function RunSequence() {
           <span className="run-sequence-label">{ending ? "Terminal state" : step === 1 ? "Human gate" : active ? "Current receipt" : "Ready"}</span>
           {ending ? (
             <p>
-              <strong className={ending === "blocked" ? "run-sequence-stamp is-blocked" : "run-sequence-stamp is-delivered"}>
-                {ending.toUpperCase()}
+              <strong className={`run-sequence-stamp is-${ending}`}>
+                {ending === "intentionally-unchanged" ? "UNCHANGED" : ending.toUpperCase()}
               </strong>
-              <span>{ending === "blocked" ? "Questions remain. The run cannot advance." : "Every criterion has evidence and the terminal gate passes."}</span>
+              <span>{ending === "blocked" ? "Questions remain. The run cannot advance." : ending === "intentionally-unchanged" ? "The diagnosis shows no code change is needed." : "Every criterion has evidence and the terminal gate passes."}</span>
             </p>
           ) : (
             <p><strong>{active?.receipt ?? "Ticket awaiting intake"}</strong><span>{active?.detail ?? "Start the sequence to see the gates."}</span></p>
@@ -123,8 +123,11 @@ export function RunSequence() {
               <button className="run-sequence-main-action" type="button" onClick={() => setStep(2)}>
                 Approve the plan <span aria-hidden="true">→</span>
               </button>
-              <button className="run-sequence-secondary-action" type="button" onClick={block}>
+              <button className="run-sequence-secondary-action" type="button" onClick={() => stop("blocked")}>
                 Questions remain / block
+              </button>
+              <button className="run-sequence-secondary-action" type="button" onClick={() => stop("intentionally-unchanged")}>
+                No code change needed
               </button>
             </>
           ) : (

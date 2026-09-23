@@ -201,11 +201,16 @@
   color: #ff756b;
 }
 
+.run-sequence-stamp.is-intentionally-unchanged {
+  color: #87aaff;
+}
+
 .run-sequence-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.75rem;
+  max-width: 29rem;
 }
 
 .run-sequence-controls button {
