@@ -39,3 +39,8 @@ checks are unknown, not passes. This scan is not a full manual accessibility aud
 The canonical pages, robots file, and sitemap are live. Google Search Console was not signed in
 in the available browser, so sitemap acceptance and indexation remain unverified. A general
 web-search query did not provide reliable indexation evidence.
+
+After site commit `a5045e0011fd6410b1cd6625536746687036e91d`, the live SEO verifier
+reported `LIVE SEO: PASS routes=8` on both the custom domain and Sites mirror. The verifier
+checks the route-spec metadata, canonical links, declared JSON-LD types, robots, and exact
+sitemap URL set. It does not check whether Google has accepted or indexed any URL.
