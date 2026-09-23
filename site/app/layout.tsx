@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import "./run-map.css";
 
@@ -59,6 +60,19 @@ export default function RootLayout({
       <body
         className={`${plexSans.variable} ${plexMono.variable} antialiased`}
       >
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-0RRTME2WMJ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-0RRTME2WMJ');
+          `}
+        </Script>
         {children}
       </body>
     </html>
