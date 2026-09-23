@@ -41,7 +41,7 @@ export default function ProofPage() {
             {manifest.claims.map((claim, index) => (
               <article id={claim.id} key={claim.id}>
                 <div className="claim-index">0{index + 1}</div>
-                <div className="claim-body"><span className="verified-chip">{claim.status}</span><h3>{claim.statement}</h3><p><strong>Boundary:</strong> {claim.limit}</p><details><summary>{claim.artifacts.length} mapped artifacts</summary><ul>{claim.artifacts.map((artifact) => <li key={artifact}><code>{artifact}</code></li>)}</ul></details></div>
+                <div className="claim-body"><span className="verified-chip">{claim.status}</span><h3>{claim.statement}</h3><p><strong>Boundary:</strong> {claim.limit}</p><details><summary>{claim.artifacts.length} mapped artifacts</summary><ul>{claim.artifacts.map((artifact) => <li key={artifact}><a href={`https://github.com/oleg-koval/factory/blob/main/${artifact}`}><code>{artifact}</code><span aria-hidden="true"> ↗</span></a></li>)}</ul></details></div>
               </article>
             ))}
           </div>

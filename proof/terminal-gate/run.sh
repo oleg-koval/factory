@@ -16,7 +16,7 @@ run_case() {
   output="$(cd "$ROOT" && python3 "$GATE" "$run_dir" --terminal delivered 2>&1)"
   rc=$?
 
-  printf '%s\n%s\n\n' "[$name] exit=$rc" "$output"
+  printf '%s\n%s\n' "[$name] exit=$rc" "$output"
 
   if [[ "$rc" -ne "$expected_rc" ]]; then
     printf 'proof failure: %s exited %s, expected %s\n' "$name" "$rc" "$expected_rc" >&2
@@ -30,7 +30,9 @@ run_case() {
 }
 
 run_case false-delivery 1 "GATE: BLOCKED"
+printf '\n'
 run_case honest-delivery 0 "GATE: PASS"
+printf '\n'
 run_case mismatched-terminal 1 "does not match requested terminal"
 
 exit "$FAIL"

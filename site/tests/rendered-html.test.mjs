@@ -57,6 +57,20 @@ test("proof page contains parseable structured data and visible boundaries", asy
   assert.equal(JSON.parse(jsonLd[1])["@type"], "CollectionPage");
   assert.match(html, /Public-source installation was verified in a disposable repository/);
   assert.match(html, /href="\/proof\/manifest\.json"/);
+  assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/blob\/main\/proof\/terminal-gate\/false-delivery\/state\.json"/);
+});
+
+test("displayed gate results match the published executable receipt", async () => {
+  const [resultsText, receipt] = await Promise.all([
+    readFile(new URL("../public/proof/gate-results.json", import.meta.url), "utf8"),
+    readFile(new URL("../public/proof/terminal-gate.txt", import.meta.url), "utf8"),
+  ]);
+  const results = JSON.parse(resultsText);
+  assert.equal(Object.keys(results).length, 3);
+
+  for (const [caseId, output] of Object.entries(results)) {
+    assert.ok(receipt.includes(output), `${caseId} does not match the published gate receipt`);
+  }
 });
 
 test("run map exposes the complete phase contract and both PDF editions", async () => {

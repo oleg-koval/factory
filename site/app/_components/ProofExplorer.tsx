@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import manifest from "../../public/proof/manifest.json";
+import gateResults from "../../public/proof/gate-results.json";
 
 type ProofCase = {
-  id: string;
+  id: keyof typeof gateResults;
+  claimId: string;
   label: string;
   verdict: string;
   code: string;
   counts: string[];
-  output: string;
   reasons: string[];
   explanation: string;
   tone: "blocked" | "passed";
@@ -17,11 +19,11 @@ type ProofCase = {
 const cases: ProofCase[] = [
   {
     id: "false-delivery",
+    claimId: "false-completion-is-rejected",
     label: "Refused delivery",
     verdict: "Not delivered",
     code: "exit=1 · GATE: BLOCKED",
     counts: ["5 unanswered", "2 invalid"],
-    output: `$ bash proof/terminal-gate/run.sh\nchecking manifest .......... ok\nchecking delivery answers .. 5 unanswered\nchecking reported checks ... 2 invalid\n\nGATE: BLOCKED\ndelivery_status=not_delivered\nexit=1`,
     reasons: [
       "Five blocking questions have no recorded answer.",
       "Two acceptance criteria use the invalid status partly met.",
@@ -33,11 +35,11 @@ const cases: ProofCase[] = [
   },
   {
     id: "honest-delivery",
+    claimId: "valid-completion-is-accepted",
     label: "Honest delivery",
     verdict: "Delivered",
     code: "exit=0 · GATE: PASS",
     counts: ["5 answered", "2 met"],
-    output: `$ python3 scripts/gate.py proof/terminal-gate/honest-delivery --terminal delivered\nchecking manifest .......... ok\nchecking delivery answers .. complete\nchecking reported checks ... met\n\nGATE: PASS  run=honest-delivery terminal=delivered matrix=clean\nexit=0`,
     reasons: [
       "Every represented blocking question has an answer.",
       "Every represented acceptance criterion is met.",
@@ -49,11 +51,11 @@ const cases: ProofCase[] = [
   },
   {
     id: "gate-bug",
+    claimId: "terminal-mismatch-bypass-is-closed",
     label: "Gate bug",
     verdict: "Contradiction caught",
     code: "exit=1 · MISMATCH",
     counts: ["recorded blocked", "requested delivered"],
-    output: `$ python3 scripts/gate.py proof/terminal-gate/mismatched-terminal --terminal delivered\nchecking recorded terminal . blocked\nchecking requested terminal  delivered\n\nGATE: BLOCKED\nstate.terminal 'blocked' does not match requested terminal 'delivered'\nexit=1`,
     reasons: [
       "The old gate trusted only the command-line request.",
       "The regression fixture preserves the contradictory states.",
@@ -68,10 +70,12 @@ const cases: ProofCase[] = [
 export function ProofExplorer() {
   const [activeId, setActiveId] = useState(cases[0].id);
   const active = cases.find((item) => item.id === activeId) ?? cases[0];
+  const claim = manifest.claims.find((item) => item.id === active.claimId);
+  const stateArtifact = claim?.artifacts.find((artifact) => artifact.endsWith("/state.json"));
 
   return (
     <div className="proof-explorer">
-      <div className="proof-tabs" aria-label="Choose a recorded Factory run">
+      <div className="proof-tabs" aria-label="Choose an executable gate fixture">
         {cases.map((item) => (
           <button
             key={item.id}
@@ -105,7 +109,7 @@ export function ProofExplorer() {
               <span>terminal</span>
               <span>factory gate</span>
             </div>
-            <pre><code>{active.output}</code></pre>
+            <pre><code>{gateResults[active.id]}</code></pre>
           </div>
           <div className="reason-panel">
             <p className="panel-kicker">Why this verdict</p>
@@ -122,8 +126,8 @@ export function ProofExplorer() {
         <div className="artifact-row">
           <span className="artifact-label">Receipts</span>
           <a href="/proof/#manifest"><span>proof manifest</span><span aria-hidden="true">↗</span></a>
-          <a href="/proof/#fixtures"><span>fixture state</span><span aria-hidden="true">↗</span></a>
-          <a href="/proof/#case-study"><span>case study</span><span aria-hidden="true">↗</span></a>
+          {stateArtifact ? <a href={`https://github.com/oleg-koval/factory/blob/main/${stateArtifact}`}><span>fixture state</span><span aria-hidden="true">↗</span></a> : null}
+          <a href="/proof/terminal-gate.txt"><span>complete gate output</span><span aria-hidden="true">↗</span></a>
         </div>
       </article>
     </div>

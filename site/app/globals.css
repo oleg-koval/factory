@@ -1491,6 +1491,18 @@ button:focus-visible {
   margin-block: 0.5rem;
 }
 
+.claim-body li a {
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2rem;
+}
+
+.claim-body li a:hover,
+.claim-body li a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .before-after {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
