@@ -23,10 +23,12 @@ After publishing, compare the live pages and crawl files with the same route sou
 
 ```bash
 node scripts/verify-live-seo.mjs
+node scripts/verify-live-seo.mjs --alternate
 ```
 
 This verifies published HTTP status, title, description, canonical URL, one H1, declared
-structured-data types, robots, and the exact sitemap URL set. It does not prove indexing.
+structured-data types, robots, and the exact sitemap URL set. The second command also requires
+`X-Robots-Tag: noindex` on all eight routes of the public Sites mirror. Neither proves indexing.
 
 ## Search promise
 

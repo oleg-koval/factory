@@ -3,11 +3,15 @@
 import { readFileSync } from "node:fs";
 
 const spec = JSON.parse(readFileSync(new URL("../docs/seo-routes.json", import.meta.url), "utf8"));
-const origin = process.argv[2] ?? spec.base_url;
+const args = process.argv.slice(2);
+const checkAlternate = args.includes("--alternate");
+const origins = args.filter((arg) => arg !== "--alternate");
+const origin = origins[0] ?? spec.base_url;
+const alternateOrigin = "https://factory.olkokoval.chatgpt.site";
 const failures = [];
 
-if (process.argv.length > 3 || !/^(https:\/\/[^/]+|http:\/\/localhost(?::\d+)?)$/.test(origin)) {
-  console.error("usage: node scripts/verify-live-seo.mjs [https://site-origin|http://localhost:port]");
+if (origins.length > 1 || !/^(https:\/\/[^/]+|http:\/\/localhost(?::\d+)?)$/.test(origin)) {
+  console.error("usage: node scripts/verify-live-seo.mjs [https://site-origin|http://localhost:port] [--alternate]");
   process.exit(2);
 }
 
@@ -33,14 +37,27 @@ function schemaTypes(value, found = new Set()) {
   return found;
 }
 
-async function get(path) {
-  const url = new URL(path, origin);
+async function get(path, targetOrigin = origin) {
+  const url = new URL(path, targetOrigin);
   try {
     const response = await fetch(url, { redirect: "manual", signal: AbortSignal.timeout(15000) });
     return { response, body: await response.text() };
   } catch (error) {
-    failures.push(path + " unavailable: " + String(error));
+    failures.push(url + " unavailable: " + String(error));
     return null;
+  }
+}
+
+if (checkAlternate) {
+  for (const route of spec.routes) {
+    const result = await get(route.path, alternateOrigin);
+    if (!result) continue;
+    const { response, body } = result;
+    const prefix = alternateOrigin + route.path + ": ";
+    if (response.status !== 200) failures.push(prefix + "HTTP " + response.status + ", expected 200");
+    if (!response.headers.get("content-type")?.includes("text/html")) failures.push(prefix + "not HTML");
+    if (!/\bnoindex\b/i.test(response.headers.get("x-robots-tag") ?? "")) failures.push(prefix + "X-Robots-Tag noindex missing");
+    if (match(body, /<link rel="canonical" href="([^"]*)"/) !== spec.base_url + route.path) failures.push(prefix + "canonical differs from spec");
   }
 }
 
@@ -91,4 +108,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("LIVE SEO: PASS routes=" + spec.routes.length + " origin=" + origin);
+console.log("LIVE SEO: PASS routes=" + spec.routes.length + " origin=" + origin + (checkAlternate ? " alternate=" + alternateOrigin : ""));

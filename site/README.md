@@ -37,11 +37,14 @@ npx wrangler deploy --dry-run --config wrangler.jsonc
 npx wrangler deploy --config wrangler.jsonc
 cd ..
 node scripts/verify-live-seo.mjs
+node scripts/verify-live-seo.mjs --alternate
 ```
 
 Confirm the deploy output names `factory.olegkoval.com` and records a Worker version ID. Verify
 the changed route on the live domain before calling the release delivered. The separate Sites
 mirror is published through its own saved-version flow; a Worker deploy does not update it.
+The `--alternate` check remains blocked until that mirror is separately updated and its live
+HTML responses carry `noindex`.
 
 For rollback, list Worker versions with `npx wrangler versions list` from `site/`, then use
 `npx wrangler rollback <known-good-version-id>` and rerun the live verifier. Do not assume a
