@@ -42,6 +42,20 @@ for (const [path, title, h1] of routes) {
   });
 }
 
+test("Google Analytics tag is present in the initial HTML", async () => {
+  const response = await render("/");
+  const html = await response.text();
+
+  assert.ok(
+    html.includes("https://www.googletagmanager.com/gtag/js?id=G-0RRTME2WMJ"),
+    "Google Analytics library must be discoverable before client hydration",
+  );
+  assert.ok(
+    html.includes("gtag('config', 'G-0RRTME2WMJ')"),
+    "Google Analytics must configure the expected measurement ID",
+  );
+});
+
 test("proof manifest is synchronized with the repository manifest", async () => {
   const [published, canonical] = await Promise.all([
     readFile(new URL("../public/proof/manifest.json", import.meta.url), "utf8"),
