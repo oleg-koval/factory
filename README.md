@@ -1,5 +1,7 @@
 # Factory
 
+[![skills.sh](https://skills.sh/b/oleg-koval/factory)](https://skills.sh/oleg-koval/factory)
+
 Your agent can write code. Factory makes it earn the word **delivered**.
 
 Factory is an Agent Skill that turns a ticket, incident, or rough request into an isolated
