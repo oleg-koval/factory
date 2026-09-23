@@ -2,9 +2,9 @@
 
 Evidence status: verified from the public `oleg-koval/factory` repository on 2026-09-22 against
 commit `54d2cc0f114c6db3fe5a3e8e1fd00357b4a5ee84`. This proves public-source discovery and local
-installation into a clean repository with the `skills` CLI. A separate Codex consult invocation
-was verified on 2026-09-23. Neither check proves a second-machine install, a global install
-target, or a complete Factory run.
+installation into a clean repository with the `skills` CLI. Separate fresh Codex and Claude Code
+consult invocations were verified on 2026-09-23. These checks do not prove a second-machine
+install, a global install target, or a complete Factory run.
 
 ## Command
 
@@ -42,9 +42,25 @@ asked for source evidence, and ended with “Start a Factory run with this input
 product-source changes. This verifies fresh-session Codex discovery and consult behavior from a
 project-local public install, not a global installation or a delivery run.
 
+## Fresh Claude Code consult (2026-09-23)
+
+An empty temporary Git repository received the public root skill at
+`.claude/skills/factory` using the same installer helper. The installed `SKILL.md` SHA-256
+matched public main commit `24ce845a447e426372eb4e11fff5a7a7d4a47364`. A new,
+non-persistent Claude Code session invoked `/factory consult` in
+plan mode with `--setting-sources project`. Its tool trace read `references/roles.md` and
+`references/phase-0-intake.md` from that temporary install, then returned a consult verdict:
+the hypothetical intermittent button report was a symptom, not a verified defect. No
+product-source changes were made.
+
+The first attempt without `--setting-sources project` read the pre-existing user-global
+Factory skill instead. That attempt is **not** counted as public-install proof; user skills
+can shadow project skills. The isolated attempt verifies fresh-session Claude Code discovery
+and consult behavior from the public project-local copy, not the documented global `-g`
+installation or a full delivery run.
+
 ## Still unproven
 
 - A clean install on a second machine.
 - The global `-g` target used by the recommended end-user commands.
-- Invocation behavior inside a fresh Claude Code session.
 - A complete cross-provider Factory run reaching an honest terminal state.

@@ -156,7 +156,8 @@ test("install page states verified counts and invocation limits", async () => {
   assert.match(html, /The eight-route search specification passed locally/);
   assert.doesNotMatch(html, /seven-route search specification/);
   assert.match(html, /A fresh Codex session discovered/);
-  assert.match(html, /Global installation, fresh Claude Code invocation, and a complete run remain release gates/);
+  assert.match(html, /A fresh Claude Code session used/);
+  assert.match(html, /Global installation and a complete run remain release gates/);
   assert.match(html, /docs\/install-verification\.md/);
 });
 
