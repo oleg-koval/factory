@@ -21,6 +21,18 @@ export function SiteFooter() {
             style={{ height: 40, width: "auto" }}
           />
         </a>
+        <a
+          href="https://peerpush.com/p/factory-agent-skills"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- Load the PeerPush badge directly. */}
+          <img
+            src="https://peerpush.com/p/factory-agent-skills/badge.png"
+            alt="Factory Agent Skills on PeerPush"
+            style={{ width: 230 }}
+          />
+        </a>
       </div>
       <nav aria-label="Footer navigation">
         <a href="/how-it-works/">How it works</a>
