@@ -57,9 +57,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${plexSans.variable} ${plexMono.variable} antialiased`}
-      >
+      <head>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-0RRTME2WMJ"
@@ -73,6 +71,10 @@ export default function RootLayout({
             gtag('config', 'G-0RRTME2WMJ');
           `}
         </Script>
+      </head>
+      <body
+        className={`${plexSans.variable} ${plexMono.variable} antialiased`}
+      >
         {children}
       </body>
     </html>
