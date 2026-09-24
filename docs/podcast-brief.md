@@ -88,6 +88,12 @@ application or a podcast-booking email. Third-party podcast directories list pos
 none was verified on the official site, so this draft has no selected recipient or channel.
 Oleg must choose and approve those details before outreach.
 
+New official route verified 2026-09-25: Greg's published newsletter says people with a startup
+idea can join his YouTube livestreams and share it on stage. That is a public workshop route, not
+a guaranteed podcast application. Factory's strongest version is a concise live teardown: show
+the gate reject a false delivery, then show the same evidence pass after the record is corrected.
+Source: [Greg's published livestream invitation](https://www.gregisenberg.com/blog/faceless-youtube-formula).
+
 Subject: Your software factory episode missed one gate
 
 Greg — your September 14 software factory episode with Ras Mic mapped the operating loop:
@@ -120,7 +126,8 @@ Would that make a useful follow-up for your audience?
 - [x] The complete public demo takes less than three minutes when timed: `bash scripts/demo.sh` completed in 0.18 seconds on 2026-09-24; this times the executable proof, not the narration.
 - [ ] Oleg reviews the unsent wording in his own voice.
 - [ ] Select a recipient and channel using a verified route; no official guest form or booking
-  email was found on Greg's site on 2026-09-23.
+  email was found on Greg's site on 2026-09-23. The official YouTube livestream workshop route is
+  now verified, but a specific livestream date or submission mechanism is not.
 - [ ] Oleg explicitly approves the recipient, channel, and final message before anything is sent.
 
 No outreach should be sent merely because these checks become green.
