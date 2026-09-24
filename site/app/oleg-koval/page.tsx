@@ -45,6 +45,20 @@ export default function OlegPage() {
           </div>
         </section>
 
+        <section className="terminal-section profile-topics">
+          <div className="section-heading">
+            <p className="eyebrow">Conversation brief</p>
+            <h2>Three useful questions for an AI software factory.</h2>
+            <p>Factory is a working answer, not a prediction. These are the conversations the public proof can support.</p>
+          </div>
+          <div className="terminal-grid">
+            <article><code>01 / REFUSAL</code><p>What should an agent say when the code changed but the delivery claim is not earned?</p></article>
+            <article><code>02 / RECEIPTS</code><p>How do acceptance criteria, test teeth, and review receipts make an AI run inspectable?</p></article>
+            <article><code>03 / LEVERAGE</code><p>Why does a one-person software factory need bounded failure states more than another generation trick?</p></article>
+          </div>
+          <a className="text-link section-link" href="/proof/">Bring the runnable proof to the conversation <span aria-hidden="true">↗</span></a>
+        </section>
+
         <section className="elsewhere-section"><p className="eyebrow">Elsewhere</p><div><a href="https://olegkoval.com/">Portfolio ↗</a><a href="https://github.com/oleg-koval">GitHub ↗</a><a href="https://www.linkedin.com/in/kovaloleg/">LinkedIn ↗</a><a href="https://olko.substack.com/">Writing ↗</a></div></section>
       </main>
       <SiteFooter />
