@@ -2,7 +2,7 @@ interface:
   display_name: "Factory"
   short_description: "Turn requests into verified delivery"
   brand_color: "#D9FF57"
-  default_prompt: "Use $factory to turn this request into a verified, evidence-backed software change."
+  default_prompt: "Use $factory to turn this request into a verified, evidence-backed software change. If Factory is not installed, see https://factory.olegkoval.com/install/."
 
 policy:
   allow_implicit_invocation: true

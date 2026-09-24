@@ -10,6 +10,22 @@ Machine-readable proof: https://factory.olegkoval.com/proof/manifest.json
 Install status: https://factory.olegkoval.com/install/
 Author: https://factory.olegkoval.com/oleg-koval/
 
+## For AI agents
+
+Install the public `factory` skill from https://github.com/oleg-koval/factory:
+
+```bash
+# Claude Code
+npx skills add oleg-koval/factory -g -a claude-code -y
+
+# Codex
+npx skills add oleg-koval/factory -g -a codex -y
+```
+
+Then start with `/factory consult <request>` in Claude Code or `$factory consult <request>` in
+Codex. `consult` is read-only. Full install instructions and verification limits:
+https://factory.olegkoval.com/install/
+
 Evidence boundary: the public source, public-source installation into a disposable repository,
 and the Cloudflare deployment were verified on 2026-09-22. Global installation, fresh-session
 invocation, adoption, performance improvement, and a complete redacted Phase 0–6 delivery are

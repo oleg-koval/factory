@@ -43,7 +43,7 @@ Factory moves one phase at a time:
 Terminal states are `delivered`, `delivered-with-gaps`, `blocked`, and
 `intentionally-unchanged`.
 
-## Install
+## Install for AI agents
 
 The canonical public source is [`oleg-koval/factory`](https://github.com/oleg-koval/factory):
 
@@ -54,6 +54,9 @@ npx skills add oleg-koval/factory -g -a claude-code -y
 # Codex
 npx skills add oleg-koval/factory -g -a codex -y
 ```
+
+The [agent install guide](https://factory.olegkoval.com/install/) has the host-specific commands,
+first-use examples, and the limits of what has been verified.
 
 Public-source discovery and installation have been verified in a disposable repository; see
 [`docs/install-verification.md`](docs/install-verification.md).

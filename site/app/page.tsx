@@ -255,13 +255,18 @@ export default function Home() {
 
         <section className="install-promo">
           <div>
-            <p className="eyebrow">Install</p>
-            <h2>Bring your own agent.<br />Keep the gates.</h2>
+            <p className="eyebrow">For AI agents / install</p>
+            <h2>Install Factory.<br />Start with consult.</h2>
+            <p>
+              Add the public Factory skill to Claude Code or Codex. Begin with <code>consult</code>
+              for a read-only CTO view, or give Factory a request to start a full delivery run.
+            </p>
           </div>
           <div className="install-preview">
             <p className="release-note"><span>Public source</span> Verified from a clean repository on 2026-09-22.</p>
-            <pre><code>{`# Claude Code\nnpx skills add oleg-koval/factory -g -a claude-code -y\n\n# Codex\nnpx skills add oleg-koval/factory -g -a codex -y`}</code></pre>
-            <a className="text-link" href="/install/">See the verification boundary <span aria-hidden="true">↗</span></a>
+            <pre><code>{`# Claude Code\nnpx skills add oleg-koval/factory -g -a claude-code -y\n/factory consult "Review this change request"\n\n# Codex\nnpx skills add oleg-koval/factory -g -a codex -y\n$factory consult "Review this change request"`}</code></pre>
+            <p>Consult answers in chat and does not write files. Start a full run with a ticket, Sentry URL, or plain-language request.</p>
+            <a className="text-link" href="/install/">Read the install and verification guide <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 
