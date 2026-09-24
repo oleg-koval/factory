@@ -5,6 +5,14 @@ deployed and have passed local rendering and live-browser checks as of 2026-09-2
 Google Search Console sitemap acceptance, indexation, ranking, and search traffic are not yet
 verified. Browser results and limits are recorded in [browser-acceptance.md](browser-acceptance.md).
 
+Alternate-host indexing gate: on 2026-09-23, live GET responses from the separate, publicly
+accessible Sites deployment at `factory.olkokoval.chatgpt.site` returned 200 without
+`X-Robots-Tag`. Sites reported its latest saved version as 14, sourced from commit `c49fc65`,
+which predates the host-aware fix in `site/proxy.ts`. The fix passes the built-Worker test for
+all eight routes on both hosts and a Cloudflare deployment dry run, but has not been published
+to Sites or verified on that live URL. Keep this gate open until the alternate host carries
+`noindex` and the canonical domain remains indexable.
+
 The machine-readable route source is [`seo-routes.json`](seo-routes.json). Run:
 
 ```bash
@@ -15,10 +23,12 @@ After publishing, compare the live pages and crawl files with the same route sou
 
 ```bash
 node scripts/verify-live-seo.mjs
+node scripts/verify-live-seo.mjs --alternate
 ```
 
 This verifies published HTTP status, title, description, canonical URL, one H1, declared
-structured-data types, robots, and the exact sitemap URL set. It does not prove indexing.
+structured-data types, robots, and the exact sitemap URL set. The second command also requires
+`X-Robots-Tag: noindex` on all eight routes of the public Sites mirror. Neither proves indexing.
 
 ## Search promise
 
@@ -49,8 +59,8 @@ Each intent gets one useful page. Do not generate near-duplicate keyword pages.
   `https://factory.olegkoval.com/sitemap.xml`.
 - Include only canonical 200-status routes in `/sitemap.xml`; use absolute URLs and one consistent
   trailing-slash policy.
-- Keep preview deployments `noindex` with an HTTP `X-Robots-Tag`; do not rely on `robots.txt` to
-  hide a preview.
+- Keep preview deployments and public alternate-host mirrors `noindex` with an HTTP
+  `X-Robots-Tag`; do not rely on `robots.txt` to hide them.
 - Return a useful 404 and permanent redirects for any route renamed after launch.
 - Serve `proof/manifest.json` at `/proof/manifest.json` as `application/json`, link it visibly from
   `/proof/`, and generate proof cards from it rather than duplicating claim text.
