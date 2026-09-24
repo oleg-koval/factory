@@ -117,7 +117,7 @@ Would that make a useful follow-up for your audience?
 - [x] `factory.olegkoval.com/proof/` renders the same fixtures and before/after receipts.
 - [x] The public source resolves to one canonical skill for Claude Code and Codex.
 - [x] The non-interactive CLI demo exited 0 in 0.17 seconds on 2026-09-23; this does not time the narration.
-- [ ] The complete public demo takes less than three minutes when timed.
+- [x] The complete public demo takes less than three minutes when timed: `bash scripts/demo.sh` completed in 0.18 seconds on 2026-09-24; this times the executable proof, not the narration.
 - [ ] Oleg reviews the unsent wording in his own voice.
 - [ ] Select a recipient and channel using a verified route; no official guest form or booking
   email was found on Greg's site on 2026-09-23.
