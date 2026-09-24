@@ -1,4 +1,4 @@
-name: Deploy Factory site
+name: Validate Factory site
 
 on:
   pull_request:
@@ -34,12 +34,3 @@ jobs:
       - name: Build and verify site
         working-directory: site
         run: npm test
-      - name: Deploy production Worker
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4.136.3"
-          workingDirectory: site
-          command: deploy --config wrangler.jsonc

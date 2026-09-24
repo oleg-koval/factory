@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 const routes = [
@@ -184,4 +184,25 @@ test("Cloudflare serves built assets before falling back to the SSR worker", asy
   );
 
   assert.notEqual(config.assets?.run_worker_first, true);
+});
+
+test("GitHub Actions validates the site without deploying it", async () => {
+  const workflowsDir = new URL("../../.github/workflows/", import.meta.url);
+  const workflowNames = (await readdir(workflowsDir)).filter((name) => /\.ya?ml$/.test(name));
+  const workflows = await Promise.all(workflowNames.map(async (name) =>
+    [name, await readFile(new URL(name, workflowsDir), "utf8")],
+  ));
+  const siteWorkflow = workflows.find(([name]) => name === "deploy-site.yml")?.[1];
+  assert.ok(siteWorkflow, "site validation workflow must exist");
+  assert.match(siteWorkflow, /name: Validate Factory site/);
+  assert.match(siteWorkflow, /pull_request:/);
+  assert.match(siteWorkflow, /push:/);
+  assert.match(siteWorkflow, /run: npm test/);
+  const deployCommand = /cloudflare\/wrangler-action|wrangler\s+deploy|secrets\.CLOUDFLARE_(?:API_TOKEN|ACCOUNT_ID)/i;
+  assert.throws(() => assert.doesNotMatch("uses: cloudflare/wrangler-action@v4", deployCommand),
+    "the policy test must reject the former deployment action");
+  for (const [name, source] of workflows) {
+    assert.doesNotMatch(source, deployCommand,
+      `${name} must not deploy Factory from GitHub Actions`);
+  }
 });

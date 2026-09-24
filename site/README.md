@@ -24,11 +24,9 @@ manifest matches the canonical repository manifest.
 
 ## Production deployment
 
-GitHub Actions deploys the site Worker to `factory.olegkoval.com` after each push or merge to
-`main`. The workflow runs `npm ci`, lint, and the complete site build and rendered-route checks
-before deployment. It uses the repository secrets `CLOUDFLARE_API_TOKEN` and
-`CLOUDFLARE_ACCOUNT_ID`; the token should be scoped to the Cloudflare account and Worker deploy
-permissions required for this project.
+GitHub Actions checks pull requests and pushes to `main` with `npm ci`, lint, and the complete
+site build and rendered-route tests. It does not deploy or use Cloudflare deployment secrets.
+Production deployment remains a separate, manual release decision.
 
 For a manual deployment from a clean `main` checkout, run:
 
