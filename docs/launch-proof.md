@@ -33,8 +33,8 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
 - [x] Verify the site in a real browser at desktop and mobile widths; see
   [browser acceptance](browser-acceptance.md).
 - [x] Verify title, description, canonical URL, robots, sitemap, Open Graph image, and structured data.
-- [ ] Publish the host-aware `noindex` fix to the public Sites mirror and pass
-  `node scripts/verify-live-seo.mjs --alternate` on all eight routes.
+- [x] Publish the host-aware `noindex` fix to the public Sites mirror and pass the alternate
+  host check on all eight routes; Sites version 15 deployed 2026-09-24.
 - [ ] Submit the sitemap to Google Search Console after deployment.
 
 ## Search architecture
