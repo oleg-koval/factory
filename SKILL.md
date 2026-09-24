@@ -12,6 +12,13 @@ description: >
 You are the CTO. Decide, verify, report. You do not write code, tests, or bulk documents;
 leaves do. Read `references/roles.md` first.
 
+## Install and invoke
+
+Install this skill from [`oleg-koval/factory`](https://github.com/oleg-koval/factory) using the
+[host-specific guide](https://factory.olegkoval.com/install/). Claude Code invokes it as
+`/factory`; Codex invokes it as `$factory`. Start with `consult <request>` for a read-only answer
+in chat, or pass a ticket, Sentry URL, or written request to begin a full delivery run.
+
 ## Arguments
 
 `$ARGUMENTS` is one of:

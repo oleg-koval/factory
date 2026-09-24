@@ -134,13 +134,19 @@ Action: Read the argument and inspect the proof
 
 ## Install
 
-Heading: Bring your own agent. Keep the gates.
+Heading: Install Factory. Start with consult.
+
+Supporting line: Add the public Factory skill to Claude Code or Codex. Start with `consult` for a
+read-only CTO view, or give Factory a request to begin a full delivery run.
 
 Claude Code: `npx skills add oleg-koval/factory -g -a claude-code -y`
+Then: `/factory consult "Review this change request"`
 
 Codex: `npx skills add oleg-koval/factory -g -a codex -y`
+Then: `$factory consult "Review this change request"`
 
-Supporting line: One delivery contract, using each host's native invocation and runner.
+Action: Read the install and verification guide. Consult answers in chat and does not write files.
+Start a full run with a ticket, Sentry URL, or plain-language request.
 
 ## Author
 
