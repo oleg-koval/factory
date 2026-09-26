@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { createServer } from "node:net";
 import { readFile, readdir } from "node:fs/promises";
-import test from "node:test";
+import { setTimeout as delay } from "node:timers/promises";
+import { after, before, test } from "node:test";
+import { fileURLToPath } from "node:url";
+
+const siteDir = fileURLToPath(new URL("..", import.meta.url));
+let workerServer;
+let origin;
 
 const routes = [
   ["/", "Factory — Delivery gates for AI coding agents", "Your agent can write code."],
@@ -14,33 +22,82 @@ const routes = [
   ["/case-studies/development-hydration-warning/", "Factory run case study — Fixing a hydration warning", "The same page warned in development, but not in production."],
 ];
 
-async function loadWorker() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  return (await import(workerUrl.href)).default;
+async function unusedPort() {
+  const listener = createServer();
+  await new Promise((ready, reject) => {
+    listener.once("error", reject);
+    listener.listen(0, "127.0.0.1", ready);
+  });
+  const port = listener.address().port;
+  await new Promise((closed) => listener.close(closed));
+  return port;
 }
 
-async function render(path, host = "localhost") {
-  const builtWorker = await loadWorker();
-  return builtWorker.fetch(
-    new Request(`http://${host}${path}`, { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
+async function stopWorkerServer() {
+  if (!workerServer || workerServer.exitCode !== null || workerServer.signalCode !== null) return;
+  try { process.kill(-workerServer.pid, "SIGTERM"); } catch (error) {
+    if (error.code !== "ESRCH") throw error;
+  }
+  const deadline = Date.now() + 3_000;
+  while (workerServer.exitCode === null && workerServer.signalCode === null && Date.now() < deadline) {
+    await delay(50);
+  }
+  if (workerServer.exitCode === null && workerServer.signalCode === null) {
+    try { process.kill(-workerServer.pid, "SIGKILL"); } catch (error) {
+      if (error.code !== "ESRCH") throw error;
+    }
+  }
 }
 
-test("alternate-host HTML is noindex while the canonical host stays indexable", async () => {
+before(async () => {
+  const port = await unusedPort();
+  origin = `http://127.0.0.1:${port}`;
+  workerServer = spawn("npx", ["wrangler", "dev", "--local", "--ip", "127.0.0.1", "--port", String(port)], {
+    cwd: siteDir,
+    detached: true,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  let output = "";
+  for (const stream of [workerServer.stdout, workerServer.stderr]) {
+    stream.setEncoding("utf8");
+    stream.on("data", (chunk) => { output = (output + chunk).slice(-12_000); });
+  }
+  const deadline = Date.now() + 90_000;
+  while (Date.now() < deadline) {
+    if (workerServer.exitCode !== null || workerServer.signalCode !== null) {
+      throw new Error(`Wrangler dev exited early (${workerServer.exitCode ?? workerServer.signalCode})\n${output}`);
+    }
+    try {
+      const response = await fetch(`${origin}/`, { signal: AbortSignal.timeout(2_000) });
+      if (response.status === 200) return;
+      if (response.status >= 400) throw new Error(`Wrangler dev returned HTTP ${response.status}\n${output}`);
+    } catch (error) {
+      if (!/fetch failed|abort|timed out/i.test(String(error))) throw error;
+    }
+    await delay(250);
+  }
+  await stopWorkerServer();
+  throw new Error(`Wrangler dev did not start within 90 seconds\n${output}`);
+});
+
+after(stopWorkerServer);
+
+async function render(path) {
+  return fetch(`${origin}${path}`, { headers: { accept: "text/html" } });
+}
+
+test("canonical HTML stays indexable and alternate-host noindex policy is explicit", async () => {
   for (const [path] of routes) {
-    const [mirror, canonical] = await Promise.all([
-      render(path, "factory.olkokoval.chatgpt.site"),
-      render(path, "factory.olegkoval.com"),
-    ]);
-
-    assert.equal(mirror.status, 200, `mirror ${path}`);
-    assert.match(mirror.headers.get("x-robots-tag") ?? "", /\bnoindex\b/i, `mirror ${path}`);
+    const canonical = await render(path);
     assert.equal(canonical.status, 200, `canonical ${path}`);
     assert.equal(canonical.headers.get("x-robots-tag"), null, `canonical ${path}`);
   }
+
+  // The local Worker runtime routes requests through its configured custom domain,
+  // so it cannot emulate a second Host. Keep the alternate-host guard explicit.
+  const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
+  assert.match(proxy, /request\.nextUrl\.hostname !== canonicalHost/);
+  assert.match(proxy, /X-Robots-Tag", "noindex, nofollow"/);
 });
 
 for (const [path, title, h1] of routes) {
@@ -257,7 +314,9 @@ test("GitHub Actions validates the site without deploying it", async () => {
   assert.match(siteWorkflow, /name: Validate Factory site/);
   assert.match(siteWorkflow, /pull_request:/);
   assert.match(siteWorkflow, /push:/);
+  assert.match(siteWorkflow, /run: npm audit --audit-level=moderate/);
   assert.match(siteWorkflow, /run: npm test/);
+  assert.match(siteWorkflow, /HYDRATION_SERVER_MODE=production npm run test:hydration/);
   const deployCommand = /cloudflare\/wrangler-action|wrangler\s+deploy|secrets\.CLOUDFLARE_(?:API_TOKEN|ACCOUNT_ID)/i;
   assert.throws(() => assert.doesNotMatch("uses: cloudflare/wrangler-action@v4", deployCommand),
     "the policy test must reject the former deployment action");

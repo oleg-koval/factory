@@ -29,8 +29,12 @@ async function unusedPort() {
 async function startServer() {
   const port = await unusedPort();
   const origin = `http://127.0.0.1:${port}`;
-  const mode = process.env.HYDRATION_SERVER_MODE === "production" ? "start" : "dev";
-  const server = spawn("npm", ["run", mode, "--", "--hostname", "127.0.0.1", "--port", String(port)], {
+  const mode = process.env.HYDRATION_SERVER_MODE === "production" ? "production" : "development";
+  const command = mode === "production" ? "npx" : "npm";
+  const args = mode === "production"
+    ? ["wrangler", "dev", "--local", "--ip", "127.0.0.1", "--port", String(port)]
+    : ["run", "dev", "--", "--hostname", "127.0.0.1", "--port", String(port)];
+  const server = spawn(command, args, {
     cwd: siteDir,
     detached: true,
     stdio: ["ignore", "pipe", "pipe"],
@@ -45,18 +49,18 @@ async function startServer() {
     const deadline = Date.now() + 90_000;
     while (Date.now() < deadline) {
       if (server.exitCode !== null || server.signalCode !== null) {
-        throw new Error(`vinext ${mode} exited early (${server.exitCode ?? server.signalCode})\n${output}`);
+        throw new Error(`${mode} server exited early (${server.exitCode ?? server.signalCode})\n${output}`);
       }
       try {
         const response = await fetch(`${origin}${route}`, { signal: AbortSignal.timeout(2_000) });
         if (response.status === 200) return { server, origin };
-        if (response.status >= 400) throw new Error(`vinext ${mode} returned HTTP ${response.status}\n${output}`);
+        if (response.status >= 400) throw new Error(`${mode} server returned HTTP ${response.status}\n${output}`);
       } catch (error) {
         if (!/fetch failed|abort|timed out/i.test(String(error))) throw error;
       }
       await delay(250);
     }
-    throw new Error(`vinext ${mode} did not serve ${route} within 90 seconds\n${output}`);
+    throw new Error(`${mode} server did not serve ${route} within 90 seconds\n${output}`);
   } catch (error) {
     await stopServer(server);
     throw error;

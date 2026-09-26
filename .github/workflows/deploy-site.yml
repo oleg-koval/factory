@@ -31,6 +31,12 @@ jobs:
       - name: Lint site
         working-directory: site
         run: npm run lint
+      - name: Audit site dependency tree
+        working-directory: site
+        run: npm audit --audit-level=moderate
       - name: Build and verify site
         working-directory: site
         run: npm test
+      - name: Verify built Worker hydration at desktop and mobile widths
+        working-directory: site
+        run: HYDRATION_SERVER_MODE=production npm run test:hydration
