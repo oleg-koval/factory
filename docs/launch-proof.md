@@ -1,7 +1,8 @@
 # Factory launch proof plan
 
-Evidence status: launch checkpoint updated 2026-09-22. The public repository, public-source install,
-and Cloudflare deployment are verified; the remaining promotion gates stay open below.
+Evidence status: launch checkpoint updated 2026-09-26. The public repository, public-source install,
+and canonical Cloudflare deployment are verified; search indexation and the remaining promotion
+gates stay open below.
 
 ## Local proof already staged
 
@@ -39,11 +40,14 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
 - [x] Verify title, description, canonical URL, robots, sitemap, Open Graph image, and structured data.
 - [x] Publish the host-aware `noindex` fix to the public Sites mirror and pass the alternate
   host check on all eight routes; Sites version 15 deployed 2026-09-24.
+- [ ] Refresh the separate Sites mirror for the ninth canonical route. The latest alternate-host
+  verifier reports HTTP 404 and a canonical mismatch for `/case-studies/development-hydration-warning/`;
+  the canonical Cloudflare site passes all nine routes.
 - [ ] Submit the sitemap to Google Search Console after deployment.
-- [x] Submit the nine canonical sitemap routes to IndexNow on 2026-09-26. The first response was
-  HTTP 202 with key verification pending. After confirming the root key file returned HTTP 200
-  with content matching the published key, a follow-up submission returned HTTP 200 (`received`)
-  at 12:27:48 UTC. Both responses confirm receipt only, not crawling, indexing, or ranking.
+- [x] Notify IndexNow of the nine canonical sitemap routes on 2026-09-26. The initial response was
+  HTTP 202 with key verification pending. After the public key was verified, later submissions
+  returned HTTP 200 (`received`), including one after the latest manual deployment. These responses
+  confirm receipt only—not crawling, indexing, or ranking.
 
 ## Search architecture
 
@@ -69,6 +73,8 @@ Initial public routes:
 - `/oleg-koval/` - why Oleg built it and links to his other work
 - `/essays/right-to-say-not-delivered/` - the delivery-gate argument
 - `/case-studies/terminal-state-mismatch/` - a reproduced gate defect and its fix
+- `/case-studies/development-hydration-warning/` - a full Phase 0–6 run with baseline, test, fix,
+  browser verification, and explicit evidence limits
 
 Each route gets its own title, description, canonical URL, Open Graph metadata, and visible
 author/date when appropriate. The root links to every route with descriptive text.
@@ -109,8 +115,11 @@ approval. Stage the draft and evidence bundle first.
 
 Factory is deployed as a Cloudflare Worker with Static Assets and a Worker Custom Domain. The
 Worker is the origin; Cloudflare created the DNS record and certificate for
-`factory.olegkoval.com` during the initial deployment on 2026-09-22. The browser and
-accessibility pass was deployed from site commit `619dd28` on 2026-09-23.
+`factory.olegkoval.com` during the initial deployment on 2026-09-22. The latest manual release on
+2026-09-26 serves repository `main` at `6b29e48`, including the clarified Claude Code/Codex
+homepage metadata and more readable proof receipts. The live SEO verifier passes all nine
+canonical routes. The focused desktop/mobile receipt check and latest IndexNow receipt are recorded
+in [browser acceptance](browser-acceptance.md).
 
 Successful local build, source commit, remote SHA, Worker deployment, custom-domain activation,
 and public HTTP response are verified separately. Browser acceptance is recorded in
