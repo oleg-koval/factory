@@ -11,7 +11,7 @@ let workerServer;
 let origin;
 
 const routes = [
-  ["/", "Factory — Delivery gates for AI coding agents", "Your agent can write code."],
+  ["/", "Factory by Oleg Koval: Claude Code + Codex Agent Skill", "Your agent can write code."],
   ["/proof/", "Factory Proof — Watch a false delivery claim fail", "A delivery claim should survive inspection."],
   ["/how-it-works/", "Factory run map — A verified AI coding agent workflow", "The complete run—from ticket to verified draft PR."],
   ["/install/", "Install Factory for Claude Code and Codex", "Bring your own agent. Keep the gates."],
