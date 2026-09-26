@@ -6,13 +6,14 @@ import { SiteHeader } from "./_components/SiteHeader";
 import { StructuredData } from "./_components/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Factory — Delivery gates for AI coding agents",
+  title: "Factory by Oleg Koval: Claude Code + Codex Agent Skill",
   description:
-    "Factory is the open-source delivery gate for Claude Code and Codex: acceptance criteria, test-first proof, review receipts, and honest terminal states.",
+    "Open-source MIT agent skill for Claude Code and Codex. Turn software requests into isolated changes with test-first proof and honest delivery states.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Factory — Delivery gates for AI coding agents",
-    description: "Your agent can write code. Factory makes it earn the word delivered.",
+    title: "Factory by Oleg Koval: Claude Code + Codex Agent Skill",
+    description:
+      "Your coding agent can write code. Factory, an open-source skill for Claude Code and Codex, makes it earn the word delivered.",
     url: "/",
     type: "website",
     images: [{ url: "/og-factory.png", width: 1200, height: 630 }],

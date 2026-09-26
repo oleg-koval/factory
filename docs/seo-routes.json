@@ -5,9 +5,9 @@
   "routes": [
     {
       "path": "/",
-      "title": "Factory — Delivery gates for AI coding agents",
-      "description": "Factory is the open-source delivery gate for Claude Code and Codex: acceptance criteria, test-first proof, review receipts, and honest terminal states.",
-      "intent": "AI coding agent verification",
+      "title": "Factory by Oleg Koval: Claude Code + Codex Agent Skill",
+      "description": "Open-source MIT agent skill for Claude Code and Codex. Turn software requests into isolated changes with test-first proof and honest delivery states.",
+      "intent": "Factory Claude Code Codex agent skill",
       "schemas": ["WebSite", "SoftwareSourceCode"],
       "evidence": ["docs/site-copy.md", "docs/product-brief.md", "proof/manifest.json"]
     },
