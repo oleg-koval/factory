@@ -87,6 +87,15 @@ of a Google rich result.
 - An optional `/llms.txt` may point agents to the canonical docs and proof manifest, but it must
   not be described as a search-ranking mechanism or replace the sitemap.
 
+## Search-engine notification
+
+After the public Worker deploy, run `node scripts/submit-indexnow.mjs --dry-run` and inspect the
+verified key and sitemap result. Then run `node scripts/submit-indexnow.mjs` once to notify
+participating IndexNow engines of the exact canonical sitemap URLs. The script verifies the public
+key file and checks that live sitemap URLs exactly match `seo-routes.json` before it submits.
+IndexNow's successful response confirms receipt only; it does not prove crawling, indexing, or
+ranking, and it does not replace submitting the sitemap in Google Search Console.
+
 ## Launch verification
 
 Report these as separate gates:
@@ -98,9 +107,12 @@ Report these as separate gates:
 5. A real mobile and desktop browser can navigate the site with JavaScript disabled for core text.
 6. Cloudflare custom domain and TLS are active.
 7. Google Search Console accepts the sitemap. Indexation remains pending until Google reports it.
+8. The IndexNow notification is received by a participating search engine; report this separately
+   from indexing and ranking.
 
-Sources checked 2026-09-21:
+Google sources checked 2026-09-21:
 
 - [Google SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
 - [Google sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)
 - [Google structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data)
+- [IndexNow protocol documentation](https://www.indexnow.org/documentation), checked 2026-09-26.
