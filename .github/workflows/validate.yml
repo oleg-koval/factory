@@ -42,6 +42,8 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - name: Install site dependencies
         run: npm ci
+      - name: Validate IndexNow sitemap submission safeguards
+        run: node --test ../tests/seo-indexnow.test.mjs
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run case-study browser regression

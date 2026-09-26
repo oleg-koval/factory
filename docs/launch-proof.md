@@ -40,6 +40,8 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
 - [x] Publish the host-aware `noindex` fix to the public Sites mirror and pass the alternate
   host check on all eight routes; Sites version 15 deployed 2026-09-24.
 - [ ] Submit the sitemap to Google Search Console after deployment.
+- [ ] After deploy, run `node scripts/submit-indexnow.mjs --dry-run`, then submit the exact live
+  canonical route set with `node scripts/submit-indexnow.mjs`. A receipt is not proof of indexing.
 
 ## Search architecture
 
