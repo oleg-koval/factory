@@ -83,12 +83,18 @@ Run `bash scripts/demo.sh` and follow [`docs/demo-script.md`](demo-script.md):
 
 ## Outreach draft — do not send yet
 
-Booking-route evidence (checked 2026-09-26): [Greg's official site](https://www.gregisenberg.com/)
+Booking-route check (official homepage checked 2026-09-27): [Greg's site](https://www.gregisenberg.com/)
 links his [X profile](https://twitter.com/gregisenberg) and
-[LinkedIn profile](https://www.linkedin.com/in/gisenberg/), but does not publish a guest
-application or podcast-booking email. Use one of those official social profiles for a concise
-direct pitch if Oleg chooses to send. Third-party podcast directories list possible contacts, but
-none was verified on Greg's official site; do not use an unverified address.
+[LinkedIn profile](https://www.linkedin.com/in/gisenberg/), along with podcast listening links, but
+does not list a guest application or podcast-booking email on that page. Recommended route: a
+LinkedIn idea-test post first, then a concise LinkedIn message if the idea resonates. This adapts
+Greg's public content-validation advice; it is not a verified booking channel, and the profile's
+current message permissions were not verified. In his
+[article about validating ideas](https://www.gregisenberg.com/blog/how-to-become-an-idea-machine),
+Greg recommends testing a one-liner on Twitter and LinkedIn, expanding it if it resonates, and says
+LinkedIn is a better starting point when you have not built an audience on Twitter. That is
+audience-building advice, not evidence about podcast bookings. Third-party podcast directories list
+possible contacts; none was verified on Greg's official site, so do not use an unverified address.
 
 New official route verified 2026-09-25: Greg's published newsletter says people with a startup
 idea can join his YouTube livestreams and share it on stage. That is a public workshop route, not
@@ -97,25 +103,44 @@ false delivery claim and the evidence that makes the gate refuse it.
 Source: [Greg's published livestream invitation](https://www.gregisenberg.com/blog/faceless-youtube-formula).
 The next livestream date or submission procedure is not verified.
 
-Subject: The missing quality gate between agent-built and shipped
+LinkedIn idea test — draft only, not posted:
 
-Greg — your September 14 conversation with Ras Mic laid out the software-factory loop:
-isolate, build, prove, ship. Your latest episode looks at agents becoming products through
-connectors, discovery, and approval. The problem I work on is the trust boundary before “ship.”
-Factory is an MIT-licensed skill for Claude Code and Codex that checks whether a delivery claim
-matches its acceptance criteria and evidence—and returns a specific blocked result when it does
-not.
+> An AI coding agent saying `done` isn't evidence. The delivery gate should be able to say `not
+> yet` and show exactly why.
 
-The sharpest demo is Factory catching its own false finish: the old gate accepted `delivered` even
-when the run recorded `blocked`. The regression now rejects that mismatch and links to the
-before-and-after source. Separately, a complete Phase 0–6 run on Factory's own site is public: it
-reproduced a hydration warning at desktop and mobile widths, fixed it, and verified the deployed
-page clean. That is one documented run, not a claim of general reliability or customer adoption.
+If that one-liner gets substantive replies from builders, expand it into this post before making a
+podcast ask:
 
-I have a concise live demo script for the gate. Would a teardown of one “agent says done / evidence
-says not yet” run make a useful follow-up for builders using agents to ship products?
+> Factory's own gate once accepted `delivered` even though its run record said `blocked`. I added
+> a regression that reproduces that contradiction and makes the gate refuse it.
+>
+> That is the point: “done” should be a claim the evidence has to earn, not a summary the agent
+> gets to write about itself. Factory's before/after proof is public, as is a separate full run
+> from a reproduced warning to a deployed fix.
+>
+> What should an AI coding workflow have to prove before it is allowed to say “shipped”?
+>
+> [Runnable gate proof](https://factory.olegkoval.com/proof/) · [full-run case
+> study](https://factory.olegkoval.com/case-studies/development-hydration-warning/)
 
-Public proof: [Factory gate](https://factory.olegkoval.com/proof/) · [full-run case
+This sequence is an inference from Greg's content advice, not a proven route to a podcast booking.
+No engagement threshold is assumed; Oleg should judge whether any response is meaningful before
+expanding or sending a pitch.
+
+LinkedIn draft — do not send without Oleg's final approval:
+
+Greg — your September 14 conversation with Ras Mic mapped isolate → build → prove → ship. I built
+the missing quality gate: an MIT-licensed Factory skill for Claude Code and Codex that refuses
+`delivered` when a run's own evidence says `blocked`.
+
+Factory caught that false pass in its own gate. A separate full run on Factory's site reproduced
+and fixed a desktop/mobile hydration warning, then verified the deployed page clean. Both have
+public receipts.
+
+Would you consider me for a Startup Ideas episode showing how an agent can prove—or refuse—its
+“done” claim?
+
+Proof: [gate demo](https://factory.olegkoval.com/proof/) · [full-run case
 study](https://factory.olegkoval.com/case-studies/development-hydration-warning/)
 
 — Oleg
@@ -126,11 +151,12 @@ study](https://factory.olegkoval.com/case-studies/development-hydration-warning/
 - [x] `factory.olegkoval.com/proof/` renders the same fixtures and before/after receipts.
 - [x] The public source resolves to one canonical skill for Claude Code and Codex.
 - [x] The non-interactive CLI demo exited 0 in 0.17 seconds on 2026-09-23; this does not time the narration.
-- [x] The executable proof completed in 0.18 seconds on 2026-09-24; the spoken walkthrough has not been timed, so the pitch does not promise a three-minute segment.
-- [ ] Oleg reviews the unsent wording in his own voice.
-- [ ] Oleg selects either Greg's official X/LinkedIn profile for the podcast pitch or the separate
-  public livestream workshop route; no official guest form or booking email is listed as of
-  2026-09-26.
+- [x] `bash scripts/demo.sh` reran on 2026-09-26: exit 0 in 0.155 seconds with the false-delivery, honest-delivery, and gate-mismatch outcomes expected. This times only the executable segment; the spoken walkthrough remains unverified.
+- [ ] Oleg reviews and approves whether to publish the LinkedIn idea-test draft in his own voice.
+- [ ] If the idea-test post receives a meaningful response, Oleg reviews the concise LinkedIn pitch
+  in his own voice and confirms the recipient/channel.
+  The official public livestream is a separate idea-workshop route, not a podcast booking form; no
+  guest application or booking email was listed on the homepage as of 2026-09-27.
 - [ ] Oleg explicitly approves the recipient, channel, and final message before anything is sent.
 
 No outreach should be sent merely because these checks become green.

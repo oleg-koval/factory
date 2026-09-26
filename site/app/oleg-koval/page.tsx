@@ -40,8 +40,9 @@ export default function OlegPage() {
           <div className="link-ledger">
             <a href="/proof/"><span>01</span><strong>Runnable terminal gate</strong><em>False completion rejected; corrected record accepted</em><b>↗</b></a>
             <a href="/case-studies/terminal-state-mismatch/"><span>02</span><strong>Gate bypass case study</strong><em>Regression, before state, and fixed refusal</em><b>↗</b></a>
-            <a href="/how-it-works/"><span>03</span><strong>Delivery contract</strong><em>Seven gates shared by Claude Code and Codex</em><b>↗</b></a>
-            <a href="/essays/right-to-say-not-delivered/"><span>04</span><strong>The argument</strong><em>Why a software factory needs refusal states</em><b>↗</b></a>
+            <a href="/case-studies/development-hydration-warning/"><span>03</span><strong>Full hydration run</strong><em>Warning reproduced at two widths; deployed fix verified</em><b>↗</b></a>
+            <a href="/how-it-works/"><span>04</span><strong>Delivery contract</strong><em>Seven gates shared by Claude Code and Codex</em><b>↗</b></a>
+            <a href="/essays/right-to-say-not-delivered/"><span>05</span><strong>The argument</strong><em>Why a software factory needs refusal states</em><b>↗</b></a>
           </div>
         </section>
 

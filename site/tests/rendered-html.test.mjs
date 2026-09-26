@@ -213,6 +213,14 @@ test("full-run case study exposes evidence, limits, and route-specific metadata"
   assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/pull\/15"/);
 });
 
+test("Oleg's profile links directly to the full-run case study", async () => {
+  const response = await render("/oleg-koval/");
+  const html = await response.text();
+  assert.match(html, /<strong>Full hydration run<\/strong>/);
+  assert.match(html, /href="\/case-studies\/development-hydration-warning\/"/);
+  assert.match(html, /Warning reproduced at two widths; deployed fix verified/);
+});
+
 test("AC-2 CI runs read-only browser validation without deployment credentials", async () => {
   const workflow = await readFile(new URL("../../.github/workflows/validate.yml", import.meta.url), "utf8");
   assert.match(workflow, /npm (?:--prefix site run|run) test:hydration\b/, "CI must run the case-study browser regression");
