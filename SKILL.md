@@ -1,10 +1,10 @@
 ---
 name: factory
 description: >
-  Turn a Linear issue, Sentry event, or written request into an isolated, verified branch.
-  Use when the user invokes $factory or /factory, asks for proof-carrying implementation, or wants a
-  long-running change delivered through explicit plans, acceptance criteria, tests, reviews,
-  and terminal gates. Supports consult, resume, and role configuration modes.
+  Turn a Linear ticket, Sentry event, or written request into an isolated, inspectable change with
+  testable acceptance criteria, evidence receipts, reviews, and executable gates that reject
+  unsupported `delivered` claims. Use for Factory consult/resume or full proof-carrying delivery
+  runs in Claude Code and Codex.
 ---
 
 # Factory
