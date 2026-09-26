@@ -6,6 +6,8 @@ Canonical site: https://factory.olegkoval.com/
 How it works: https://factory.olegkoval.com/how-it-works/
 Proof surface: https://factory.olegkoval.com/proof/
 Gate failure case study: https://factory.olegkoval.com/case-studies/terminal-state-mismatch/
+Full-run case study: https://factory.olegkoval.com/case-studies/development-hydration-warning/
+Sanitized Phase 0–6 evidence: https://github.com/oleg-koval/factory/blob/main/proof/case-studies/hydration-warning/README.md
 Machine-readable proof: https://factory.olegkoval.com/proof/manifest.json
 Install status: https://factory.olegkoval.com/install/
 Author: https://factory.olegkoval.com/oleg-koval/
@@ -26,7 +28,7 @@ Then start with `/factory consult <request>` in Claude Code or `$factory consult
 Codex. `consult` is read-only. Full install instructions and verification limits:
 https://factory.olegkoval.com/install/
 
-Evidence boundary: the public source, public-source installation into a disposable repository,
-and the Cloudflare deployment were verified on 2026-09-22. Global installation, fresh-session
-invocation, adoption, performance improvement, and a complete redacted Phase 0–6 delivery are
-not yet claimed.
+Evidence boundary: the public source, disposable-repository installation, Cloudflare deployment,
+fresh project-local consults in Codex and Claude Code, and one full Phase 0–6 run on the Factory
+codebase are documented. A global install on a clean target, independent adoption, performance
+improvement, and Google indexing are not claimed.

@@ -54,7 +54,7 @@ export default function ProofPage() {
             <article><span className="result-bad">Before / false pass</span><pre><code>{`state.terminal: blocked\nrequested: delivered\n\nGATE: PASS\nexit=0`}</code></pre><p>Baseline <code>e0f8277</code></p></article>
             <article><span className="result-good">After / honest refusal</span><pre><code>{`state.terminal: blocked\nrequested: delivered\n\nGATE: BLOCKED\nexit=1`}</code></pre><p>Fixed by <code>fd1cd03</code></p></article>
           </div>
-          <div className="section-actions"><a className="button button-outline" href="/case-studies/terminal-state-mismatch/">Read the full case study <span aria-hidden="true">↗</span></a></div>
+          <div className="section-actions"><a className="button button-outline" href="/case-studies/terminal-state-mismatch/">Read the gate-bug case study <span aria-hidden="true">↗</span></a><a className="text-link" href="/case-studies/development-hydration-warning/">Inspect a complete Factory run <span aria-hidden="true">↗</span></a></div>
         </section>
 
         <aside className="release-banner"><strong>Current evidence boundary</strong><p>{manifest.boundaries.join(" ")}</p></aside>

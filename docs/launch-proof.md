@@ -11,9 +11,12 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
   discriminating between those outcomes.
 - `proof/case-studies/terminal-state-mismatch/` reproduces a real bypass against the pre-fix
   commit and records the fixed output without presenting it as a full Factory run.
+- `proof/case-studies/hydration-warning/` records a complete Phase 0–6 run, from the confirmed
+  local warning through the merged, manually deployed fix, with public browser tests and limits.
 - `proof/manifest.json` maps each local claim to its artifacts, executable output, and explicit
   limit; `scripts/verify-proof.py` rejects missing artifacts or output drift.
-- This is one mechanical gate specimen, not the complete redacted run still required below.
+- The terminal-gate specimen remains a reconstruction; it is distinct from the full run documented
+  in the hydration-warning case study.
 
 ## Public proof before promotion
 
@@ -25,10 +28,11 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
 - [x] Verify a fresh, project-local Codex `consult` invocation from the public skill source;
   [record](install-verification.md).
 - [x] Verify a fresh, project-local Claude Code `consult` invocation from the public skill source;
-  [record](install-verification.md). Global install and a complete run remain open.
+  [record](install-verification.md). Global installation remains open.
 - [x] Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in
   `SECURITY.md` before publishing the first supported version.
-- [ ] Publish one complete redacted Factory run and its terminal gate output.
+- [x] Publish one complete Factory run and its terminal gate output; see the
+  [hydration-warning case study](../proof/case-studies/hydration-warning/README.md).
 - [x] Demonstrate one failure caught by Factory that a normal happy-path test missed.
 - [x] Verify the site in a real browser at desktop and mobile widths; see
   [browser acceptance](browser-acceptance.md).

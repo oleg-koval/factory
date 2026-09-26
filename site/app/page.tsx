@@ -163,7 +163,7 @@ export default function Home() {
             <span>Evidence boundary</span>
             <p>
               This is a runnable redacted reconstruction, not the original private run or a
-              complete Phase 0–6 delivery. No adoption, speed, or defect-reduction claim is implied.
+              complete Phase 0–6 delivery. <a href="/case-studies/development-hydration-warning/">Inspect a separate full run from baseline reproduction through deployment</a>. No adoption, speed, or defect-reduction claim is implied.
             </p>
           </aside>
           <div className="section-actions">
@@ -203,6 +203,9 @@ export default function Home() {
                 <p>{failure.body}</p>
               </article>
             ))}
+          </div>
+          <div className="section-actions">
+            <a className="button button-outline" href="/case-studies/development-hydration-warning/">Inspect a full Factory run <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 

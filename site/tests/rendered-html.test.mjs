@@ -11,6 +11,7 @@ const routes = [
   ["/oleg-koval/", "Oleg Koval — Reliable agent-driven software delivery", "I build systems that have to show their work."],
   ["/essays/right-to-say-not-delivered/", "Your software factory needs the right to say not delivered", "Your software factory needs the right to say “not delivered.”"],
   ["/case-studies/terminal-state-mismatch/", "Factory case study — When a blocked run passed delivery", "A blocked run passed the delivery gate."],
+  ["/case-studies/development-hydration-warning/", "Factory run case study — Fixing a hydration warning", "The same page warned in development, but not in production."],
 ];
 
 async function loadWorker() {
@@ -135,6 +136,26 @@ test("AC-2 case-study initial HTML retains Analytics and TechArticle matching vi
   assert.match(html, /fd1cd03381451bc610e7424123132cb2f6a12aba/);
 });
 
+test("full-run case study exposes evidence, limits, and route-specific metadata", async () => {
+  const response = await render("/case-studies/development-hydration-warning/");
+  const html = await response.text();
+  const jsonLd = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
+  assert.ok(jsonLd);
+  const article = JSON.parse(jsonLd[1]);
+  assert.equal(article["@type"], "TechArticle");
+  assert.equal(article.headline, "Factory run case study — Fixing a hydration warning");
+  assert.equal(article.mainEntityOfPage, "https://factory.olegkoval.com/case-studies/development-hydration-warning/");
+  assert.match(html, /<meta property="og:title" content="Factory run case study — Fixing a hydration warning"/);
+  assert.match(html, /<meta name="twitter:title" content="Factory run case study — Fixing a hydration warning"/);
+  assert.doesNotMatch(html, /<meta (?:property="og:image"|name="twitter:image")/);
+  assert.match(html, /AC-1 \/ exact baseline/);
+  assert.match(html, /AC-2 \/ fixed site/);
+  assert.match(html, /exact internal rendering branch also remains unidentified/);
+  assert.match(html, /one request failed in each recorded live session/);
+  assert.match(html, /GATE: PASS {2}run=hydration-warning-on-case-study-20260923 terminal=delivered matrix=clean/);
+  assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/pull\/15"/);
+});
+
 test("AC-2 CI runs read-only browser validation without deployment credentials", async () => {
   const workflow = await readFile(new URL("../../.github/workflows/validate.yml", import.meta.url), "utf8");
   assert.match(workflow, /npm (?:--prefix site run|run) test:hydration\b/, "CI must run the case-study browser regression");
@@ -188,11 +209,11 @@ test("run-map downloads are published as non-empty PDF files", async () => {
 test("install page states verified counts and invocation limits", async () => {
   const response = await render("/install/");
   const html = await response.text();
-  assert.match(html, /The eight-route search specification passed locally/);
+  assert.match(html, /The nine-route search specification passed locally/);
   assert.doesNotMatch(html, /seven-route search specification/);
   assert.match(html, /A fresh Codex session discovered/);
   assert.match(html, /A fresh Claude Code session used/);
-  assert.match(html, /Global installation and a complete run remain release gates/);
+  assert.match(html, /One complete run on the Factory codebase is documented/);
   assert.match(html, /docs\/install-verification\.md/);
 });
 
@@ -203,8 +224,12 @@ test("wide proof receipts and comparison tables are keyboard-accessible", async 
     render("/case-studies/terminal-state-mismatch/").then((response) => response.text()),
   ]);
   assert.match(home, /class="table-wrap" role="region" aria-label="Factory comparison table" tabindex="0"/);
+  assert.match(home, /href="\/case-studies\/development-hydration-warning\/"/);
   assert.match(proof, /role="region" aria-label="Factory gate output" tabindex="0"/);
   assert.match(caseStudy, /role="region" aria-label="Baseline false-pass receipt" tabindex="0"/);
+  const fullRun = await render("/case-studies/development-hydration-warning/").then((response) => response.text());
+  assert.match(fullRun, /role="region" aria-label="Baseline desktop and mobile results" tabindex="0"/);
+  assert.match(fullRun, /role="region" aria-label="Fixed-site desktop and mobile results" tabindex="0"/);
 });
 
 test("unknown routes return the custom 404", async () => {

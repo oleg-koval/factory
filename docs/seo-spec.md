@@ -1,17 +1,15 @@
 # Factory search and discovery specification
 
-Evidence status: eight canonical routes, metadata, structured data, robots, and sitemap are
-deployed and have passed local rendering and live-browser checks as of 2026-09-23.
-Google Search Console sitemap acceptance, indexation, ranking, and search traffic are not yet
-verified. Browser results and limits are recorded in [browser-acceptance.md](browser-acceptance.md).
+The route contract currently declares nine canonical pages. `seo-routes.json` is the source for
+their titles, descriptions, structured-data types, intent, and evidence links. The live verifier
+checks publication; neither local nor live route checks prove Google acceptance, indexation,
+ranking, or search traffic. Browser results and limits are recorded in
+[browser-acceptance.md](browser-acceptance.md).
 
-Alternate-host indexing gate: on 2026-09-23, live GET responses from the separate, publicly
-accessible Sites deployment at `factory.olkokoval.chatgpt.site` returned 200 without
-`X-Robots-Tag`. Sites reported its latest saved version as 14, sourced from commit `c49fc65`,
-which predates the host-aware fix in `site/proxy.ts`. The fix passes the built-Worker test for
-all eight routes on both hosts and a Cloudflare deployment dry run, but has not been published
-to Sites or verified on that live URL. Keep this gate open until the alternate host carries
-`noindex` and the canonical domain remains indexable.
+Alternate-host history: the separately hosted Sites mirror was refreshed on 2026-09-24 and its
+then-current routes passed the `noindex` check. That is a different deployment target from the
+Cloudflare canonical site. Re-run `node scripts/verify-live-seo.mjs --alternate` after changing
+the canonical route list; do not infer mirror freshness or `noindex` from a Cloudflare deployment.
 
 The machine-readable route source is [`seo-routes.json`](seo-routes.json). Run:
 
@@ -28,7 +26,8 @@ node scripts/verify-live-seo.mjs --alternate
 
 This verifies published HTTP status, title, description, canonical URL, one H1, declared
 structured-data types, robots, and the exact sitemap URL set. The second command also requires
-`X-Robots-Tag: noindex` on all eight routes of the public Sites mirror. Neither proves indexing.
+`X-Robots-Tag: noindex` on the mirror's declared routes; a Cloudflare deploy does not update that
+separate host. Neither command proves indexing.
 
 ## Search promise
 

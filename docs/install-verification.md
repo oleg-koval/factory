@@ -3,8 +3,9 @@
 Evidence status: verified from the public `oleg-koval/factory` repository on 2026-09-22 against
 commit `54d2cc0f114c6db3fe5a3e8e1fd00357b4a5ee84`. This proves public-source discovery and local
 installation into a clean repository with the `skills` CLI. Separate fresh Codex and Claude Code
-consult invocations were verified on 2026-09-23. These checks do not prove a second-machine
-install, a global install target, or a complete Factory run.
+consult invocations were verified on 2026-09-23. A full Phase 0–6 run was later completed on the
+Factory codebase; it is documented in [the hydration-warning case study](../proof/case-studies/hydration-warning/README.md).
+These checks do not prove a second-machine install or a full run from a clean global install.
 
 ## Command
 
@@ -63,4 +64,5 @@ installation or a full delivery run.
 
 - A clean install on a second machine.
 - The global `-g` target used by the recommended end-user commands.
-- A complete cross-provider Factory run reaching an honest terminal state.
+- A full delivery run starting from an independently installed copy on a clean target.
+- A single run repeated in both Claude Code and Codex.

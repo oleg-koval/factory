@@ -82,6 +82,9 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
   delivery claim blocked and the corrected state passing.
 - [`proof/case-studies/terminal-state-mismatch/`](proof/case-studies/terminal-state-mismatch/)
   reproduces a real gate bypass against the pre-fix commit and preserves its before/after output.
+- [`proof/case-studies/hydration-warning/`](proof/case-studies/hydration-warning/) summarizes a
+  full Phase 0–6 Factory run on the site, with public browser tests, merged PR, deployment, and
+  explicit evidence limits.
 - [`proof/manifest.json`](proof/manifest.json) is the machine-readable claim-to-artifact map used
   by `python3 scripts/verify-proof.py`.
 - [`docs/demo-script.md`](docs/demo-script.md) and [`scripts/demo.sh`](scripts/demo.sh) turn the
@@ -112,8 +115,9 @@ zsh tests/check.sh
 ## Evidence status
 
 The structural suite passes on the current working tree, public-source installation was verified
-on 2026-09-22, and project-local fresh Codex and Claude Code `consult` invocations were verified
-on 2026-09-23. `factory.olegkoval.com` is live. Global installation, adoption, performance
-outcomes, and a complete cross-provider run are not claimed.
+on 2026-09-22, project-local fresh Codex and Claude Code `consult` invocations were verified on
+2026-09-23, and one full Factory run on this codebase is documented. `factory.olegkoval.com` is
+live. Global installation, independent adoption, performance outcomes, and a complete
+cross-provider run are not claimed.
 
 Built by [Oleg Koval](https://olegkoval.com/).

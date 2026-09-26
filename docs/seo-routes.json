@@ -66,6 +66,14 @@
       "intent": "AI coding agent delivery gate failure case study",
       "schemas": ["TechArticle"],
       "evidence": ["proof/case-studies/terminal-state-mismatch/README.md", "proof/case-studies/terminal-state-mismatch/before.txt", "proof/case-studies/terminal-state-mismatch/after.txt", "proof/case-studies/terminal-state-mismatch/regression-test.patch"]
+    },
+    {
+      "path": "/case-studies/development-hydration-warning/",
+      "title": "Factory run case study — Fixing a hydration warning",
+      "description": "A full Factory run reproduced a development hydration warning, fixed it, and proved the page clean at desktop and mobile widths in development and production.",
+      "intent": "full AI coding agent delivery workflow case study",
+      "schemas": ["TechArticle"],
+      "evidence": ["proof/case-studies/hydration-warning/README.md", "site/tests/hydration.baseline.browser.test.mjs", "site/tests/hydration.browser.test.mjs", ".github/workflows/validate.yml", "docs/launch-proof.md"]
     }
   ]
 }

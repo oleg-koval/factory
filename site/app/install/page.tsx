@@ -29,7 +29,7 @@ export default function InstallPage() {
           <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. The canonical repository is public and the source has passed a clean installation check.</p>
         </header>
 
-        <aside className="release-banner"><strong>Public source / verified</strong><p>A disposable repository installed from <code>oleg-koval/factory</code> on 2026-09-22. Fresh Codex and Claude Code sessions invoked project-local public copies in non-writing <code>consult</code> mode on 2026-09-23. Global installation and a complete run remain unproven. <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the verification record ↗</a></p></aside>
+        <aside className="release-banner"><strong>Public source / verified</strong><p>A disposable repository installed from <code>oleg-koval/factory</code> on 2026-09-22. Fresh Codex and Claude Code sessions invoked project-local public copies in non-writing <code>consult</code> mode on 2026-09-23. One complete run on the Factory codebase is documented; a full run from a clean global install remains unverified. <a href="https://factory.olegkoval.com/case-studies/development-hydration-warning/">Inspect the full run ↗</a> · <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the install verification record ↗</a></p></aside>
 
         <section className="install-grid">
           <article>
@@ -54,10 +54,10 @@ export default function InstallPage() {
             <li><span>✓</span>The CLI discovered exactly one root skill named <code>factory</code>.</li>
             <li><span>✓</span>Claude Code and Codex resolved to the same <code>SKILL.md</code>.</li>
             <li><span>✓</span>The installed proof suite reported 3 claims, 13 artifacts, and 3 executable cases.</li>
-            <li><span>✓</span>The eight-route search specification passed locally.</li>
+            <li><span>✓</span>The nine-route search specification passed locally.</li>
             <li><span>✓</span>A fresh Codex session discovered <code>$factory</code> and used <code>consult</code> without writing files.</li>
             <li><span>✓</span>A fresh Claude Code session used <code>/factory consult</code> from the public project-local install.</li>
-            <li><span>—</span>Global installation and a complete run remain release gates.</li>
+            <li><span>—</span>Global installation on a clean target remains unverified.</li>
           </ul>
         </section>
 

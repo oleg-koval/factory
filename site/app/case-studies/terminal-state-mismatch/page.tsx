@@ -73,6 +73,7 @@ export default function TerminalStateMismatchPage() {
           <p>This case proves that one concrete gate bypass existed, was reproduced against the old code, and is rejected by the fixed code. It was reconstructed from repository history after the change. It is <strong>not</strong> a complete Phase 0–6 Factory-orchestrated run, evidence of production adoption, or a measured improvement in delivery speed or defect rate.</p>
           <aside className="article-pullquote">The quality system needs receipts for its own mistakes, too.</aside>
           <p>That boundary is part of the argument. Factory should not claim more than its evidence supports—even when the claim is about Factory.</p>
+          <p>For a separate end-to-end example, inspect the <a href="/case-studies/development-hydration-warning/">full Factory run that reproduced and fixed a development-only hydration warning</a>.</p>
         </article>
 
         <section className="article-next"><p className="eyebrow">Continue</p><h2>Try the gate yourself.</h2><a className="button button-primary" href="/proof/">Open the runnable proof <span aria-hidden="true">↗</span></a></section>
