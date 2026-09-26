@@ -66,8 +66,9 @@ Primary action: Run the specimen locally
 
 Secondary action: Compare the two states
 
-Evidence note: This is a runnable redacted reconstruction, not the original private run or a
-complete Factory delivery.
+Evidence note: This fixture is a runnable redacted reconstruction, not the original private run or
+a complete Factory delivery. A separate complete run is documented at
+`/case-studies/development-hydration-warning/`.
 
 ## Failure stories
 

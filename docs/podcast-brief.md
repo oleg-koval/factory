@@ -108,8 +108,9 @@ statuses.
 
 I have a three-minute demo script built around those public artifacts. The idea for your
 audience: a software factory needs a quality system that can refuse shipment and say exactly
-why. Factory's proof page is explicit about its limits; this is a gate demonstration, not a claim
-of production adoption or a complete multi-phase run.
+why. The three-minute demo is a gate demonstration, not a claim of production adoption. A separate
+full Phase 0–6 run on the Factory codebase is documented in the public
+[hydration-warning case study](https://factory.olegkoval.com/case-studies/development-hydration-warning/).
 
 Public proof: https://factory.olegkoval.com/proof/
 
