@@ -1866,8 +1866,9 @@ button:focus-visible,
 .article-proof pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  font-size: 0.9rem;
-  line-height: 1.65;
+  color: #f4f3ee;
+  font-size: clamp(1rem, 0.94rem + 0.2vw, 1.1rem);
+  line-height: 1.6;
 }
 
 .article-proof pre::selection,
