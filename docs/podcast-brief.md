@@ -1,7 +1,7 @@
 # Factory podcast brief
 
 Evidence status: internal positioning and outreach draft based on public sources checked on
-2026-09-23 and the committed Factory proof artifacts. Nothing here has been sent or published.
+2026-09-26 and the committed Factory proof artifacts. Nothing here has been sent or published.
 
 ## The strategic correction
 
@@ -25,16 +25,18 @@ engineer can inspect.
 
 ## Why this fits Greg now
 
-Greg's current Skills Suite describes agent roles with failure guardrails and review loops. His
-recent channel has covered skills, agent workforces, Claude Code, local AI, and software
-factories. Factory meets that conversation at its next unresolved question: what makes an
-agent's completion claim trustworthy?
+On 2026-09-26, Apple Podcasts listed Greg's latest episode as **Muse AI Connectors: The Next App
+Store Moment?** It explores how agent connectors are built, discovered, distributed, and approved.
+That is an adjacent opportunity, not the same product category. The bridge for Factory is the
+trust boundary before distribution: when an agent builds a product or connector, what evidence
+lets anyone say it is actually ready to ship?
 
 Sources:
 
 - [Software Factory episode](https://podcasts.apple.com/us/podcast/building-a-software-factory-that-actually-works/id1593424985?i=1000789595921), published 2026-09-14.
+- [The Startup Ideas Podcast](https://podcasts.apple.com/us/podcast/the-startup-ideas-podcast/id1593424985), latest episode checked 2026-09-26.
 - [Greg Isenberg Skills Suite](https://www.gregisenberg.com/skills-suite), checked 2026-09-21.
-- [Greg Isenberg YouTube channel](https://www.youtube.com/@GregIsenberg), checked 2026-09-21.
+- [Greg Isenberg official site](https://www.gregisenberg.com/), including linked X, LinkedIn, and podcast profiles, checked 2026-09-26.
 
 ## The non-overlapping wedge
 
@@ -51,10 +53,10 @@ quality-control layer it creates demand for.
 
 ## Episode idea
 
-Working title: **Your software factory needs the right to say “not delivered.”**
+Working title: **The missing quality gate between agent-built and shipped.**
 
-One-sentence promise: Watch an AI coding workflow reject its own completion claim, expose the
-missing evidence, and pass only after the record and the request agree.
+One-sentence promise: Watch an AI coding workflow reject its own false completion claim, expose
+the exact contradiction, and pass only when its evidence and delivery record agree.
 
 Three useful audience takeaways:
 
@@ -67,7 +69,7 @@ Strongest limitation to state on air: Factory does not prove that the acceptance
 the right product decision. It proves whether the recorded criteria and required evidence were
 satisfied, and it blocks when the decision frontier remains open.
 
-## Three-minute demo
+## Proof demo
 
 Run `bash scripts/demo.sh` and follow [`docs/demo-script.md`](demo-script.md):
 
@@ -81,40 +83,40 @@ Run `bash scripts/demo.sh` and follow [`docs/demo-script.md`](demo-script.md):
 
 ## Outreach draft — do not send yet
 
-Booking-route evidence (checked 2026-09-23): [Greg's official site](https://www.gregisenberg.com/)
+Booking-route evidence (checked 2026-09-26): [Greg's official site](https://www.gregisenberg.com/)
 links his [X profile](https://twitter.com/gregisenberg) and
 [LinkedIn profile](https://www.linkedin.com/in/gisenberg/), but does not publish a guest
-application or a podcast-booking email. Third-party podcast directories list possible contacts;
-none was verified on the official site, so this draft has no selected recipient or channel.
-Oleg must choose and approve those details before outreach.
+application or podcast-booking email. Use one of those official social profiles for a concise
+direct pitch if Oleg chooses to send. Third-party podcast directories list possible contacts, but
+none was verified on Greg's official site; do not use an unverified address.
 
 New official route verified 2026-09-25: Greg's published newsletter says people with a startup
 idea can join his YouTube livestreams and share it on stage. That is a public workshop route, not
-a guaranteed podcast application. Factory's strongest version is a concise live teardown: show
-the gate reject a false delivery, then show the same evidence pass after the record is corrected.
+a guaranteed podcast application. Factory's strongest version is a concise live teardown of a
+false delivery claim and the evidence that makes the gate refuse it.
 Source: [Greg's published livestream invitation](https://www.gregisenberg.com/blog/faceless-youtube-formula).
+The next livestream date or submission procedure is not verified.
 
-Subject: Your software factory episode missed one gate
+Subject: The missing quality gate between agent-built and shipped
 
-Greg — your September 14 software factory episode with Ras Mic mapped the operating loop:
-isolate, build, prove, ship. I built Factory, an MIT-licensed agent skill for Claude Code and
-Codex with executable delivery gates. Its public regression caught a false pass in Factory's
-own gate.
+Greg — your September 14 conversation with Ras Mic laid out the software-factory loop:
+isolate, build, prove, ship. Your latest episode looks at agents becoming products through
+connectors, discovery, and approval. The problem I work on is the trust boundary before “ship.”
+Factory is an MIT-licensed skill for Claude Code and Codex that checks whether a delivery claim
+matches its acceptance criteria and evidence—and returns a specific blocked result when it does
+not.
 
-The old gate could accept `delivered` even when the run's recorded state was `blocked`. The same
-fixture now exits 1, names the contradiction, and links to the before-and-after source. Another
-fixture shows the gate refusing five unanswered questions and two invalid acceptance-criterion
-statuses.
+The sharpest demo is Factory catching its own false finish: the old gate accepted `delivered` even
+when the run recorded `blocked`. The regression now rejects that mismatch and links to the
+before-and-after source. Separately, a complete Phase 0–6 run on Factory's own site is public: it
+reproduced a hydration warning at desktop and mobile widths, fixed it, and verified the deployed
+page clean. That is one documented run, not a claim of general reliability or customer adoption.
 
-I have a three-minute demo script built around those public artifacts. The idea for your
-audience: a software factory needs a quality system that can refuse shipment and say exactly
-why. The three-minute demo is a gate demonstration, not a claim of production adoption. A separate
-full Phase 0–6 run on the Factory codebase is documented in the public
-[hydration-warning case study](https://factory.olegkoval.com/case-studies/development-hydration-warning/).
+I have a concise live demo script for the gate. Would a teardown of one “agent says done / evidence
+says not yet” run make a useful follow-up for builders using agents to ship products?
 
-Public proof: https://factory.olegkoval.com/proof/
-
-Would that make a useful follow-up for your audience?
+Public proof: [Factory gate](https://factory.olegkoval.com/proof/) · [full-run case
+study](https://factory.olegkoval.com/case-studies/development-hydration-warning/)
 
 — Oleg
 
@@ -124,11 +126,11 @@ Would that make a useful follow-up for your audience?
 - [x] `factory.olegkoval.com/proof/` renders the same fixtures and before/after receipts.
 - [x] The public source resolves to one canonical skill for Claude Code and Codex.
 - [x] The non-interactive CLI demo exited 0 in 0.17 seconds on 2026-09-23; this does not time the narration.
-- [x] The complete public demo takes less than three minutes when timed: `bash scripts/demo.sh` completed in 0.18 seconds on 2026-09-24; this times the executable proof, not the narration.
+- [x] The executable proof completed in 0.18 seconds on 2026-09-24; the spoken walkthrough has not been timed, so the pitch does not promise a three-minute segment.
 - [ ] Oleg reviews the unsent wording in his own voice.
-- [ ] Select a recipient and channel using a verified route; no official guest form or booking
-  email was found on Greg's site on 2026-09-23. The official YouTube livestream workshop route is
-  now verified, but a specific livestream date or submission mechanism is not.
+- [ ] Oleg selects either Greg's official X/LinkedIn profile for the podcast pitch or the separate
+  public livestream workshop route; no official guest form or booking email is listed as of
+  2026-09-26.
 - [ ] Oleg explicitly approves the recipient, channel, and final message before anything is sent.
 
 No outreach should be sent merely because these checks become green.
