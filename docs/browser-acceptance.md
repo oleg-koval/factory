@@ -40,6 +40,11 @@ The canonical pages, robots file, and sitemap are live. Google Search Console wa
 in the available browser, so sitemap acceptance and indexation remain unverified. A general
 web-search query did not provide reliable indexation evidence.
 
+On 2026-09-26, the live IndexNow public key matched the repository and the SEO verifier passed all
+nine canonical routes. The one-time notification returned HTTP 202 (accepted; key verification
+pending). This confirms receipt by the IndexNow service only—not key verification completion,
+crawling, indexing, or ranking. Google Search Console acceptance remains unverified.
+
 After site commit `a5045e0011fd6410b1cd6625536746687036e91d`, the live SEO verifier
 reported `LIVE SEO: PASS routes=8` on both the custom domain and Sites mirror. The verifier
 checks the route-spec metadata, canonical links, declared JSON-LD types, robots, and exact
