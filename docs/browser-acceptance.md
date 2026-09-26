@@ -4,6 +4,25 @@ Evidence status: live-browser checks against the public Cloudflare custom domain
 commit `619dd2859e8276d70b2e0d5d9adc0ba57d962e6c`. This is a browser and accessibility
 smoke check, not proof of search indexing or a complete Factory delivery run.
 
+## Latest canonical-site check — 2026-09-26
+
+The current Cloudflare release serves repository `main` at `6b29e48`. The live SEO verifier
+passed all nine canonical routes, including title, description, canonical URL, structured data,
+robots, and the exact sitemap URL set. A live browser check of the terminal-state case study
+reported proof receipts at 17.6px on a 1440px desktop and 16px on a 390px mobile viewport, with
+off-white text on the existing near-black surface and no horizontal page overflow. This is a
+focused visual check of the receipt readability fix, not a new full-site accessibility audit.
+
+The live IndexNow key and nine-URL sitemap passed the dry run. The post-deploy submission returned
+HTTP 200 (`received`). This confirms notification receipt only; it does not prove crawling,
+indexing, or ranking. Search Console access remains unavailable in this session, so Google
+sitemap acceptance and URL index status are unknown.
+
+The canonical Cloudflare site passes, but the separate, noncanonical Sites mirror is stale for the
+ninth route: `node scripts/verify-live-seo.mjs --alternate` reports HTTP 404 and a canonical
+mismatch for `/case-studies/development-hydration-warning/`. This does not affect the canonical
+custom domain; the mirror needs its own refresh before the alternate check can pass again.
+
 ## Reproduced and fixed
 
 At 390 CSS pixels, the previous public build had horizontal page overflow: the home page
@@ -40,10 +59,11 @@ The canonical pages, robots file, and sitemap are live. Google Search Console wa
 in the available browser, so sitemap acceptance and indexation remain unverified. A general
 web-search query did not provide reliable indexation evidence.
 
-On 2026-09-26, the live IndexNow public key matched the repository and the SEO verifier passed all
-nine canonical routes. The one-time notification returned HTTP 202 (accepted; key verification
-pending). This confirms receipt by the IndexNow service only—not key verification completion,
-crawling, indexing, or ranking. Google Search Console acceptance remains unverified.
+On 2026-09-26, the initial live IndexNow submission returned HTTP 202 while key verification was
+pending; after the public key was confirmed, the follow-up returned HTTP 200 (`received`). After
+the latest manual Cloudflare release, the nine-URL sitemap dry run passed and a fresh submission
+again returned HTTP 200 (`received`). These responses confirm receipt only—not crawling,
+indexing, or ranking. Google Search Console acceptance remains unverified.
 
 After site commit `a5045e0011fd6410b1cd6625536746687036e91d`, the live SEO verifier
 reported `LIVE SEO: PASS routes=8` on both the custom domain and Sites mirror. The verifier
