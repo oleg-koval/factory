@@ -40,8 +40,10 @@ and Cloudflare deployment are verified; the remaining promotion gates stay open 
 - [x] Publish the host-aware `noindex` fix to the public Sites mirror and pass the alternate
   host check on all eight routes; Sites version 15 deployed 2026-09-24.
 - [ ] Submit the sitemap to Google Search Console after deployment.
-- [x] Submit the nine canonical sitemap routes to IndexNow on 2026-09-26; response was HTTP 202,
-  accepted with key verification pending. This is not evidence of crawling or indexing.
+- [x] Submit the nine canonical sitemap routes to IndexNow on 2026-09-26. The first response was
+  HTTP 202 with key verification pending. After confirming the root key file returned HTTP 200
+  with content matching the published key, a follow-up submission returned HTTP 200 (`received`)
+  at 12:27:48 UTC. Both responses confirm receipt only, not crawling, indexing, or ranking.
 
 ## Search architecture
 
