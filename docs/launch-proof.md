@@ -59,8 +59,8 @@ gates stay open below.
   evidence that those two pages are unindexed.
 - [x] Notify IndexNow of the nine canonical sitemap routes on 2026-09-26. The initial response was
   HTTP 202 with key verification pending. After the public key was verified, later submissions
-  returned HTTP 200 (`received`), including one after the latest manual deployment. These responses
-  confirm receipt only—not crawling, indexing, or ranking.
+  returned HTTP 200 (`received`), including one after the 2026-09-28 manual deployment. These
+  responses confirm receipt only—not crawling, indexing, or ranking.
 
 ## Search architecture
 
@@ -129,8 +129,8 @@ approval. Stage the draft and evidence bundle first.
 Factory is deployed as a Cloudflare Worker with Static Assets and a Worker Custom Domain. The
 Worker is the origin; Cloudflare created the DNS record and certificate for
 `factory.olegkoval.com` during the initial deployment on 2026-09-22. The latest manual release on
-2026-09-26 serves repository `main` at `6b29e48`, including the clarified Claude Code/Codex
-homepage metadata and more readable proof receipts. The live SEO verifier passes all nine
+2026-09-28 serves repository `main` at `7dfd120`, including the verified project-local install
+command on the homepage, install guide, and `llms.txt`. The live SEO verifier passes all nine
 canonical routes. The focused desktop/mobile receipt check and latest IndexNow receipt are recorded
 in [browser acceptance](browser-acceptance.md).
 

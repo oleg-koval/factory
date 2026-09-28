@@ -159,8 +159,9 @@ test("install and changelog publish structured data matching visible content", a
   assert.match(install, /npx --yes skills add oleg-koval\/factory -a claude-code -a codex -y/);
   assert.doesNotMatch(install, /skills add oleg-koval\/factory[^<]*-g/);
   assert.equal(changelogData["@type"], "CollectionPage");
-  assert.equal(changelogData.mainEntity.itemListElement.length, 7);
-  assert.match(changelog, /Eight-route discovery contract/);
+  assert.equal(changelogData.mainEntity.itemListElement.length, 8);
+  assert.match(changelog, /Nine-route discovery contract/);
+  assert.match(changelog, /Verified project-local installation/);
 });
 
 test("AC-2 case-study initial HTML retains Analytics and TechArticle matching visible content", async () => {

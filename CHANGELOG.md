@@ -7,6 +7,8 @@ that has not been packaged as a tagged version.
 
 ### Added
 
+- The public homepage, install guide, and `llms.txt` recommend the verified project-local install
+  command for Claude Code and Codex; the global `-g` path is explicitly marked unverified.
 - Deferred findings are checked against the incident sample: Phase 1 names the failing entity
   and the field that decides its code path, and Phase 4 refuses to defer a case the sample hits.
 - Interactive mode: a run in a live session continues past a passing phase gate instead of

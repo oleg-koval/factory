@@ -4,6 +4,26 @@ Evidence status: live-browser checks against the public Cloudflare custom domain
 commit `619dd2859e8276d70b2e0d5d9adc0ba57d962e6c`. This is a browser and accessibility
 smoke check, not proof of search indexing or a complete Factory delivery run.
 
+## Latest canonical-site check — 2026-09-28
+
+The latest manual Cloudflare deployment serves repository `main` at `7dfd120`. The local site
+suite passed 27/27 rendered-HTML tests; Factory's structural, proof, and nine-route SEO-spec
+checks passed. Both GitHub validation workflows passed against the full commit
+`7dfd120e7a1c3103ae00153cf1f18aac6ada2d59`.
+
+After deployment, the live SEO verifier passed all nine canonical routes on both the custom domain
+and the separate Sites mirror. Direct HTTP checks of `/`, `/install/`, and `/llms.txt` each returned
+200 and contained the verified project-local install command
+`npx --yes skills add oleg-koval/factory -a claude-code -a codex -y`; those public instructions no
+longer recommend the unverified global `-g` install.
+
+The IndexNow dry run confirmed the public key and exact nine-URL sitemap. The post-deploy request
+returned HTTP 200 (`received`). This is notification receipt only, not evidence of crawling,
+indexing, or ranking. No new Search Console query or browser visual/accessibility audit was run in
+this release; the Search Console status remains the separate 2026-09-28 inspection recorded in
+the [launch proof](launch-proof.md), and the focused browser observations below remain from
+2026-09-26.
+
 ## Latest canonical-site check — 2026-09-26
 
 The current Cloudflare release serves repository `main` at `6b29e48`. The live SEO verifier
