@@ -3,7 +3,27 @@
 Evidence status: focused browser and accessibility observations are recorded by date below. They
 are not proof of search ranking or a complete Factory delivery run.
 
-## Latest manual Worker release — 2026-09-28
+## Latest manual Worker release — 2026-09-28 / sitemap freshness
+
+Repository commit `6673078e1e8385965c0a66ee5f8fb873731d0d40` updates the nine sitemap
+`lastmod` values to the latest substantive edit for each route. Dates now range from
+`2026-09-23` (`/how-it-works/` and the essay) through `2026-09-28` (home, proof, install, and
+changelog); author profile is `2026-09-27`, and both case studies are `2026-09-26`. The typed route
+map requires one date per canonical route.
+
+Local build and rendered-page tests passed 29/29, lint passed, the SEO spec passed for all nine
+routes, and Wrangler's dry run succeeded. Both GitHub validation workflows passed on the commit,
+including the production-Worker desktop/mobile regression. The manual Cloudflare deployment
+reported Worker version `a910ba69-869c-4cc9-baf0-d54d383e2f21`.
+
+After deployment, `node scripts/verify-live-seo.mjs` passed all nine routes. A direct request to
+`/sitemap.xml` returned HTTP 200 with exactly nine canonical URLs and the dates above. The
+IndexNow dry run verified the public key and sitemap; the one post-deploy notification returned
+`received` for all nine URLs. This confirms receipt only, not crawling, indexing, or ranking. The
+already-submitted Search Console sitemap was not resubmitted, and no new Search Console inspection
+or visual/accessibility audit was performed for this metadata-only change.
+
+## Previous manual Worker release — 2026-09-28 / first-run guide
 
 The live Cloudflare Worker serves repository commit
 `4d5924d5424aeab609c71a5eba6cad9785855b5b`; Wrangler reported Worker version
