@@ -31,6 +31,6 @@ Speak once: cause, confidence, treatment, blast radius, under 8 lines.
 2. Run `python3 <skill-dir>/scripts/gate.py .factory/<slug> --phase 1` and quote its output.
    `GATE: BLOCKED` means fix the named file or key and run it again; you may not advance past a
    blocked gate.
-3. Stop. Say in one line which phase comes next and that `scripts/run.sh <slug>` resumes it. A
-   fresh session per phase is the design; compaction is the fallback when a phase is resumed
-   inside an old session.
+3. Close per `state.mode`. `driven`: stop; say in one line which phase comes next and that
+   `scripts/run.sh <slug>` resumes it. `interactive`: say the same line, then read the next phase
+   file and continue; do not wait for the user.

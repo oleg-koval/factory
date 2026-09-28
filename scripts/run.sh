@@ -194,18 +194,18 @@ while true; do
 
   if [[ "$HUMAN" -eq 1 ]]; then
     if [[ "$RUNNER" == "codex" ]]; then
-      echo "NEEDS-YOU: phase ${PHASE} needs you. Run Codex in this repository and say: Use \$factory to resume ${SLUG}. Quit when the phase says it is closed, then run this script again."
+      echo "NEEDS-YOU: phase ${PHASE} needs you. Run Codex in this repository and say: Use \$factory to resume ${SLUG} --driven. Quit when the phase says it is closed, then run this script again."
     else
-      echo "NEEDS-YOU: phase ${PHASE} needs you. Run Claude Code in this repository and say: /factory resume ${SLUG}. Quit when the phase says it is closed, then run this script again."
+      echo "NEEDS-YOU: phase ${PHASE} needs you. Run Claude Code in this repository and say: /factory resume ${SLUG} --driven. Quit when the phase says it is closed, then run this script again."
     fi
     exit 0
   fi
 
   if [[ "$RUNNER" == "codex" ]]; then
-    PROMPT="Use \$factory to resume ${SLUG}. Complete exactly one phase, run its gate, update state, and stop."
+    PROMPT="Use \$factory to resume ${SLUG} --driven. Complete exactly one phase, run its gate, update state, and stop."
     codex exec -C "$PWD" ${EXTRA[@]+"${EXTRA[@]}"} "$PROMPT"
   else
-    PROMPT="/factory resume ${SLUG}. Complete exactly one phase, run its gate, update state, and stop."
+    PROMPT="/factory resume ${SLUG} --driven. Complete exactly one phase, run its gate, update state, and stop."
     claude -p "$PROMPT" ${EXTRA[@]+"${EXTRA[@]}"}
   fi
 

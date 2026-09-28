@@ -25,7 +25,8 @@ You are the physician taking the history. Cheap, mostly reading. Write nothing o
 6. Role `knowledge-lookup` on the touched area (Shopify, @teifi-digital, team gotchas).
    Store what came back, verbatim, under `## Knowledge`.
 7. Write `intake.md` with sections `## Source`, `## Acceptance criteria`, `## Triage`,
-   `## Knowledge`. Write `state.json` with `phase: "0"` and `depth` set.
+   `## Knowledge`. Write `state.json` with `phase: "0"`, `depth`, and `mode` set: `mode` is
+   `"interactive"` unless this invocation was `resume ... --driven`, in which case it is `"driven"`.
 
 The baseline is NOT measured here. It is measured in Phase 0b, inside the tree the run will
 actually use, because a baseline taken in a different tree with different dependencies is not
@@ -39,9 +40,9 @@ Speak once: class, depth, AC count, and the next phase, in under 6 lines.
 2. Run `python3 <skill-dir>/scripts/gate.py .factory/<slug> --phase 0` and quote its output.
    `GATE: BLOCKED` means fix the named file or key and run it again; you may not advance past a
    blocked gate.
-3. Stop. Say in one line which phase comes next and that `scripts/run.sh <slug>` resumes it. A
-   fresh session per phase is the design; compaction is the fallback when a phase is resumed
-   inside an old session.
+3. Close per `state.mode`. `driven`: stop; say in one line which phase comes next and that
+   `scripts/run.sh <slug>` resumes it. `interactive`: say the same line, then read the next phase
+   file and continue; do not wait for the user.
 
 ## consult mode
 

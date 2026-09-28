@@ -7,6 +7,9 @@ that has not been packaged as a tagged version.
 
 ### Added
 
+- Interactive mode: a run in a live session continues past a passing phase gate instead of
+  asking for `continue`; `resume --driven` and `run.sh` keep the one-phase-per-session behaviour.
+  Asks are limited to material decisions and real blockers.
 - One provider-neutral skill package with native Claude Code and Codex runner selection.
 - A current `skills` CLI installation check for both hosts.
 - A CI workflow that runs the structural and behavioral gate suite.
