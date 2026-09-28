@@ -1,7 +1,8 @@
 # Factory launch proof plan
 
-Evidence status: launch checkpoint updated 2026-09-26. The public repository, public-source install,
-and canonical Cloudflare deployment are verified; search indexation and the remaining promotion
+Evidence status: launch checkpoint updated 2026-09-28. The public repository, public-source install,
+and canonical Cloudflare deployment are verified. Search Console reports the sitemap healthy and
+the two inspected routes indexed; broader indexing, search visibility, and the remaining promotion
 gates stay open below.
 
 ## Local proof already staged
@@ -43,7 +44,17 @@ gates stay open below.
 - [ ] Refresh the separate Sites mirror for the ninth canonical route. The latest alternate-host
   verifier reports HTTP 404 and a canonical mismatch for `/case-studies/development-hydration-warning/`;
   the canonical Cloudflare site passes all nine routes.
-- [ ] Submit the sitemap to Google Search Console after deployment.
+- [x] Confirm the sitemap is already submitted in Search Console: last submitted
+  `2026-09-23T13:23:05.979Z`, last read `2026-09-28T04:52:31.716Z`, pending
+  `false`, 9 submitted URLs, 0 errors, and 0 warnings. No new submission was made.
+- [x] Inspect the homepage and hydration-warning case study in the
+  `sc-domain:factory.olegkoval.com` property on 2026-09-28: both returned
+  `PASS`, `Submitted and indexed`, and `SUCCESSFUL` page fetches. Both were
+  crawled as mobile; homepage last crawl was `2026-09-24T08:58:33Z` and case
+  study last crawl was `2026-09-27T00:59:01Z`.
+  Note: the sitemap API returned 0 indexed URLs even though both individual URL inspections
+  returned `Submitted and indexed`. Keep these as separate signals; the sitemap count is not
+  evidence that those two pages are unindexed.
 - [x] Notify IndexNow of the nine canonical sitemap routes on 2026-09-26. The initial response was
   HTTP 202 with key verification pending. After the public key was verified, later submissions
   returned HTTP 200 (`received`), including one after the latest manual deployment. These responses
