@@ -1,10 +1,9 @@
 ---
 name: factory
 description: >
-  Turn a Linear ticket, Sentry event, or written request into an isolated, inspectable change with
-  testable acceptance criteria, evidence receipts, reviews, and executable gates that reject
-  unsupported `delivered` claims. Use for Factory consult/resume or full proof-carrying delivery
-  runs in Claude Code and Codex.
+  Turn Linear tickets, Sentry issues, and written requests into isolated changes with testable
+  criteria, receipts, reviews, and executable delivery gates. Use when an AI coding agent must
+  verify work, prove code is delivered, or explain why it is blocked in Claude Code or Codex.
 ---
 
 # Factory
