@@ -35,6 +35,8 @@ that has not been packaged as a tagged version.
 
 ### Fixed
 
+- The Codex session runner now names its exact installed `SKILL.md` path and ignores same-name
+  skill collisions instead of invoking an ambiguous `$factory` alias.
 - The session runner now rejects traversal or shell syntax in slugs, rejects non-integer session
   caps, and passes state paths and keys to Python without source interpolation.
 - The terminal gate now rejects a requested terminal state that disagrees with a terminal already

@@ -232,6 +232,7 @@ mkdir -p "$gaterun_dir/.factory/gateslug" "$gaterun_dir/fakebin"
 cat > "$gaterun_dir/fakebin/codex" <<'FAKECODEX'
 #!/usr/bin/env bash
 touch "$(dirname "$0")/../codex-was-called"
+printf '%s\n' "$@" > "$(dirname "$0")/../codex-args"
 exit 0
 FAKECODEX
 chmod +x "$gaterun_dir/fakebin/codex"
@@ -262,6 +263,8 @@ json.dump({'slug': 'gateslug', 'source': 'linear', 'input': 'X-1', 'class': 'bug
 gate_out2=$(cd "$gaterun_dir" && PATH="$gaterun_dir/fakebin:$PATH" bash $root/scripts/run.sh gateslug --runner codex 2>&1)
 print -r -- "$gate_out2" | grep -q "gate blocked" && f "run.sh gated a fresh run with no closed phase"
 [[ -f "$gaterun_dir/codex-was-called" ]] || f "run.sh did not invoke codex when there is no closed phase to gate"
+grep -F "$root/SKILL.md" "$gaterun_dir/codex-args" >/dev/null || f "run.sh did not direct Codex to the exact installed Factory skill"
+grep -F "ignore other skills named factory" "$gaterun_dir/codex-args" >/dev/null || f "run.sh did not warn Codex about same-name skills"
 rm -rf "$gaterun_dir"
 
 # The provider-neutral runner must execute Claude with its native skill syntax too.

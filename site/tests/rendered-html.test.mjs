@@ -175,6 +175,8 @@ test("install and changelog publish structured data matching visible content", a
   const changelogData = JSON.parse(changelog.match(jsonLd)?.[1] ?? "null");
   assert.deepEqual(installData["@graph"].map((entry) => entry["@type"]), ["WebPage", "SoftwareSourceCode"]);
   assert.match(install, /npx --yes skills add oleg-koval\/factory -a claude-code -a codex -y/);
+  assert.match(install, /\.agents\/skills\/factory\/SKILL\.md/);
+  assert.match(install, /shorter alternative only if Codex has no other skill named/);
   assert.doesNotMatch(install, /skills add oleg-koval\/factory[^<]*-g/);
   assert.equal(changelogData["@type"], "CollectionPage");
   assert.equal(changelogData.mainEntity.itemListElement.length, 8);
@@ -295,7 +297,7 @@ test("install page states verified counts and invocation limits", async () => {
   const response = await render("/install/");
   const html = await response.text();
   assert.match(html, /The nine-route search specification passed locally/);
-  assert.match(html, /If Codex also has a user-wide/);
+  assert.match(html, /In Codex, use <code>\.agents\/skills\/factory\/SKILL\.md<\/code> specifically/);
   assert.doesNotMatch(html, /seven-route search specification/);
   assert.match(html, /same-name user-wide skill/);
   assert.match(html, /path-directed Codex consult used/);
@@ -310,7 +312,7 @@ test("install page gives a truthful, evidence-backed first-run path", async () =
   const html = await response.text();
   assert.match(html, /Bring one bug you actually observed/);
   assert.match(html, /Claude Code: \/factory I observed \[actual behavior\]/);
-  assert.match(html, /Codex: \$factory I observed \[actual behavior\]/);
+  assert.match(html, /Codex: Use \.agents\/skills\/factory\/SKILL\.md specifically\. Then consult: I observed \[actual behavior\]/);
   assert.match(html, /Use \.agents\/skills\/factory\/SKILL\.md specifically/);
   assert.match(html, /records intake under <code>\.factory\/<\/code>/);
   assert.match(html, /creates an external worktree and measures its baseline before code edits/);

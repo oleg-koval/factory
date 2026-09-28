@@ -194,7 +194,7 @@ while true; do
 
   if [[ "$HUMAN" -eq 1 ]]; then
     if [[ "$RUNNER" == "codex" ]]; then
-      echo "NEEDS-YOU: phase ${PHASE} needs you. Run Codex in this repository and say: Use \$factory to resume ${SLUG} --driven. Quit when the phase says it is closed, then run this script again."
+      echo "NEEDS-YOU: phase ${PHASE} needs you. Run Codex in this repository and say: Read and follow only ${SKILL_DIR}/SKILL.md; resume ${SLUG} --driven. Report the skill path you loaded. Quit when the phase says it is closed, then run this script again."
     else
       echo "NEEDS-YOU: phase ${PHASE} needs you. Run Claude Code in this repository and say: /factory resume ${SLUG} --driven. Quit when the phase says it is closed, then run this script again."
     fi
@@ -202,7 +202,7 @@ while true; do
   fi
 
   if [[ "$RUNNER" == "codex" ]]; then
-    PROMPT="Use \$factory to resume ${SLUG} --driven. Complete exactly one phase, run its gate, update state, and stop."
+    PROMPT="Read and follow only the Factory skill at ${SKILL_DIR}/SKILL.md; ignore other skills named factory. Resume ${SLUG} --driven. Complete exactly one phase, run its gate, update state, report the skill path you loaded, and stop."
     codex exec -C "$PWD" ${EXTRA[@]+"${EXTRA[@]}"} "$PROMPT"
   else
     PROMPT="/factory resume ${SLUG} --driven. Complete exactly one phase, run its gate, update state, and stop."

@@ -56,6 +56,14 @@ the answer reported that path. This verifies a prompt-based workaround in this f
 not verify the interactive skill picker's duplicate-name UX. When in doubt, ask Codex to report the
 `SKILL.md` path it loaded.
 
+## Codex runner path selection safeguard (2026-09-28)
+
+The runner now directs each Codex session to the exact installed `${SKILL_DIR}/SKILL.md` and tells
+it to ignore other skills named `factory`. The human-resume instruction uses the same exact path.
+The structural test captures the mocked Codex invocation and verifies both the path and collision
+warning. This checks the prompt the runner sends; a future real run must still report its loaded
+path to prove runtime selection.
+
 ## Earlier Codex consult (2026-09-23)
 
 An empty temporary Git repository received the public root skill using Codex's skill-installer

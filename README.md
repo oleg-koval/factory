@@ -62,13 +62,14 @@ Once installed:
 
 ```text
 Claude Code: /factory consult <request>
-Codex:       $factory consult <request>
+Codex:       Use .agents/skills/factory/SKILL.md specifically, then consult <request>.
 ```
 
-If Codex also has a user-wide skill named `factory`, it may select that copy rather than the
-project-local install. Ask Codex to use `.agents/skills/factory/SKILL.md` explicitly and report
-the path it loaded; this prompt-based workaround was verified. The interactive picker's duplicate
-name behavior remains unverified. See the [install verification record](docs/install-verification.md).
+The Codex skill picker may show a user-wide skill with the same name as the project-local one. The
+path-directed prompt avoids relying on ambiguous name selection and was verified to load the
+project-local copy. `$factory` is a shorter alternative only when there is no same-name conflict;
+the interactive picker's duplicate-name behavior remains unverified. See the [install verification
+record](docs/install-verification.md).
 
 The command above installs project-local skills in the current repository. A global `-g`
 installation is also supported by the installer, but has not yet been independently verified

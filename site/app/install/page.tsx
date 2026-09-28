@@ -40,8 +40,8 @@ export default function InstallPage() {
           <article>
             <div className="install-heading"><span>02</span><h2>Invoke in your agent</h2></div>
             <p>After installation: <code>/factory consult &lt;request&gt;</code></p>
-            <p>In Codex, use <code>$factory consult &lt;request&gt;</code>. The consult path reads context and proposes a run without modifying files.</p>
-            <p>If Codex also has a user-wide <code>factory</code> skill, it may choose that copy. Say: “Use <code>.agents/skills/factory/SKILL.md</code> specifically, then consult on my request. Report the path you loaded.” This workaround was tested.</p>
+            <p>In Codex, use <code>.agents/skills/factory/SKILL.md</code> specifically, then say <code>consult &lt;request&gt;</code>. This avoids a same-name user-wide skill being selected instead. The consult path reads context and proposes a run without modifying files.</p>
+            <p><code>$factory consult &lt;request&gt;</code> is a shorter alternative only if Codex has no other skill named <code>factory</code>. Report the skill path loaded when checking the installation.</p>
           </article>
         </section>
 
@@ -69,8 +69,8 @@ export default function InstallPage() {
           <p>Replace the brackets with a real behavior from a codebase you own. Include where you saw it; Factory records that provenance, then tries to reproduce the behavior before proposing a fix.</p>
           <pre><code>{`Claude Code: /factory I observed [actual behavior] after [action] in [feature]. Expected [expected behavior]. Source: [ticket, Sentry event, test, log, or my own observation]. Reproduce it before changing code.
 
-Codex: $factory I observed [actual behavior] after [action] in [feature]. Expected [expected behavior]. Source: [ticket, Sentry event, test, log, or my own observation]. Reproduce it before changing code.`}</code></pre>
-          <p>If Codex might select a same-name user-wide Factory skill, start your prompt with: <code>Use .agents/skills/factory/SKILL.md specifically.</code> Then ask it to report the path it loaded.</p>
+Codex: Use .agents/skills/factory/SKILL.md specifically. Then consult: I observed [actual behavior] after [action] in [feature]. Expected [expected behavior]. Source: [ticket, Sentry event, test, log, or my own observation]. Reproduce it before changing code.`}</code></pre>
+          <p>Ask Codex to report the path it loaded so you can confirm it used the project-local install.</p>
           <p>Factory records intake under <code>.factory/</code>, asks you to confirm testable acceptance criteria, then creates an external worktree and measures its baseline before code edits. If you have no real behavior to investigate, use <code>consult</code>: it reads and advises without writing files. Don’t invent a bug just to exercise the workflow.</p>
           <p>Resume an existing gated run with <code>resume &lt;slug&gt;</code>. <a href="/how-it-works/">Inspect every gate <span aria-hidden="true">↗</span></a></p>
         </section>
