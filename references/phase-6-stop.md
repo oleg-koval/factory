@@ -79,6 +79,11 @@ feature flag and its 14-day removal ticket, or none. Multiple selections are all
 
 ## Open the PR
 
+Review bots can run on a draft PR at open and on every later push. Get the branch to its final
+state before step 2, and batch later fixes into as few pushes as possible. A gap accepted in the
+report is not exempt: bots read the diff, not the Gaps section. For each gap, fix it before
+pushing or pre-draft, in the report, the one-line reply for when a reviewer raises it.
+
 1. `git -C <worktree> status --porcelain` must print nothing. A dirty tree is reported, never
    staged: one line of why, the previous binding staged the whole tree and once staged the user's own
    unrelated files.

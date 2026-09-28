@@ -36,11 +36,36 @@ echo "head: $(git rev-parse HEAD)"
 echo "changed files: $CHANGED_COUNT"
 printf '%s\n' "$CHANGED" | sed 's/^/  /'
 
+STRICT_TESTS=0
+if [ "${FACTORY_STRICT_TESTS:-0}" = "1" ]; then
+  STRICT_TESTS=1
+elif [ -f "$WORKTREE/.factory/hard-rules.json" ]; then
+  IS_STRICT=$(python3 -c '
+import json, sys
+try:
+    with open(sys.argv[1]) as handle:
+        d = json.load(handle)
+    print("1" if d.get("strict_tests") is True else "0")
+except Exception:
+    print("0")
+' "$WORKTREE/.factory/hard-rules.json")
+  [ "$IS_STRICT" = "1" ] && STRICT_TESTS=1
+fi
+
 echo
 echo "== hard rules (full file text, not the hunks)"
-echo "  TS-1 cast or any | TS-2 .js file | GQL-1 nodes without pageInfo"
+if [ "$STRICT_TESTS" -eq 1 ]; then
+  echo "  mode: --strict-tests (tests scanned like production files)"
+else
+  echo "  mode: default (tests may cast and assert non-null; any[] only)"
+fi
+echo "  TS-1 cast or any | TS-2 .js file | TS-3 non-null assertion | GQL-1 nodes without pageInfo"
 if [ "$CHANGED_COUNT" -gt 0 ]; then
-  printf '%s\n' "$CHANGED" | tr '\n' '\0' | xargs -0 python3 "$HERE/hard-rules.py"
+  if [ "$STRICT_TESTS" -eq 1 ]; then
+    printf '%s\n' "$CHANGED" | tr '\n' '\0' | xargs -0 python3 "$HERE/hard-rules.py" --strict-tests
+  else
+    printf '%s\n' "$CHANGED" | tr '\n' '\0' | xargs -0 python3 "$HERE/hard-rules.py"
+  fi
 else
   echo "  none"
 fi

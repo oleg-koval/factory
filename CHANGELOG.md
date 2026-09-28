@@ -15,6 +15,16 @@ that has not been packaged as a tagged version.
   expected executable output, and evidence boundary.
 - A validated seven-route search specification with unique metadata, local evidence sources,
   crawl rules, structured-data boundaries, and a negative duplicate-title test.
+- Hard rule TS-3, a non-null assertion outside tests, and a `--strict-tests` flag that scans
+  test files for TS-1/TS-3 like production files (opt in via `.factory/hard-rules.json`'s
+  `strict_tests` or `FACTORY_STRICT_TESTS=1`).
+- A reachability check in Phase 5's whole-change review: a fix whose target rows the upstream
+  selection never reaches is now a finding.
+- A rule that any leaf's absence claim ("no casts", "none found") is re-run once by the
+  orchestrator before the verdict that depends on it is accepted.
+- A note in Phase 6 that review bots run on a draft PR at open and on every push, so the branch
+  should be final before it opens, and that gaps listed as accepted still need a pre-drafted
+  reply for when a bot raises them.
 
 ### Fixed
 
