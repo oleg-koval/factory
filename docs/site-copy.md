@@ -5,10 +5,10 @@ outcomes stay marked `[TK]` until their authoritative sources exist.
 
 ## Metadata
 
-Title: Factory by Oleg Koval: Claude Code + Codex Agent Skill
+Title: Factory: AI Coding Agent Verification | Oleg Koval
 
-Description: Open-source MIT agent skill for Claude Code and Codex. Turn software requests into
-isolated changes with test-first proof and honest delivery states.
+Description: Open-source MIT delivery skill for Claude Code and Codex. It checks criteria, tests,
+reviews, and receipts before an AI coding agent can claim “delivered.”
 
 Canonical URL: `https://factory.olegkoval.com/`
 

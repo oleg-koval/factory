@@ -11,7 +11,7 @@ let workerServer;
 let origin;
 
 const routes = [
-  ["/", "Factory by Oleg Koval: Claude Code + Codex Agent Skill", "Your agent can write code."],
+  ["/", "Factory: AI Coding Agent Verification | Oleg Koval", "Your agent can write code."],
   ["/proof/", "Factory Proof — Watch a false delivery claim fail", "A delivery claim should survive inspection."],
   ["/how-it-works/", "Factory run map — A verified AI coding agent workflow", "The complete run—from ticket to verified draft PR."],
   ["/install/", "Install Factory for Claude Code and Codex", "Bring your own agent. Keep the gates."],
@@ -98,6 +98,22 @@ test("canonical HTML stays indexable and alternate-host noindex policy is explic
   const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
   assert.match(proxy, /request\.nextUrl\.hostname !== canonicalHost/);
   assert.match(proxy, /X-Robots-Tag", "noindex, nofollow"/);
+});
+
+test("homepage title and description match the canonical SEO route contract", async () => {
+  const routesDocument = JSON.parse(
+    await readFile(new URL("../../docs/seo-routes.json", import.meta.url), "utf8"),
+  );
+  const homepage = routesDocument.routes.find(({ path }) => path === "/");
+  assert.ok(homepage, "SEO route contract must include the homepage");
+
+  const response = await render("/");
+  const html = await response.text();
+  const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
+  const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
+
+  assert.equal(title, homepage.title);
+  assert.equal(description, homepage.description);
 });
 
 for (const [path, title, h1] of routes) {

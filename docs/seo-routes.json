@@ -5,9 +5,9 @@
   "routes": [
     {
       "path": "/",
-      "title": "Factory by Oleg Koval: Claude Code + Codex Agent Skill",
-      "description": "Open-source MIT agent skill for Claude Code and Codex. Turn software requests into isolated changes with test-first proof and honest delivery states.",
-      "intent": "Factory Claude Code Codex agent skill",
+      "title": "Factory: AI Coding Agent Verification | Oleg Koval",
+      "description": "Open-source MIT delivery skill for Claude Code and Codex. It checks criteria, tests, reviews, and receipts before an AI coding agent can claim “delivered.”",
+      "intent": "AI coding agent verification",
       "schemas": ["WebSite", "SoftwareSourceCode"],
       "evidence": ["docs/site-copy.md", "docs/product-brief.md", "proof/manifest.json"]
     },

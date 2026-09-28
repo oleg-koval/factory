@@ -18,9 +18,9 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://factory.olegkoval.com"),
-  title: "Factory by Oleg Koval: Claude Code + Codex Agent Skill",
+  title: "Factory: AI Coding Agent Verification | Oleg Koval",
   description:
-    "Open-source MIT agent skill for Claude Code and Codex. Turn software requests into isolated changes with test-first proof and honest delivery states.",
+    "Open-source MIT delivery skill for Claude Code and Codex. It checks criteria, tests, reviews, and receipts before an AI coding agent can claim “delivered.”",
   applicationName: "Factory",
   authors: [{ name: "Oleg Koval", url: "https://factory.olegkoval.com/oleg-koval/" }],
   creator: "Oleg Koval",
