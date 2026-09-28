@@ -267,9 +267,10 @@ export default function Home() {
             </p>
           </div>
           <div className="install-preview">
-            <p className="release-note"><span>Public source</span> Verified from a clean repository on 2026-09-22.</p>
+            <p className="release-note"><span>Public source</span> Project-local install checked 2026-09-28.</p>
             <pre><code>{`# Install the verified project-local skill for both agents\nnpx --yes skills add oleg-koval/factory -a claude-code -a codex -y\n\n# Claude Code\n/factory consult "Review this change request"\n\n# Codex\n$factory consult "Review this change request"`}</code></pre>
             <p>Consult answers in chat and does not write files. Start a full run with a ticket, Sentry URL, or plain-language request.</p>
+            <p className="install-note">Already have a user-wide <code>factory</code> skill? Tell Codex: “Use <code>.agents/skills/factory/SKILL.md</code> specifically.”</p>
             <a className="text-link" href="/install/">Read the install and verification guide <span aria-hidden="true">↗</span></a>
           </div>
         </section>

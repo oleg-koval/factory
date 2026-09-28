@@ -1,9 +1,11 @@
 # Factory product brief
 
 Evidence status: product direction backed by the public Factory repository, its passing structural
-suite, a verified public-source install, fresh project-local consult invocations in Claude Code
-and Codex, a live Cloudflare deployment, and one complete Phase 0–6 run on the Factory codebase.
-Global installs, independent adoption, and performance claims are not yet proven.
+suite, a verified public-source install, Claude Code project-local consult, a live Cloudflare
+deployment, and one complete Phase 0–6 run on the Factory codebase. A Codex path-resolution check
+found a same-name user-wide skill was selected instead of the project-local copy; an explicit
+project path in the prompt successfully selected the local skill. Independent adoption and
+performance claims are not yet proven.
 
 ## The claim
 

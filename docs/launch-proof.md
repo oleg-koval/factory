@@ -27,8 +27,10 @@ gates stay open below.
   package for Claude Code and Codex.
 - [x] Replace every `[TK]` in the rendered site copy with a verified artifact or delete the claim.
 - [x] Run the package validator and installation check from the public source for both hosts.
-- [x] Verify a fresh, project-local Codex `consult` invocation from the public skill source;
-  [record](install-verification.md).
+- [x] Verify a fresh, path-directed Codex `consult` loads the project copy when a same-name
+  user-wide skill exists. Plain `$factory` selected the user-wide copy; the path-directed
+  workaround is recorded in [the install verification](install-verification.md). The interactive
+  picker's duplicate-name behavior remains unverified.
 - [x] Verify a fresh, project-local Claude Code `consult` invocation from the public skill source;
   [record](install-verification.md). Global installation remains open.
 - [x] Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in

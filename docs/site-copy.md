@@ -143,6 +143,11 @@ read-only CTO view, or give Factory a request to begin a full delivery run.
 Claude Code and Codex (verified project-local install): `npx --yes skills add oleg-koval/factory -a claude-code -a codex -y`
 Then: `/factory consult "Review this change request"`
 
+Codex may select a same-name user-wide `factory` skill instead of the project copy. To force the
+project copy, ask Codex to use `.agents/skills/factory/SKILL.md` explicitly and report the loaded
+path. This prompt-based workaround is verified; the interactive picker's duplicate-name behavior
+is not.
+
 Global install with `-g` is supported by the installer but has not been independently verified for Factory.
 Then: `$factory consult "Review this change request"`
 

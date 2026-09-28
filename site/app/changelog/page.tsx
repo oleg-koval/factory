@@ -16,7 +16,7 @@ const changes = [
   ["Added", "Runnable refusal specimen", "A redacted fixture shows false delivery blocked, honest delivery accepted, and terminal mismatch rejected."],
   ["Added", "Machine-readable proof manifest", "Every public claim maps to artifacts, expected output, and a visible evidence boundary."],
   ["Added", "Nine-route discovery contract", "Unique metadata, canonical URLs, crawl rules, and evidence boundaries are checked locally and on the public site. Indexation remains unverified."],
-  ["Added", "Verified project-local installation", "One command installs the same public skill for Claude Code and Codex in the current repository; global installation remains unverified."],
+  ["Updated", "Install verification boundary", "The public skill installs project-locally for Claude Code and Codex. On a machine with a same-name user-wide skill, Codex selected that copy; project-local selection in that collision case remains unverified."],
   ["Fixed", "Terminal-state mismatch bypass", "The gate now rejects a requested terminal that conflicts with the state already recorded by the run."],
   ["Fixed", "Ambiguous gate invocation", "Calls without exactly one phase or terminal now fail with a usage error."],
   ["Fixed", "Unsafe runner inputs", "The runner rejects path traversal, shell syntax in slugs, and non-integer session caps."],

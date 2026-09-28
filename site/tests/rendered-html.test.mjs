@@ -161,7 +161,7 @@ test("install and changelog publish structured data matching visible content", a
   assert.equal(changelogData["@type"], "CollectionPage");
   assert.equal(changelogData.mainEntity.itemListElement.length, 8);
   assert.match(changelog, /Nine-route discovery contract/);
-  assert.match(changelog, /Verified project-local installation/);
+  assert.match(changelog, /Install verification boundary/);
 });
 
 test("AC-2 case-study initial HTML retains Analytics and TechArticle matching visible content", async () => {
@@ -277,8 +277,11 @@ test("install page states verified counts and invocation limits", async () => {
   const response = await render("/install/");
   const html = await response.text();
   assert.match(html, /The nine-route search specification passed locally/);
+  assert.match(html, /If Codex also has a user-wide/);
   assert.doesNotMatch(html, /seven-route search specification/);
-  assert.match(html, /A fresh Codex session discovered/);
+  assert.match(html, /same-name user-wide skill/);
+  assert.match(html, /path-directed Codex consult used/);
+  assert.match(html, /Duplicate-name behavior in the interactive skill picker remains unverified/);
   assert.match(html, /A fresh Claude Code session used/);
   assert.match(html, /One complete run on the Factory codebase is documented/);
   assert.match(html, /docs\/install-verification\.md/);

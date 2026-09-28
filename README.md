@@ -65,6 +65,11 @@ Claude Code: /factory consult <request>
 Codex:       $factory consult <request>
 ```
 
+If Codex also has a user-wide skill named `factory`, it may select that copy rather than the
+project-local install. Ask Codex to use `.agents/skills/factory/SKILL.md` explicitly and report
+the path it loaded; this prompt-based workaround was verified. The interactive picker's duplicate
+name behavior remains unverified. See the [install verification record](docs/install-verification.md).
+
 The command above installs project-local skills in the current repository. A global `-g`
 installation is also supported by the installer, but has not yet been independently verified
 for Factory; see the [install verification record](docs/install-verification.md).
@@ -115,10 +120,10 @@ zsh tests/check.sh
 
 ## Evidence status
 
-The structural suite passes on the current working tree, public-source installation was verified
-on 2026-09-22, project-local fresh Codex and Claude Code `consult` invocations were verified on
-2026-09-23, and one full Factory run on this codebase is documented. `factory.olegkoval.com` is
-live. Global installation, independent adoption, performance outcomes, and a complete
-cross-provider run are not claimed.
+The structural suite passes on the current working tree, public-source project-local installation
+was verified on 2026-09-28, Claude Code project-local `consult` was verified on 2026-09-23, and one
+full Factory run on this codebase is documented. A 2026-09-28 Codex check found a same-name
+user-wide skill was selected instead of the project-local copy. `factory.olegkoval.com` is live.
+Independent adoption, performance outcomes, and a complete cross-provider run are not claimed.
 
 Built by [Oleg Koval](https://olegkoval.com/).

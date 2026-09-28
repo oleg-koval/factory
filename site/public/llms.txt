@@ -22,10 +22,12 @@ npx --yes skills add oleg-koval/factory -a claude-code -a codex -y
 ```
 
 Then start with `/factory consult <request>` in Claude Code or `$factory consult <request>` in
-Codex. `consult` is read-only. Full install instructions and verification limits:
+Codex. `consult` is read-only. If Codex also has a user-wide `factory` skill, explicitly ask it to
+use `.agents/skills/factory/SKILL.md` and report the loaded path. Full install instructions and verification limits:
 https://factory.olegkoval.com/install/
 
-Evidence boundary: the public source, disposable-repository installation, Cloudflare deployment,
-fresh project-local consults in Codex and Claude Code, and one full Phase 0–6 run on the Factory
-codebase are documented. A global install on a clean target, independent adoption, performance
-improvement, and Google indexing are not claimed.
+Evidence boundary: the public source, disposable-repository installation, Claude Code project-local
+consult, Cloudflare deployment, and one full Phase 0–6 run on the Factory codebase are documented.
+A Codex same-name collision check selected the user-wide copy with plain `$factory`; a path-directed
+prompt selected the project-local copy. Independent adoption, performance improvement, and Google
+indexing are not claimed.

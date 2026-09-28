@@ -1,11 +1,12 @@
 # Installer verification
 
-Evidence status: verified from the public `oleg-koval/factory` repository on 2026-09-22 against
-commit `54d2cc0f114c6db3fe5a3e8e1fd00357b4a5ee84`. This proves public-source discovery and local
-installation into a clean repository with the `skills` CLI. Separate fresh Codex and Claude Code
-consult invocations were verified on 2026-09-23. A full Phase 0–6 run was later completed on the
-Factory codebase; it is documented in [the hydration-warning case study](../proof/case-studies/hydration-warning/README.md).
-These checks do not prove a second-machine install or a full run from a clean global install.
+Evidence status: the public `oleg-koval/factory` source was installed into a disposable repository
+on 2026-09-28 from commit `c15fe5de52119aa17290f9f7e768fd57d9c1444c`. A full Phase 0–6 run was
+completed on the Factory codebase; it is documented in [the hydration-warning case
+study](../proof/case-studies/hydration-warning/README.md). Claude Code project-local consult was
+verified on 2026-09-23. A later Codex resolution check found that a same-name user-wide skill can
+be selected instead of the project copy. These checks do not prove a second-machine install or a
+full run from a clean global install.
 
 ## Command
 
@@ -29,7 +30,33 @@ npx --yes skills add oleg-koval/factory \
   the installed package.
 - The disposable repository was moved to Trash after verification.
 
-## Fresh Codex consult (2026-09-23)
+## Codex project/global collision check (2026-09-28)
+
+The public install command was run in a disposable repository:
+
+```bash
+npx --yes skills add oleg-koval/factory -a claude-code -a codex -y
+```
+
+The installer placed the public package in `.agents/skills/factory` and linked
+`.claude/skills/factory` to it. Its `SKILL.md` SHA-256 matched the file at public `main`
+(`c15fe5de52119aa17290f9f7e768fd57d9c1444c`). The installed structural, proof, and SEO checks
+passed. This proves public-source installation, not which same-named skill Codex will select.
+
+On this machine, `codex debug prompt-input '$factory consult'` exposed two `factory` entries:
+the pre-existing user-wide skill and the newly installed project skill. A fresh read-only
+`codex exec` consult selected the pre-existing user-wide `SKILL.md`, not the fixture's
+`.agents/skills/factory/SKILL.md`. Therefore this run does **not** prove project-local Codex
+invocation when a user-wide same-name skill is present. It also does not justify changing the
+user's global settings or removing their skill.
+
+A second read-only consult explicitly requested the project path (`.agents/skills/factory/SKILL.md`)
+and asked Codex to ignore same-name copies. Its tool trace read that exact project-local file and
+the answer reported that path. This verifies a prompt-based workaround in this fixture; it does
+not verify the interactive skill picker's duplicate-name UX. When in doubt, ask Codex to report the
+`SKILL.md` path it loaded.
+
+## Earlier Codex consult (2026-09-23)
 
 An empty temporary Git repository received the public root skill using Codex's skill-installer
 helper with `--repo oleg-koval/factory --path . --name factory --dest <temp>/.agents/skills`.
@@ -37,11 +64,11 @@ The installed `SKILL.md` SHA-256 matched the same file at public main commit
 `5976c9d33275feaf854df0d841a456969ce2a16c`. A new, ephemeral `codex exec` session ran
 read-only with `$factory consult` about a hypothetical intermittent button failure.
 
-The session explicitly selected `factory`, read its installed `SKILL.md`, `references/roles.md`,
-and `references/phase-0-intake.md`, classified the report as an unverified bug at full depth,
-asked for source evidence, and ended with “Start a Factory run with this input?” It made no
-product-source changes. This verifies fresh-session Codex discovery and consult behavior from a
-project-local public install, not a global installation or a delivery run.
+The session explicitly selected `factory`, read a `SKILL.md`, `references/roles.md`, and
+`references/phase-0-intake.md`, classified the report as an unverified bug at full depth, asked for
+source evidence, and ended with “Start a Factory run with this input?” It made no product-source
+changes. Its captured source-path evidence is insufficient to distinguish a project-local copy
+from a same-named user-wide copy; the 2026-09-28 collision check above narrows this claim.
 
 ## Fresh Claude Code consult (2026-09-23)
 
@@ -64,5 +91,6 @@ installation or a full delivery run.
 
 - A clean install on a second machine.
 - The global `-g` target used by the recommended end-user commands.
+- Codex's interactive skill-picker behavior when a user-wide same-name skill is also installed.
 - A full delivery run starting from an independently installed copy on a clean target.
 - A single run repeated in both Claude Code and Codex.

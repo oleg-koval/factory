@@ -29,7 +29,7 @@ export default function InstallPage() {
           <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. Start with the verified project-local install in the repository you want Factory to work in.</p>
         </header>
 
-        <aside className="release-banner"><strong>Public source / verified project-local install</strong><p>This exact command installed the public skill into a disposable repository for both agents. Fresh Codex and Claude Code sessions then invoked their project-local copies in non-writing <code>consult</code> mode. One complete run on the Factory codebase is documented; a full run from a clean global install remains unverified. <a href="https://factory.olegkoval.com/case-studies/development-hydration-warning/">Inspect the full run ↗</a> · <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the install verification record ↗</a></p></aside>
+        <aside className="release-banner"><strong>Public source / project-local install verified</strong><p>This command installed the public skill into a disposable repository for both agents. Claude Code used its project-local copy in non-writing <code>consult</code> mode. A plain <code>$factory</code> invocation selected a same-name user-wide skill; explicitly naming the project-local path selected the correct copy. Duplicate-name behavior in the interactive skill picker remains unverified. One complete run on the Factory codebase is documented. <a href="https://factory.olegkoval.com/case-studies/development-hydration-warning/">Inspect the full run ↗</a> · <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the install verification record ↗</a></p></aside>
 
         <section className="install-grid">
           <article>
@@ -41,6 +41,7 @@ export default function InstallPage() {
             <div className="install-heading"><span>02</span><h2>Invoke in your agent</h2></div>
             <p>After installation: <code>/factory consult &lt;request&gt;</code></p>
             <p>In Codex, use <code>$factory consult &lt;request&gt;</code>. The consult path reads context and proposes a run without modifying files.</p>
+            <p>If Codex also has a user-wide <code>factory</code> skill, it may choose that copy. Say: “Use <code>.agents/skills/factory/SKILL.md</code> specifically, then consult on my request. Report the path you loaded.” This workaround was tested.</p>
           </article>
         </section>
 
@@ -55,7 +56,8 @@ export default function InstallPage() {
             <li><span>✓</span>Claude Code and Codex resolved to the same <code>SKILL.md</code>.</li>
             <li><span>✓</span>The installed proof suite reported 3 claims, 13 artifacts, and 3 executable cases.</li>
             <li><span>✓</span>The nine-route search specification passed locally.</li>
-            <li><span>✓</span>A fresh Codex session discovered <code>$factory</code> and used <code>consult</code> without writing files.</li>
+            <li><span>✓</span>A fresh, path-directed Codex consult used <code>.agents/skills/factory/SKILL.md</code>.</li>
+            <li><span>!</span>Plain <code>$factory</code> selected the same-name user-wide copy; duplicate-name behavior in the interactive skill picker remains unverified.</li>
             <li><span>✓</span>A fresh Claude Code session used <code>/factory consult</code> from the public project-local install.</li>
             <li><span>—</span>Global installation on a clean target remains unverified.</li>
           </ul>

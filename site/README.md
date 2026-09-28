@@ -55,6 +55,8 @@ successful command alone proves the custom domain serves the intended version.
 ## Evidence boundary
 
 The site reports proof exactly as recorded in the parent repository. Public-source installation,
-Cloudflare deployment, DNS, TLS, browser acceptance, project-local fresh Codex and Claude Code
-consult invocations, and one full Factory run on this codebase are documented. Global installation,
-search indexation, independent adoption, and performance outcomes remain separate gates.
+Cloudflare deployment, DNS, TLS, browser acceptance, Claude Code project-local consult, and one
+full Factory run on this codebase are documented. In Codex, plain `$factory` selected a same-name
+user-wide copy; explicitly naming `.agents/skills/factory/SKILL.md` successfully selected the
+project-local copy. Search indexation, independent adoption, and performance outcomes remain
+separate gates.
