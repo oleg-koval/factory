@@ -7,16 +7,16 @@ smoke check, not proof of search indexing or a complete Factory delivery run.
 ## Latest canonical-site check — 2026-09-28
 
 The latest manual Cloudflare deployment serves site code from repository commit
-`5aa7842558e31fafb3339394b7a25f9e6f903ef3`. Wrangler reported Worker version
-`77499038-5e6f-44a3-ae55-2d52ba327e9b` for `factory.olegkoval.com`. The local site lint and build
+`0e2e547303a77ad02688d77bff3c3115c53e44fb`. Wrangler reported Worker version
+`72adfe7f-9899-429b-bd77-4191211e4bc5` for `factory.olegkoval.com`. The local site lint and build
 passed; rendered HTML tests passed 27/27; Factory's structural, proof, and nine-route SEO checks
 passed. Both GitHub validation workflows passed against the deployed source commit.
 
 After deployment, the live SEO verifier passed all nine canonical routes at the custom domain.
-Direct HTTP verification of `/install/` confirmed the public command, the same-name Codex skill
-collision warning, and the tested project-path workaround. The page now says plainly that plain
-`$factory` selected a user-wide copy on the tested machine; it no longer claims that invocation
-used the project-local copy.
+Direct HTTP verification of `/proof/manifest.json` confirmed the refreshed 2026-09-28 boundary:
+plain `$factory` selected a same-name user-wide skill in the test, while an explicit project-path
+prompt selected `.agents/skills/factory/SKILL.md`. The live `/proof/` page exposes that same
+boundary; it no longer says fresh-session invocation is wholly unproven.
 
 The IndexNow dry run confirmed the public key and exact nine-URL sitemap. The post-deploy request
 returned HTTP 200 (`received`) for all nine routes. This is notification receipt only, not evidence

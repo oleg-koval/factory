@@ -62,7 +62,7 @@ gates stay open below.
 - [x] Notify IndexNow of the nine canonical sitemap routes on 2026-09-26 and after the 2026-09-28
   manual release. The initial response was
   HTTP 202 with key verification pending. After the public key was verified, later submissions
-  returned HTTP 200 (`received`), including one after the 2026-09-28 release at `5aa7842`. These
+  returned HTTP 200 (`received`), including one after the 2026-09-28 release at `0e2e547`. These
   responses confirm receipt only—not crawling, indexing, or ranking.
 
 ## Search architecture
@@ -132,11 +132,11 @@ approval. Stage the draft and evidence bundle first.
 Factory is deployed as a Cloudflare Worker with Static Assets and a Worker Custom Domain. The
 Worker is the origin; Cloudflare created the DNS record and certificate for
 `factory.olegkoval.com` during the initial deployment on 2026-09-22. The latest manual release on
-2026-09-28 serves site code from `5aa7842` (Worker version
-`77499038-5e6f-44a3-ae55-2d52ba327e9b`). It publishes the tested Codex same-name collision warning
-and project-path workaround. The live SEO verifier passes all nine canonical routes; IndexNow
-returned `received` for the nine-URL notification. Full release and browser evidence is recorded
-in [browser acceptance](browser-acceptance.md).
+2026-09-28 serves site code from `0e2e547` (Worker version
+`72adfe7f-9899-429b-bd77-4191211e4bc5`). It publishes the refreshed proof manifest with the tested
+Codex same-name collision and project-path workaround. The live SEO verifier passes all nine
+canonical routes; IndexNow returned `received` for the nine-URL notification. Full release and
+browser evidence is recorded in [browser acceptance](browser-acceptance.md).
 
 Successful local build, source commit, remote SHA, Worker deployment, custom-domain activation,
 and public HTTP response are verified separately. Browser acceptance is recorded in
