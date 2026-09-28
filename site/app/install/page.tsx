@@ -26,21 +26,21 @@ export default function InstallPage() {
         <header className="page-hero page-hero-short">
           <p className="eyebrow">Install Factory</p>
           <h1>Bring your own agent. Keep the gates.</h1>
-          <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. The canonical repository is public and the source has passed a clean installation check.</p>
+          <p className="page-deck">One provider-neutral skill, using each host’s native invocation and runner. Start with the verified project-local install in the repository you want Factory to work in.</p>
         </header>
 
-        <aside className="release-banner"><strong>Public source / verified</strong><p>A disposable repository installed from <code>oleg-koval/factory</code> on 2026-09-22. Fresh Codex and Claude Code sessions invoked project-local public copies in non-writing <code>consult</code> mode on 2026-09-23. One complete run on the Factory codebase is documented; a full run from a clean global install remains unverified. <a href="https://factory.olegkoval.com/case-studies/development-hydration-warning/">Inspect the full run ↗</a> · <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the install verification record ↗</a></p></aside>
+        <aside className="release-banner"><strong>Public source / verified project-local install</strong><p>This exact command installed the public skill into a disposable repository for both agents. Fresh Codex and Claude Code sessions then invoked their project-local copies in non-writing <code>consult</code> mode. One complete run on the Factory codebase is documented; a full run from a clean global install remains unverified. <a href="https://factory.olegkoval.com/case-studies/development-hydration-warning/">Inspect the full run ↗</a> · <a href="https://github.com/oleg-koval/factory/blob/main/docs/install-verification.md">Read the install verification record ↗</a></p></aside>
 
         <section className="install-grid">
           <article>
-            <div className="install-heading"><span>01</span><h2>Claude Code</h2></div>
-            <pre><code>npx skills add oleg-koval/factory -g -a claude-code -y</code></pre>
-            <p>After installation: <code>/factory consult &lt;request&gt;</code></p>
+            <div className="install-heading"><span>01</span><h2>Install for both agents</h2></div>
+            <pre><code>npx --yes skills add oleg-koval/factory -a claude-code -a codex -y</code></pre>
+            <p>Run this from the repository where you want to use Factory. It installs the same project-local skill for both hosts.</p>
           </article>
           <article>
-            <div className="install-heading"><span>02</span><h2>Codex</h2></div>
-            <pre><code>npx skills add oleg-koval/factory -g -a codex -y</code></pre>
-            <p>After installation: <code>$factory consult &lt;request&gt;</code></p>
+            <div className="install-heading"><span>02</span><h2>Invoke in your agent</h2></div>
+            <p>After installation: <code>/factory consult &lt;request&gt;</code></p>
+            <p>In Codex, use <code>$factory consult &lt;request&gt;</code>. The consult path reads context and proposes a run without modifying files.</p>
           </article>
         </section>
 
@@ -48,7 +48,7 @@ export default function InstallPage() {
           <div className="section-heading">
             <p className="eyebrow">What has actually been verified</p>
             <h2>The public source resolves for both hosts.</h2>
-            <p>A disposable Git repository installed from the public GitHub source to test package discovery, canonical installation, the Claude Code symlink, structural checks, proof verification, and the Codex skill validator.</p>
+            <p>A disposable Git repository installed from the public GitHub source to test package discovery, canonical project-local installation, the Claude Code symlink, structural checks, proof verification, and the Codex skill validator. Global installation is not represented as verified.</p>
           </div>
           <ul className="check-list">
             <li><span>✓</span>The CLI discovered exactly one root skill named <code>factory</code>.</li>

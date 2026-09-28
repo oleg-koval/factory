@@ -17,11 +17,8 @@ Author: https://factory.olegkoval.com/oleg-koval/
 Install the public `factory` skill from https://github.com/oleg-koval/factory:
 
 ```bash
-# Claude Code
-npx skills add oleg-koval/factory -g -a claude-code -y
-
-# Codex
-npx skills add oleg-koval/factory -g -a codex -y
+# Install both skills into the current repository (verified path)
+npx --yes skills add oleg-koval/factory -a claude-code -a codex -y
 ```
 
 Then start with `/factory consult <request>` in Claude Code or `$factory consult <request>` in

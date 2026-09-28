@@ -48,11 +48,8 @@ Terminal states are `delivered`, `delivered-with-gaps`, `blocked`, and
 The canonical public source is [`oleg-koval/factory`](https://github.com/oleg-koval/factory):
 
 ```bash
-# Claude Code
-npx skills add oleg-koval/factory -g -a claude-code -y
-
-# Codex
-npx skills add oleg-koval/factory -g -a codex -y
+# Install both skills into the current repository (verified path)
+npx --yes skills add oleg-koval/factory -a claude-code -a codex -y
 ```
 
 The [agent install guide](https://factory.olegkoval.com/install/) has the host-specific commands,
@@ -67,6 +64,10 @@ Once installed:
 Claude Code: /factory consult <request>
 Codex:       $factory consult <request>
 ```
+
+The command above installs project-local skills in the current repository. A global `-g`
+installation is also supported by the installer, but has not yet been independently verified
+for Factory; see the [install verification record](docs/install-verification.md).
 
 Use `consult` to get the CTO view without writing files. Start a full run with a ticket id,
 Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated run.

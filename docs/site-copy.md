@@ -140,10 +140,10 @@ Heading: Install Factory. Start with consult.
 Supporting line: Add the public Factory skill to Claude Code or Codex. Start with `consult` for a
 read-only CTO view, or give Factory a request to begin a full delivery run.
 
-Claude Code: `npx skills add oleg-koval/factory -g -a claude-code -y`
+Claude Code and Codex (verified project-local install): `npx --yes skills add oleg-koval/factory -a claude-code -a codex -y`
 Then: `/factory consult "Review this change request"`
 
-Codex: `npx skills add oleg-koval/factory -g -a codex -y`
+Global install with `-g` is supported by the installer but has not been independently verified for Factory.
 Then: `$factory consult "Review this change request"`
 
 Action: Read the install and verification guide. Consult answers in chat and does not write files.

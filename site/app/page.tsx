@@ -268,7 +268,7 @@ export default function Home() {
           </div>
           <div className="install-preview">
             <p className="release-note"><span>Public source</span> Verified from a clean repository on 2026-09-22.</p>
-            <pre><code>{`# Claude Code\nnpx skills add oleg-koval/factory -g -a claude-code -y\n/factory consult "Review this change request"\n\n# Codex\nnpx skills add oleg-koval/factory -g -a codex -y\n$factory consult "Review this change request"`}</code></pre>
+            <pre><code>{`# Install the verified project-local skill for both agents\nnpx --yes skills add oleg-koval/factory -a claude-code -a codex -y\n\n# Claude Code\n/factory consult "Review this change request"\n\n# Codex\n$factory consult "Review this change request"`}</code></pre>
             <p>Consult answers in chat and does not write files. Start a full run with a ticket, Sentry URL, or plain-language request.</p>
             <a className="text-link" href="/install/">Read the install and verification guide <span aria-hidden="true">↗</span></a>
           </div>
