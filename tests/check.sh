@@ -529,4 +529,36 @@ bad_seo_rc=$?
 print -r -- "$bad_seo_out" | grep -q "duplicate title" || f "SEO verifier did not name duplicate title"
 rm -f "$bad_seo"
 
+# T14 hard-rules.py TS-3 (non-null assertion) and --strict-tests
+hr_dir=$(mktemp -d)
+cat > "$hr_dir/prod.ts" <<'HRPROD'
+const x = mark!.y;
+const a = foo()!;
+const b = arr[0]!;
+if (a != b) {}
+if (a !== b) {}
+if (!flag) {}
+HRPROD
+cat > "$hr_dir/foo.test.ts" <<'HRTEST'
+const y = something as never;
+const z = mark!;
+HRTEST
+
+hr_out=$(cd "$hr_dir" && python3 $root/scripts/hard-rules.py prod.ts)
+print -r -- "$hr_out" | grep -q 'TS-3 prod.ts:1' || f "hard-rules.py TS-3 missed mark!.y"
+print -r -- "$hr_out" | grep -q 'TS-3 prod.ts:2' || f "hard-rules.py TS-3 missed foo()!"
+print -r -- "$hr_out" | grep -q 'TS-3 prod.ts:3' || f "hard-rules.py TS-3 missed arr[0]!"
+print -r -- "$hr_out" | grep -q 'TS-3 prod.ts:4' && f "hard-rules.py TS-3 false hit on a != b"
+print -r -- "$hr_out" | grep -q 'TS-3 prod.ts:5' && f "hard-rules.py TS-3 false hit on a !== b"
+print -r -- "$hr_out" | grep -q 'TS-3 prod.ts:6' && f "hard-rules.py TS-3 false hit on !flag"
+
+hr_test_default=$(cd "$hr_dir" && python3 $root/scripts/hard-rules.py foo.test.ts)
+print -r -- "$hr_test_default" | grep -q 'TS-1' && f "hard-rules.py default flagged an 'as' cast in a test file"
+print -r -- "$hr_test_default" | grep -q 'TS-3' && f "hard-rules.py default flagged a non-null assertion in a test file"
+
+hr_test_strict=$(cd "$hr_dir" && python3 $root/scripts/hard-rules.py --strict-tests foo.test.ts)
+print -r -- "$hr_test_strict" | grep -q 'TS-1 foo.test.ts:1' || f "hard-rules.py --strict-tests missed the 'as' cast in a test file"
+print -r -- "$hr_test_strict" | grep -q 'TS-3 foo.test.ts:2' || f "hard-rules.py --strict-tests missed the non-null assertion in a test file"
+rm -rf "$hr_dir"
+
 exit $fail

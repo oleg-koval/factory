@@ -26,7 +26,12 @@ Checks, in order:
    Critical.
 5. Invariants: for each `INV-` id, read the whole branch's diff against the base and say
    whether the invariant holds across every commit, not just the last one.
+6. Reachability: when the change repairs specific rows, records or events, find the upstream
+   selection that feeds the changed path (query, scheduler, webhook, queue) and show the target
+   rows are actually selected by it. A fix whose target rows are never selected is a finding,
+   severity Important, even if the changed code itself is correct.
 
 Output, first line exactly `VERDICT: PASS` or `VERDICT: FIX`, then findings as
 `- <severity> <file:line> <what> <fix>`, one per line, severity one of
-`Critical|Important|Minor`. Under 300 words.
+`Critical|Important|Minor`. Every "none"/"clean"/"no callers" statement names the command that
+proved it. Under 300 words.
