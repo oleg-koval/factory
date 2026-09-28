@@ -61,6 +61,10 @@ f. **State**: append one row per AC to `ac-matrix.md` (AC id, test id, kind, sta
 
 The reviewer's verdict advances state, never the implementer's report.
 
+Before deferring a finding (an unfixed Minor, or a later Gaps entry), check it against the
+incident sample in `diagnosis.md` `## Examination`. If the sample falls inside the deferred
+case, fix it in step e: deferring it silences the report instead of fixing it. Receipt it.
+
 Receipts go to `receipts.md`, never to `state.json`. `state.json` is carried through every
 compaction, so anything that grows per milestone belongs in a sibling file; `scripts/gate.py`
 blocks a terminal state on a `state.json` over 4KB or holding a `receipts` key.

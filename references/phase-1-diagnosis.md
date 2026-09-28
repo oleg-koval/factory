@@ -10,7 +10,8 @@ Evidence gathering is delegated. You synthesize. Declare before starting:
    role `payload-reducer` first to shrink the repro. When a reproducible harness would pay for
    itself (multi-service incident, flaky repro), role `repro-harness`; record the decision and
    its reason either way. Write `## Examination` with every receipt: file:line, command and
-   output excerpt, event id.
+   output excerpt, event id. Name the incident sample: the failing entity id and the field that
+   decides which code path it takes, so later phases can check any deferred case against it.
 3. Diagnosis: one paragraph naming the cause. Confidence `high | medium | low`, and for
    anything under high, the missing evidence by name. Write `## Diagnosis`.
 4. Treatment, exactly one of: `no-change` (behaviour is expected; explain), `config-or-data`
