@@ -7,6 +7,8 @@ that has not been packaged as a tagged version.
 
 ### Added
 
+- Deferred findings are checked against the incident sample: Phase 1 names the failing entity
+  and the field that decides its code path, and Phase 4 refuses to defer a case the sample hits.
 - Interactive mode: a run in a live session continues past a passing phase gate instead of
   asking for `continue`; `resume --driven` and `run.sh` keep the one-phase-per-session behaviour.
   Asks are limited to material decisions and real blockers.
