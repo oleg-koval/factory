@@ -67,14 +67,15 @@ blocks a terminal state on a `state.json` over 4KB or holding a `receipts` key.
 
 ## Close
 
-This phase closes once per milestone: the session ends after each milestone's commit, and
-`state.milestone` says where to resume.
+This phase closes once per milestone. In `driven` mode the session ends after each milestone's
+commit; in `interactive` mode the next milestone starts in the same turn after the close.
+`state.milestone` says where to resume either way.
 
 1. Write `state.json`: `state.phase = "4"`, `state.milestone = <n>`; `state.next` stays `"4"`
    until the last milestone is done, then becomes `"5"`.
 2. Run `python3 <skill-dir>/scripts/gate.py .factory/<slug> --phase 4` and quote its output.
    `GATE: BLOCKED` means fix the named file or key and run it again; you may not advance past a
    blocked gate.
-3. Stop. Say in one line which phase comes next and that `scripts/run.sh <slug>` resumes it. A
-   fresh session per phase is the design; compaction is the fallback when a phase is resumed
-   inside an old session.
+3. Close per `state.mode`. `driven`: stop; say in one line which phase comes next and that
+   `scripts/run.sh <slug>` resumes it. `interactive`: say the same line, then read the next phase
+   file and continue; do not wait for the user.

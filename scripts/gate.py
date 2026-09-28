@@ -26,6 +26,7 @@ QUESTION_TEXT_MAX = 200
 
 REQUIRED_KEYS = {"slug", "source", "input", "class", "depth", "phase", "bindings_file", "loops", "terminal"}
 ALLOWED_KEYS = REQUIRED_KEYS | {
+    "mode",
     "milestone",
     "isolation",
     "baseline",
@@ -89,6 +90,9 @@ def check_state(run_dir: str, reasons: list[str]) -> dict:
 
     if state.get("terminal") is not None and state["terminal"] not in TERMINALS:
         fail(reasons, f"state.terminal is {state['terminal']!r}, not one of {sorted(TERMINALS)}")
+
+    if state.get("mode") is not None and state["mode"] not in {"interactive", "driven"}:
+        fail(reasons, f"state.mode is {state['mode']!r}, not one of ['driven', 'interactive']")
 
     return state
 

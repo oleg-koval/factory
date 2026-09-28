@@ -44,9 +44,9 @@ command has run and been quoted.
   state: unanswered blocking question or a `failed` AC means `blocked`; an `unrunnable` AC means
   `delivered-with-gaps`.
 
-This step exists because the rules it enforces used to be prose in this file, and prose gates do
-not fire. A real run set `terminal: delivered` with five open questions unanswered and two
-acceptance criteria marked "partly met", because nothing ever read the files.
+This step exists because these rules used to be prose here, and prose gates do not fire. A real
+run set `terminal: delivered` with five open questions unanswered and two acceptance criteria
+marked "partly met", because nothing read the files.
 
 ### What the gate checks
 
@@ -70,7 +70,7 @@ never edit `ac-matrix.md` to get past the gate.
 ## 3. Ask
 
 Ask once which follow-ups the user wants: draft PR, assign reviewers, run sandbox, create the
-feature flag and its 14-day removal ticket, or none. Multiple selections are allowed.
+feature flag and its 14-day removal ticket, or none. Multiple selections allowed.
 
 - draft PR -> role `pr-opener`, following "Open the PR" below.
 - none -> stop.
@@ -85,13 +85,13 @@ report is not exempt: bots read the diff, not the Gaps section. For each gap, fi
 pushing or pre-draft, in the report, the one-line reply for when a reviewer raises it.
 
 1. `git -C <worktree> status --porcelain` must print nothing. A dirty tree is reported, never
-   staged: one line of why, the previous binding staged the whole tree and once staged the user's own
-   unrelated files.
+   staged: one line of why, since the previous binding staged the whole tree, including the
+   user's own unrelated files.
 2. `git -C <worktree> push -u origin <branch>`.
 3. Write `.factory/<slug>/pr-body.md`. It opens with `## TL;DR (for humans)` (5-8 plain lines),
    then `---`, then sections What, Why, Proof (the AC matrix summary), Flag and rollback, Gaps.
    The body describes the change only; no tool, assistant or generator is named anywhere in the
-   title or body.
+   title or body, including any host-injected attribution footer: drop it, unasked.
 4. `gh pr create --draft --base <base> --title "[<TICKET>] <short title>" --body-file .factory/<slug>/pr-body.md`,
    then `gh pr edit <url> --add-assignee @me`.
 5. Quote the PR url in the report.
