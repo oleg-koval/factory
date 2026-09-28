@@ -1,7 +1,7 @@
 {
   "version": 1,
   "status": "verified-local-release-candidate",
-  "verified_at": "2026-09-21",
+  "verified_at": "2026-09-28",
   "claims": [
     {
       "id": "false-completion-is-rejected",
@@ -63,7 +63,7 @@
     "runner": "bash proof/terminal-gate/run.sh"
   },
   "boundaries": [
-    "Public-source installation was verified in a disposable repository on 2026-09-22; global installation and fresh-session invocation remain unproven.",
+    "Project-local public-source installation was verified in a disposable repository on 2026-09-28. With a same-name user-wide Codex skill present, plain $factory selected that copy; an explicit project-path prompt selected .agents/skills/factory/SKILL.md. The interactive skill-picker behavior, a clean second-machine install, and global installation remain unverified.",
     "No production adoption, time saving, defect reduction, or benchmark result is claimed.",
     "One complete Phase 0–6 run on the Factory codebase is documented in proof/case-studies/hydration-warning/README.md; it is one case, not proof of general reliability or repeatability across independent projects."
   ]

@@ -23,7 +23,7 @@ export default function ProofPage() {
       <SiteHeader />
       <main className="inner-page">
         <header className="page-hero">
-          <p className="eyebrow">Proof surface / verified locally 2026-09-21</p>
+          <p className="eyebrow">Proof surface / verified locally 2026-09-28</p>
           <h1>A delivery claim should survive inspection.</h1>
           <p className="page-deck">Run the same gate against an unsupported claim, a supported claim, and a contradiction the gate itself once missed.</p>
           <div className="hero-metrics"><span><b>3</b> verified-local claims</span><span><b>13</b> mapped artifacts</span><span><b>3</b> executable cases</span></div>

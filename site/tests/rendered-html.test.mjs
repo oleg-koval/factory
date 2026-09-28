@@ -142,7 +142,9 @@ test("proof page contains parseable structured data and visible boundaries", asy
   const jsonLd = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/);
   assert.ok(jsonLd);
   assert.equal(JSON.parse(jsonLd[1])["@type"], "CollectionPage");
-  assert.match(html, /Public-source installation was verified in a disposable repository/);
+  assert.match(html, /Project-local public-source installation was verified in a disposable repository on 2026-09-28/);
+  assert.match(html, /plain \$factory selected that copy/);
+  assert.match(html, /explicit project-path prompt selected \.agents\/skills\/factory\/SKILL\.md/);
   assert.match(html, /href="\/proof\/manifest\.json"/);
   assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/blob\/main\/proof\/terminal-gate\/false-delivery\/state\.json"/);
 });

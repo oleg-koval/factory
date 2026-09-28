@@ -145,8 +145,10 @@ contract.
 
 The canonical repository is public at `oleg-koval/factory`. A disposable repository verified
 public-source discovery, canonical installation for Codex, the Claude Code symlink, and the
-installed proof suite on 2026-09-22. Fresh-session invocation, a second-machine install, and a
-complete cross-provider run remain unproven.
+installed proof suite on 2026-09-28. A path-directed Codex `consult` used the project-local skill
+even with a same-name user-wide copy present; plain `$factory` selected the user-wide copy. The
+interactive skill-picker behavior, a second-machine install, and a complete cross-provider run
+remain unproven.
 
 ## Inspect the implementation
 
