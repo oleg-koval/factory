@@ -1,10 +1,26 @@
-# Factory browser acceptance — 2026-09-23
+# Factory browser acceptance
 
-Evidence status: live-browser checks against the public Cloudflare custom domain after site
-commit `619dd2859e8276d70b2e0d5d9adc0ba57d962e6c`. This is a browser and accessibility
-smoke check, not proof of search indexing or a complete Factory delivery run.
+Evidence status: focused browser and accessibility observations are recorded by date below. They
+are not proof of search ranking or a complete Factory delivery run.
 
-## Latest canonical-site check — 2026-09-28
+## Latest manual Worker release — 2026-09-28
+
+The live Cloudflare Worker serves repository commit
+`4d5924d5424aeab609c71a5eba6cad9785855b5b`; Wrangler reported Worker version
+`684259bf-2aaa-461a-83ad-c5f5030598b0`. Site lint passed, the build and 28 rendered-page tests
+passed, and Factory's structural/proof checks passed. Both GitHub validation workflows passed on
+this commit, including the production-Worker browser hydration regression at desktop and mobile
+widths.
+
+After deployment, the live SEO verifier passed all nine canonical routes. A direct request to
+`/install/` returned HTTP 200 and contained the five checked first-run instructions, including the
+real-observation prompt and the no-invented-bug boundary. The IndexNow dry run verified the public
+key and exact nine-URL sitemap; the post-deploy request returned HTTP 200 (`received`). This is
+notification receipt only, not proof of crawling, indexing, or ranking. No new visual browser or
+accessibility audit was run for this copy change; the focused observations below remain the most
+recent such audit.
+
+## Previous canonical-site release check — 2026-09-28
 
 The latest manual Cloudflare deployment serves site code from repository commit
 `0e2e547303a77ad02688d77bff3c3115c53e44fb`. Wrangler reported Worker version

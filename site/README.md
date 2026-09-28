@@ -36,14 +36,15 @@ npm ci
 npm run lint
 npm test
 npx wrangler deploy --dry-run --config wrangler.jsonc
-npx wrangler deploy --config wrangler.jsonc
+npx wrangler deploy --config wrangler.jsonc --keep-vars
 cd ..
 node scripts/verify-live-seo.mjs
 node scripts/verify-live-seo.mjs --alternate
 ```
 
-Confirm the deploy output names `factory.olegkoval.com` and records a Worker version ID. Verify
-the changed route on the live domain before calling the release delivered. The separate Sites
+`--keep-vars` preserves dashboard-set Worker variables not declared in this config. Confirm the
+deploy output names `factory.olegkoval.com` and records a Worker version ID. Verify the changed
+route on the live domain before calling the release delivered. The separate Sites
 mirror is published through its own saved-version flow; a Worker deploy does not update it.
 The `--alternate` check remains blocked until that mirror is separately updated and its live
 HTML responses carry `noindex`.
