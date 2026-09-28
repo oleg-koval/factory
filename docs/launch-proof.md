@@ -31,6 +31,9 @@ gates stay open below.
   user-wide skill exists. Plain `$factory` selected the user-wide copy; the path-directed
   workaround is recorded in [the install verification](install-verification.md). The interactive
   picker's duplicate-name behavior remains unverified.
+- [x] Make `scripts/run.sh` name its exact installed `SKILL.md` path for Codex and regression-test
+  the emitted prompt against same-name skill collisions. The mock verifies prompt construction;
+  the updated runner has not yet been observed completing a real resumed phase.
 - [x] Verify a fresh, project-local Claude Code `consult` invocation from the public skill source;
   [record](install-verification.md). Global installation remains open.
 - [x] Enable GitHub private vulnerability reporting and replace the response-policy `[TK]` in
@@ -62,8 +65,8 @@ gates stay open below.
 - [x] Notify IndexNow of the nine canonical sitemap routes on 2026-09-26 and after the 2026-09-28
   manual releases. The initial response was
   HTTP 202 with key verification pending. After the public key was verified, later submissions
-  returned HTTP 200 (`received`), including after releases at `0e2e547` and `4d5924d`. These
-  responses confirm receipt only—not crawling, indexing, or ranking.
+  returned HTTP 200 (`received`), including after releases at `0e2e547`, `4d5924d`, and `985b62f`.
+  These responses confirm receipt only—not crawling, indexing, or ranking.
 
 ## Search architecture
 
@@ -132,13 +135,13 @@ approval. Stage the draft and evidence bundle first.
 Factory is deployed as a Cloudflare Worker with Static Assets and a Worker Custom Domain. The
 Worker is the origin; Cloudflare created the DNS record and certificate for
 `factory.olegkoval.com` during the initial deployment on 2026-09-22. The latest manual release on
-2026-09-28 serves site code from `4d5924d` (Worker version
-`684259bf-2aaa-461a-83ad-c5f5030598b0`). It adds a truthful first-run guide with a real-observation
-prompt, the Codex same-name workaround, and the boundary between read-only consult and full runs.
-The live SEO verifier passes all nine canonical routes; the rendered install page returned HTTP 200
-and included all five checked first-run statements. IndexNow returned `received` for the nine-URL
-notification. No new visual browser or accessibility audit was run for this copy change. Full
-release and browser evidence is recorded in [browser acceptance](browser-acceptance.md).
+2026-09-28 serves site code from `985b62f` (Worker version
+`a6714ae6-9fed-4786-8cdf-7bb35b740a7d`). The install guide now makes path-directed Codex invocation
+the default and treats `$factory` as conditional on there being no name collision. The live SEO
+verifier passes all nine canonical routes; a 1440px/390px browser check confirmed the new copy,
+loaded styling, no horizontal overflow, and no page errors. IndexNow returned `received` for the
+nine-URL notification. No new Search Console URL inspections were made. Full release and browser
+evidence is recorded in [browser acceptance](browser-acceptance.md).
 
 Successful local build, source commit, remote SHA, Worker deployment, custom-domain activation,
 and public HTTP response are verified separately. Browser acceptance is recorded in

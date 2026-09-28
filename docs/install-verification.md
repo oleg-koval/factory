@@ -64,6 +64,17 @@ The structural test captures the mocked Codex invocation and verifies both the p
 warning. This checks the prompt the runner sends; a future real run must still report its loaded
 path to prove runtime selection.
 
+## Current public-source Codex exact-path smoke (2026-09-28)
+
+A fresh disposable Git repository installed the public source with `npx --yes skills add
+oleg-koval/factory -a codex --copy -y`. Its `SKILL.md` SHA-256 matched the source at commit
+`985b62f2a052f33cc7b170e138597c541cf85cda`. An ephemeral read-only Codex session was told to read
+only that installed file by its absolute `.agents/skills/factory/SKILL.md` path and ignore other
+same-name skills. The JSON tool trace shows `cat` of that exact file; the final response reported
+the same path and no changes. This verifies explicit path-directed loading from the current public
+install. It does not verify a real resumed-phase invocation through the updated `scripts/run.sh`
+or the interactive skill picker.
+
 ## Earlier Codex consult (2026-09-23)
 
 An empty temporary Git repository received the public root skill using Codex's skill-installer

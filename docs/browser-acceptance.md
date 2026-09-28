@@ -3,7 +3,29 @@
 Evidence status: focused browser and accessibility observations are recorded by date below. They
 are not proof of search ranking or a complete Factory delivery run.
 
-## Latest manual Worker release — 2026-09-28 / sitemap freshness
+## Latest manual Worker release — 2026-09-28 / Codex collision-safe invocation
+
+Repository commit `985b62f2a052f33cc7b170e138597c541cf85cda` directs the Codex session runner to
+the exact installed `SKILL.md` path and updates the README/install guide to make path-directed
+invocation the reliable default. It keeps `$factory` as a convenience only when no same-name
+skill conflicts. The regression test captures the mocked Codex arguments and asserts the exact
+path and collision warning; this validates the prompt emitted by the runner, not a fresh
+end-to-end model run through that updated runner.
+
+Local build and 29 rendered-page tests passed, as did lint, skill validation, structural gates,
+proof verification, the SEO spec, and Wrangler's dry run. Both GitHub validation workflows passed
+on this commit, including the production-Worker desktop/mobile browser checks. Manual deployment
+reported Worker version `a6714ae6-9fed-4786-8cdf-7bb35b740a7d`.
+
+After deployment, `node scripts/verify-live-seo.mjs` passed all nine routes. A fresh browser check
+of `/install/` returned HTTP 200 at 1440px and 390px, showed the exact project-local Codex path
+and conditional `$factory` alias guidance, loaded IBM Plex Sans, had no horizontal overflow, and
+reported no page errors. IndexNow's dry run verified the public key and exact nine-URL sitemap;
+the post-deploy request returned `received`. This is notification receipt only, not proof of
+crawling, indexing, or ranking. The already-submitted Search Console sitemap was not resubmitted,
+and no new Search Console URL inspection was made.
+
+## Previous manual Worker release — 2026-09-28 / sitemap freshness
 
 Repository commit `6673078e1e8385965c0a66ee5f8fb873731d0d40` updates the nine sitemap
 `lastmod` values to the latest substantive edit for each route. Dates now range from
