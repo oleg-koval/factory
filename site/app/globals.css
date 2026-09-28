@@ -1583,6 +1583,24 @@ button:focus-visible,
   line-height: 1.6;
 }
 
+.first-run-callout pre {
+  max-width: 72rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  overflow-x: auto;
+  background: var(--ink);
+  color: #e2e2dc;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.8rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.first-run-callout pre code {
+  color: inherit;
+}
+
 .install-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

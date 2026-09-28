@@ -63,11 +63,16 @@ export default function InstallPage() {
           </ul>
         </section>
 
-        <section className="content-callout">
-          <p className="eyebrow">Start safely</p>
-          <h2>Use <code>consult</code> for the CTO view without writing files.</h2>
-          <p>Start a full run with a ticket id, Sentry URL, or plain-language request. Use <code>resume &lt;slug&gt;</code> to continue an existing gated run.</p>
-          <a className="button button-primary" href="/how-it-works/">Understand the seven gates <span aria-hidden="true">↗</span></a>
+        <section className="content-callout first-run-callout">
+          <p className="eyebrow">Your first real run</p>
+          <h2>Bring one bug you actually observed.</h2>
+          <p>Replace the brackets with a real behavior from a codebase you own. Include where you saw it; Factory records that provenance, then tries to reproduce the behavior before proposing a fix.</p>
+          <pre><code>{`Claude Code: /factory I observed [actual behavior] after [action] in [feature]. Expected [expected behavior]. Source: [ticket, Sentry event, test, log, or my own observation]. Reproduce it before changing code.
+
+Codex: $factory I observed [actual behavior] after [action] in [feature]. Expected [expected behavior]. Source: [ticket, Sentry event, test, log, or my own observation]. Reproduce it before changing code.`}</code></pre>
+          <p>If Codex might select a same-name user-wide Factory skill, start your prompt with: <code>Use .agents/skills/factory/SKILL.md specifically.</code> Then ask it to report the path it loaded.</p>
+          <p>Factory records intake under <code>.factory/</code>, asks you to confirm testable acceptance criteria, then creates an external worktree and measures its baseline before code edits. If you have no real behavior to investigate, use <code>consult</code>: it reads and advises without writing files. Don’t invent a bug just to exercise the workflow.</p>
+          <p>Resume an existing gated run with <code>resume &lt;slug&gt;</code>. <a href="/how-it-works/">Inspect every gate <span aria-hidden="true">↗</span></a></p>
         </section>
       </main>
       <SiteFooter />

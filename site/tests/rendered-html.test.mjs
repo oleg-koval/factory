@@ -289,6 +289,19 @@ test("install page states verified counts and invocation limits", async () => {
   assert.match(html, /docs\/install-verification\.md/);
 });
 
+test("install page gives a truthful, evidence-backed first-run path", async () => {
+  const response = await render("/install/");
+  const html = await response.text();
+  assert.match(html, /Bring one bug you actually observed/);
+  assert.match(html, /Claude Code: \/factory I observed \[actual behavior\]/);
+  assert.match(html, /Codex: \$factory I observed \[actual behavior\]/);
+  assert.match(html, /Use \.agents\/skills\/factory\/SKILL\.md specifically/);
+  assert.match(html, /records intake under <code>\.factory\/<\/code>/);
+  assert.match(html, /creates an external worktree and measures its baseline before code edits/);
+  assert.match(html, /consult<\/code>: it reads and advises without writing files/);
+  assert.match(html, /Don’t invent a bug just to exercise the workflow/);
+});
+
 test("wide proof receipts and comparison tables are keyboard-accessible", async () => {
   const [home, proof, caseStudy] = await Promise.all([
     render("/").then((response) => response.text()),
