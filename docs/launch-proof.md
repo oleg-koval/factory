@@ -41,9 +41,11 @@ gates stay open below.
 - [x] Verify title, description, canonical URL, robots, sitemap, Open Graph image, and structured data.
 - [x] Publish the host-aware `noindex` fix to the public Sites mirror and pass the alternate
   host check on all eight routes; Sites version 15 deployed 2026-09-24.
-- [ ] Refresh the separate Sites mirror for the ninth canonical route. The latest alternate-host
-  verifier reports HTTP 404 and a canonical mismatch for `/case-studies/development-hydration-warning/`;
-  the canonical Cloudflare site passes all nine routes.
+- [x] Refresh the separate Sites mirror for the ninth canonical route. Sites version 16 is
+  deployed successfully; on 2026-09-28 all nine canonical routes returned HTTP 200 on the mirror.
+  The hydration-warning case study also returned `X-Robots-Tag: noindex, nofollow` and its
+  canonical URL points to `factory.olegkoval.com`. This supersedes the 2026-09-26 404 noted below
+  in the historical browser receipt.
 - [x] Confirm the sitemap is already submitted in Search Console: last submitted
   `2026-09-23T13:23:05.979Z`, last read `2026-09-28T04:52:31.716Z`, pending
   `false`, 9 submitted URLs, 0 errors, and 0 warnings. No new submission was made.
@@ -134,4 +136,5 @@ in [browser acceptance](browser-acceptance.md).
 
 Successful local build, source commit, remote SHA, Worker deployment, custom-domain activation,
 and public HTTP response are verified separately. Browser acceptance is recorded in
-[browser-acceptance.md](browser-acceptance.md); Search Console acceptance remains open.
+[browser-acceptance.md](browser-acceptance.md); Search Console URL inspection is verified for two
+routes, while broader sitemap coverage and ranking remain open.

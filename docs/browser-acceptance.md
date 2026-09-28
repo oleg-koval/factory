@@ -15,13 +15,16 @@ focused visual check of the receipt readability fix, not a new full-site accessi
 
 The live IndexNow key and nine-URL sitemap passed the dry run. The post-deploy submission returned
 HTTP 200 (`received`). This confirms notification receipt only; it does not prove crawling,
-indexing, or ranking. Search Console access remains unavailable in this session, so Google
-sitemap acceptance and URL index status are unknown.
+indexing, or ranking. At this 2026-09-26 checkpoint, Search Console access was unavailable; the
+later Search Console inspection is recorded below.
 
-The canonical Cloudflare site passes, but the separate, noncanonical Sites mirror is stale for the
-ninth route: `node scripts/verify-live-seo.mjs --alternate` reports HTTP 404 and a canonical
-mismatch for `/case-studies/development-hydration-warning/`. This does not affect the canonical
-custom domain; the mirror needs its own refresh before the alternate check can pass again.
+At this 2026-09-26 checkpoint, the separate, noncanonical Sites mirror was stale for the ninth
+route: `node scripts/verify-live-seo.mjs --alternate` reported HTTP 404 and a canonical mismatch
+for `/case-studies/development-hydration-warning/`. The issue was later cleared by the successful
+Sites version 16 deployment. On 2026-09-28, direct HTTP checks returned 200 for all nine canonical
+routes on the mirror. The hydration-warning route returned `X-Robots-Tag: noindex, nofollow` and
+its canonical link pointed to the Cloudflare custom domain. This is a route and header check, not a
+new browser visual or accessibility audit.
 
 ## Reproduced and fixed
 
@@ -55,15 +58,25 @@ checks are unknown, not passes. This scan is not a full manual accessibility aud
 
 ## Separate search gate
 
-The canonical pages, robots file, and sitemap are live. Google Search Console was not signed in
-in the available browser, so sitemap acceptance and indexation remain unverified. A general
-web-search query did not provide reliable indexation evidence.
+On 2026-09-28, GSC Wizard inspected the `sc-domain:factory.olegkoval.com` property. The sitemap
+`https://factory.olegkoval.com/sitemap.xml` was already submitted, was not pending, and had 9
+submitted URLs, 0 errors, and 0 warnings. Its last submitted time was
+`2026-09-23T13:23:05.979Z`; its last read was `2026-09-28T04:52:31.716Z`. No new submission was
+made.
+
+Individual URL inspections for the homepage and hydration-warning case study both returned
+`PASS`, `Submitted and indexed`, and a successful page fetch. Both were crawled as mobile. This
+proves those two URLs' reported index status, not that all nine sitemap URLs are indexed or rank.
+The sitemap API's indexed URL count was `0`, which conflicts with those two individual inspections;
+preserve the signals separately rather than treating the count as proof that the inspected URLs
+are unindexed. The full receipt and crawl timestamps are in the [launch proof](launch-proof.md).
 
 On 2026-09-26, the initial live IndexNow submission returned HTTP 202 while key verification was
 pending; after the public key was confirmed, the follow-up returned HTTP 200 (`received`). After
 the latest manual Cloudflare release, the nine-URL sitemap dry run passed and a fresh submission
 again returned HTTP 200 (`received`). These responses confirm receipt only—not crawling,
-indexing, or ranking. Google Search Console acceptance remains unverified.
+indexing, or ranking; the separate Search Console evidence above is the source for sitemap and URL
+inspection status.
 
 After site commit `a5045e0011fd6410b1cd6625536746687036e91d`, the live SEO verifier
 reported `LIVE SEO: PASS routes=8` on both the custom domain and Sites mirror. The verifier
