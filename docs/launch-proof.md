@@ -147,3 +147,22 @@ Successful local build, source commit, remote SHA, Worker deployment, custom-dom
 and public HTTP response are verified separately. Browser acceptance is recorded in
 [browser-acceptance.md](browser-acceptance.md); Search Console URL inspection is verified for two
 routes, while broader sitemap coverage and ranking remain open.
+
+## Launch metrics
+
+Evidence status: measurement plan written 2026-09-29. No numbers have been collected yet, and
+none are claimed here. Review date: 2026-10-13, two weeks after 1.0.0.
+
+| Question | Signal | Where it is read |
+|---|---|---|
+| Activation: did visitors try to install it? | GA4 event `install_command_copy`, sent when the visitor copies text containing the install command on `/` or `/install/` | GA4 property `G-0RRTME2WMJ` |
+| Share: did visitors go to the source? | GA4 event `github_click` (outbound links to the repository), plus GitHub stars and repository views | GA4 and the repository's own insights |
+| Interest in the evidence | GA4 event `proof_open` (links to `/proof/`) | GA4 |
+| Conversion: did anyone install it? | The `skills add` install count for `oleg-koval/factory` | [skills.sh](https://skills.sh/oleg-koval/factory) |
+| Feedback: did anyone tell us it failed? | Issues (especially "Factory said delivered but it wasn't") and Discussions once enabled | GitHub |
+
+Limits: the site has no copy buttons, so `install_command_copy` fires on the browser's copy event
+when the selection contains the install command. It counts copies, not installs, and cannot see a
+command typed by hand. The skills.sh count is the only install signal and is not tied to a site
+visit. The launch posts in [`launch-posts.md`](launch-posts.md) are drafts; nothing has been
+published, so any traffic before that date is not from them.
