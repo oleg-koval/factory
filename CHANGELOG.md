@@ -1,12 +1,17 @@
 # Changelog
 
-Evidence status: public repository history. `Unreleased` describes behavior on the default branch
-that has not been packaged as a tagged version.
+Evidence status: public repository history. Version 1.0.0 is the first tagged release; `Unreleased`
+describes behavior on the default branch that has not been packaged as a tagged version.
 
 ## Unreleased
 
+## 1.0.0 - 2026-09-29
+
 ### Added
 
+- A terminal recording of the delivery-gate demo at the top of the README, with the `vhs` tape
+  that renders it.
+- Issue templates for bugs and for false delivery claims, and a `CONTRIBUTING.md`.
 - The public homepage, install guide, and `llms.txt` recommend the verified project-local install
   command for Claude Code and Codex; the global `-g` path is explicitly marked unverified.
 - Deferred findings are checked against the incident sample: Phase 1 names the failing entity
