@@ -83,7 +83,8 @@ export default function RootLayout({
               var link = event.target instanceof Element ? event.target.closest('a[href]') : null;
               if (!link) return;
               var href = link.getAttribute('href') || '';
-              if (href.indexOf('https://github.com/oleg-koval/factory') === 0) {
+              var base = 'https://github.com/oleg-koval/factory';
+              if (href === base || href.indexOf(base + '/') === 0) {
                 gtag('event', 'github_click', { link_url: href, page_path: location.pathname });
               } else if (href === '/proof/') {
                 gtag('event', 'proof_open', { page_path: location.pathname });

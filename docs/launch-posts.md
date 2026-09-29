@@ -97,7 +97,7 @@ First comment:
 > Before and after output is in the repo.
 
 5.
-> What is proven: one full run on the Factory site, plus the demo above (a redacted
+> What is documented: one full run on the Factory site, plus the demo above (a redacted
 > reconstruction). What is not claimed: adoption, speed, fewer defects.
 >
 > npx --yes skills add oleg-koval/factory -a claude-code -a codex -y

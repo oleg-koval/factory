@@ -1,16 +1,40 @@
 # Render with: vhs docs/demo.tape  (run from the repository root)
-# The run is executed while hidden so the first frame already shows the output.
+# Each step shows one trimmed view of the real gate output; see docs/demo-gif.sh.
 Output docs/assets/factory-demo.gif
 Set Shell "bash"
-Set FontSize 13
-Set Width 1100
-Set Height 640
-Set Padding 16
+Set FontSize 22
+Set Width 1200
+Set Height 560
+Set Padding 20
 Set Theme "Dracula"
+Set TypingSpeed 25ms
 
 Hide
-Type "bash scripts/demo.sh"
+Type "PS1='$ '" Enter
+Type "clear" Enter
+Show
+
+Type "# 1. The agent claims: delivered"
+Enter
+Sleep 800ms
+Type "bash docs/demo-gif.sh false"
+Enter
+Sleep 6s
+
+Hide
+Type "clear" Enter
+Show
+Type "# 2. Same gate, honest record"
+Enter
+Type "bash docs/demo-gif.sh honest"
 Enter
 Sleep 4s
+
+Hide
+Type "clear" Enter
 Show
-Sleep 8s
+Type "# 3. The gate had its own bug"
+Enter
+Type "bash docs/demo-gif.sh bug"
+Enter
+Sleep 4s
