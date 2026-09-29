@@ -1,0 +1,34 @@
+name: Factory said delivered but it wasn't
+description: A run reached a delivered terminal state and the work was not actually done
+labels: ["false-delivery"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the failure Factory exists to prevent, so it is the most useful report you can file.
+        Redact anything private. Real output beats a description.
+  - type: textarea
+    id: claim
+    attributes:
+      label: What Factory claimed
+      description: The terminal state and the acceptance criteria it said were met.
+    validations:
+      required: true
+  - type: textarea
+    id: reality
+    attributes:
+      label: What was actually true
+      description: What was missing, broken, or unverified, and how you found out.
+    validations:
+      required: true
+  - type: textarea
+    id: gate
+    attributes:
+      label: Gate output
+      description: Output of `python3 scripts/gate.py` for the run, if you still have it.
+      render: shell
+  - type: textarea
+    id: rule
+    attributes:
+      label: What check would have caught it
+      description: Optional. A concrete, executable check is more useful than a general principle.

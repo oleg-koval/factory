@@ -8,6 +8,10 @@ Factory is an Agent Skill that turns a ticket, incident, or rough request into a
 software change with testable acceptance criteria, milestone reviews, proof receipts, and an
 explicit terminal state. It runs on Claude Code and Codex.
 
+![Terminal recording of the delivery gate blocking a false "delivered" claim, then passing an honest one.](docs/assets/factory-demo.gif)
+
+_Redacted reconstruction of the gate; re-render with `vhs docs/demo.tape`._
+
 Factory does not make an agent type faster. It changes what the agent must prove before it can
 claim the work is finished.
 
