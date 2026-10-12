@@ -12,14 +12,15 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "test:hydration": "node --test tests/hydration.browser.test.mjs",
     "test:hydration:baseline": "node --test tests/hydration.baseline.browser.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "audit": "node scripts/audit.mjs"
   },
   "dependencies": {
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.57.3",
+    "@cloudflare/vite-plugin": "1.63.1",
     "@eslint/js": "9.39.4",
     "@next/eslint-plugin-next": "16.2.6",
     "@openai/sites-vite-plugin": "0.1.0",
@@ -41,7 +42,7 @@
     "typescript-eslint": "8.59.3",
     "vinext": "1.0.0-beta.12",
     "vite": "8.3.0",
-    "wrangler": "4.136.3"
+    "wrangler": "4.149.0"
   },
   "type": "module",
   "overrides": {
