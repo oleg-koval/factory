@@ -5,6 +5,13 @@ describes behavior on the default branch that has not been packaged as a tagged 
 
 ## Unreleased
 
+### Fixed
+
+- Removed a third-party listing badge from the site footer that security scanners flagged. JSON-LD
+  output is now escaped so it cannot contain a raw `<`. Added untrusted-input rules (quoted outside
+  text sits in an untrusted block and is never executed) and a leaf command scope
+  (`### Commands you may run` in `references/briefs.md`).
+
 ## 1.0.0 - 2026-09-29
 
 ### Added
