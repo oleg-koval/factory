@@ -5,6 +5,11 @@ describes behavior on the default branch that has not been packaged as a tagged 
 
 ## Unreleased
 
+### Added
+
+- A scope lock for newly approved plans, per-milestone demonstration and release checkpoints,
+  and a deferred-idea handoff to GitHub Issues that keeps optional features outside active runs.
+
 ## 1.0.0 - 2026-09-29
 
 ### Added

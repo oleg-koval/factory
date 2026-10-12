@@ -312,6 +312,7 @@ import json, os, subprocess, sys, tempfile
 root = sys.argv[1]
 gate = os.path.join(root, "scripts", "gate.py")
 state = json.load(open(os.path.join(root, "templates", "state.json")))
+state.pop("contract_version")  # legacy fixture: existing runs have no scope lock
 
 def run(run_dir, terminal):
     out = subprocess.run([sys.executable, gate, run_dir, "--terminal", terminal],
@@ -433,6 +434,7 @@ with tempfile.TemporaryDirectory() as d:
 GATEPY
 
 # Final review: every blocked exit routes to Phase 6
+python3 "$root/tests/test_scope_and_ideas.py" || f "scope and deferred-idea behavior failed"
 for p in phase-1-diagnosis phase-2-human-plan phase-4-milestones; do
   grep -q 'terminal: blocked`, go to Phase 6' "$root/references/$p.md" || f "$p blocked exit does not route to Phase 6"
 done

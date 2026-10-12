@@ -20,6 +20,8 @@ import os
 import re
 import sys
 
+from scope_lock import verify as verify_scope
+
 STATE_MAX_BYTES = 4096
 STRING_MAX = 240
 QUESTION_TEXT_MAX = 200
@@ -38,6 +40,8 @@ ALLOWED_KEYS = REQUIRED_KEYS | {
     "budget",
     "gaps",
     "source_evidence",
+    "contract_version",
+    "checkpoint_pending",
 }
 # Keys that carried prose in earlier runs and pushed state.json to 43KB. They are not a
 # matter of taste: state.json is the one file carried across every compaction, so anything
@@ -93,6 +97,9 @@ def check_state(run_dir: str, reasons: list[str]) -> dict:
 
     if state.get("mode") is not None and state["mode"] not in {"interactive", "driven"}:
         fail(reasons, f"state.mode is {state['mode']!r}, not one of ['driven', 'interactive']")
+
+    if state.get("contract_version", 1) not in (1, 2):
+        fail(reasons, "state.contract_version must be 1 or 2")
 
     return state
 
@@ -313,6 +320,35 @@ def check_file_present(path: str, reasons: list[str]) -> bool:
     return True
 
 
+def check_scope(state: dict, run_dir: str, reasons: list[str]) -> None:
+    if state.get("contract_version", 1) == 2:
+        reasons.extend(verify_scope(run_dir))
+
+
+def check_checkpoint(milestone: dict, run_dir: str, reasons: list[str]) -> None:
+    checkpoint = milestone.get("checkpoint")
+    if not isinstance(checkpoint, dict):
+        fail(reasons, f"milestone {milestone.get('id')!r} has no release checkpoint")
+        return
+    status = checkpoint.get("status")
+    target = checkpoint.get("target")
+    receipt = checkpoint.get("receipt")
+    if not isinstance(receipt, str) or not receipt.strip():
+        fail(reasons, f"milestone {milestone.get('id')!r} checkpoint needs a demo or preview receipt")
+        return
+    try:
+        with open(os.path.join(run_dir, "receipts.md"), encoding="utf-8") as handle:
+            if receipt not in handle.read():
+                fail(reasons, f"milestone {milestone.get('id')!r} checkpoint receipt is absent from receipts.md")
+    except OSError as error:
+        fail(reasons, f"cannot verify milestone {milestone.get('id')!r} checkpoint receipt: {error}")
+    if target == "preview" and status == "verified":
+        return
+    if target == "none" and status == "not-applicable" and isinstance(checkpoint.get("reason"), str) and checkpoint["reason"].strip():
+        return
+    fail(reasons, f"milestone {milestone.get('id')!r} checkpoint needs preview verification or none with reason")
+
+
 def check_phase(state: dict, run_dir: str, phase: str, reasons: list[str]) -> None:
     if phase == "0":
         path = artifact_path(state, run_dir, "intake", "intake.md")
@@ -404,7 +440,12 @@ def check_phase(state: dict, run_dir: str, phase: str, reasons: list[str]) -> No
                 if not re.search(r"^\s*tracer:", block, re.MULTILINE):
                     fail(reasons, f"{path} has no 'tracer:' line inside the M1 block")
 
+        check_scope(state, run_dir, reasons)
+
     elif phase == "4":
+        check_scope(state, run_dir, reasons)
+        if state.get("checkpoint_pending"):
+            fail(reasons, f"milestone {state['checkpoint_pending']!r} release checkpoint is pending")
         milestones = state.get("milestones")
 
         if not isinstance(milestones, list):
@@ -415,6 +456,8 @@ def check_phase(state: dict, run_dir: str, phase: str, reasons: list[str]) -> No
             for milestone in milestones:
                 if not isinstance(milestone, dict) or milestone.get("status") != "done" or not milestone.get("sha"):
                     fail(reasons, f"milestone {milestone!r} is not done with a sha")
+                elif state.get("contract_version", 1) == 2:
+                    check_checkpoint(milestone, run_dir, reasons)
         else:
             current = state.get("milestone")
             match = None
@@ -428,8 +471,11 @@ def check_phase(state: dict, run_dir: str, phase: str, reasons: list[str]) -> No
                 fail(reasons, f"state.milestone {current!r} not found in state.milestones")
             elif match.get("status") != "done" or not match.get("sha"):
                 fail(reasons, f"milestone {match!r} is not done with a sha")
+            elif state.get("contract_version", 1) == 2:
+                check_checkpoint(match, run_dir, reasons)
 
     elif phase == "5":
+        check_scope(state, run_dir, reasons)
         scan_path = artifact_path(state, run_dir, "change_scan", "change-scan.txt")
         check_file_present(scan_path, reasons)
         matrix_rows = read_matrix(run_dir, reasons)
@@ -467,6 +513,20 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
         fail(reasons, f"state.terminal {recorded!r} does not match requested terminal {wanted!r}")
 
     strict = wanted in {"delivered", "delivered-with-gaps"}
+    if strict:
+        check_scope(state, run_dir, reasons)
+        if state.get("checkpoint_pending"):
+            fail(reasons, f"milestone {state['checkpoint_pending']!r} release checkpoint is pending")
+        if state.get("contract_version", 1) == 2:
+            milestones = state.get("milestones")
+            if not isinstance(milestones, list) or not milestones:
+                fail(reasons, "version 2 delivery needs completed milestones")
+            else:
+                for milestone in milestones:
+                    if not isinstance(milestone, dict) or milestone.get("status") != "done" or not milestone.get("sha"):
+                        fail(reasons, f"milestone {milestone!r} is not done with a sha")
+                    else:
+                        check_checkpoint(milestone, run_dir, reasons)
     check_questions(state, reasons, strict)
     check_isolation(state, reasons)
 

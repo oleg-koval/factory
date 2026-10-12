@@ -40,7 +40,7 @@ Factory moves one phase at a time:
 2. Isolate: create a clean worktree and measure the existing baseline there.
 3. Diagnose: reproduce the problem and name what remains unknown.
 4. Plan: write the human plan and close blocking questions before code.
-5. Build: make the end-to-end test fail first, implement one milestone, and review it fresh.
+5. Build: lock approved scope, make the end-to-end test fail first, and verify each milestone's release checkpoint.
 6. Prove: remove the fix, rerun the test, scan the full changed files, and review the branch.
 7. Stop: run the executable gate and issue one honest terminal state.
 
@@ -87,6 +87,8 @@ Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated r
 - [`SKILL.md`](SKILL.md) is the compact operating contract.
 - [`references/`](references/) holds one phase at a time so context stays bounded.
 - [`scripts/gate.py`](scripts/gate.py) decides whether a phase or terminal claim is allowed.
+- [`scripts/scope_lock.py`](scripts/scope_lock.py) seals approved plans and detects unreviewed scope changes.
+- [`scripts/deferred_ideas.py`](scripts/deferred_ideas.py) records optional ideas and links actionable ones at an attended GitHub Issues handoff.
 - [`scripts/change-scan.sh`](scripts/change-scan.sh) expands review beyond diff hunks.
 - [`tests/check.sh`](tests/check.sh) watches the gates fail as well as pass.
 - [`proof/terminal-gate/`](proof/terminal-gate/) is a runnable redacted specimen showing a false

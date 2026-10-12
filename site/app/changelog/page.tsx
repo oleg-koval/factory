@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 const changes = [
+  ["Added", "Scope and release checkpoints", "New runs seal approved plans, defer optional ideas, and record a verified demonstration or preview decision for each milestone."],
   ["Added", "One provider-neutral skill", "Claude Code and Codex use the same contract while retaining native invocation and runners."],
   ["Added", "Runnable refusal specimen", "A redacted fixture shows false delivery blocked, honest delivery accepted, and terminal mismatch rejected."],
   ["Added", "Machine-readable proof manifest", "Every public claim maps to artifacts, expected output, and a visible evidence boundary."],

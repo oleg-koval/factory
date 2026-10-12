@@ -4,6 +4,7 @@
   "input": "GIC-1414",
   "class": "bug",
   "depth": "full",
+  "contract_version": 2,
   "phase": "4",
   "milestone": 2,
   "bindings_file": "~/.factory/roles.json",
@@ -31,7 +32,7 @@
     { "id": "B-1", "text": "Which product field defines the manufacturer?", "blocking": true, "owner": "client via Felix", "answer": null }
   ],
   "milestones": [
-    { "id": "M1", "status": "done", "sha": "4f1c9a20" },
+    { "id": "M1", "status": "done", "sha": "4f1c9a20", "checkpoint": { "target": "preview", "status": "verified", "receipt": "M1 preview verification" } },
     { "id": "M2", "status": "in-progress", "sha": null }
   ],
   "files": {

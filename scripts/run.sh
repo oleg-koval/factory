@@ -172,6 +172,8 @@ while true; do
   case "$PHASE" in
     2|2b|6) HUMAN=1 ;;
   esac
+  CHECKPOINT_PENDING="$(py_get checkpoint_pending)"
+  [[ -n "$CHECKPOINT_PENDING" ]] && HUMAN=1
 
   if [[ "$DRY_RUN" -eq 1 ]]; then
     echo "plan: phase=${PHASE} runner=${RUNNER} configured_model=default human=${HUMAN}"
@@ -193,6 +195,10 @@ while true; do
   fi
 
   if [[ "$HUMAN" -eq 1 ]]; then
+    if [[ -n "$CHECKPOINT_PENDING" ]]; then
+      echo "NEEDS-YOU: milestone ${CHECKPOINT_PENDING} has a preview checkpoint pending. Resume ${SLUG} in an attended session, verify or revise its release checkpoint, then rerun this script."
+      exit 0
+    fi
     if [[ "$RUNNER" == "codex" ]]; then
       echo "NEEDS-YOU: phase ${PHASE} needs you. Run Codex in this repository and say: Read and follow only ${SKILL_DIR}/SKILL.md; resume ${SLUG} --driven. Report the skill path you loaded. Quit when the phase says it is closed, then run this script again."
     else

@@ -44,8 +44,8 @@ required.
 1. Intake - Separate the reported symptom from evidence. Write acceptance criteria that can fail.
 2. Isolate - Create a clean branch and worktree. Measure the baseline where the work will run.
 3. Diagnose - Reproduce the problem, name the cause, and state what remains unknown.
-4. Plan - Write the human plan first. Empty the question frontier before code begins.
-5. Build - Add the end-to-end test before implementation. Commit one reviewed milestone at a time.
+4. Plan - Close blocking questions and lock the approved scope before code begins.
+5. Build - Test and review one milestone at a time. Demonstrate each release checkpoint and defer optional ideas.
 6. Prove - Remove the fix and watch the test fail. Review the whole branch, its callers, and its invariants.
 7. Stop - Run the terminal gate. Report delivered, delivered with gaps, blocked, or intentionally unchanged.
 

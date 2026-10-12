@@ -20,6 +20,8 @@ Checks:
 6. M1 carries a `tracer:` line naming a path that touches every layer human plan section 3
    names (backend, data, UI as applicable); when section 6 requires a flag, M1 holds the flag
    task. Otherwise MISMATCH with `- 6: ...`.
+7. Every milestone has the human plan's demonstration and release checkpoint target, with
+   verification and rollback when the target is a preview. Otherwise MISMATCH with `- 7: ...`.
 
 Output, first line exactly `VERDICT: SAME-SCOPE` or `VERDICT: MISMATCH`, then one bullet
 per mismatch: `- <check number>: <what is missing or extra>`. Under 200 words.

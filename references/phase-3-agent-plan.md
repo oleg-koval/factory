@@ -30,6 +30,8 @@ Declare: "plan-equivalence retries max 1".
      tracer: <M1: the path this milestone runs end to end, one line> | widens M1
      e2e: path: <where this repo keeps such tests>; kind: playwright-ui | api | integration;
           scenarios: [one per AC id]
+     checkpoint: target: preview | none; demo: <observable result>;
+                 verify: <command or manual check>; rollback: <action or none reason>
      tasks:
        - <ordered task>; files: [exact paths]; done-check: <command>
      review-checklist: plan conformance; AC coverage; regressions in [named areas];
@@ -43,6 +45,10 @@ Declare: "plan-equivalence retries max 1".
    the tracer bullet is what runs behind it first.
 4. Role `plan-equivalence` on the two files. `VERDICT: MISMATCH` -> fix the listed items,
    run once more. Second mismatch -> ask the user which plan is wrong.
+5. After `SAME-SCOPE`, for `contract_version: 2` run
+   `python3 <skill-dir>/scripts/scope_lock.py seal .factory/<slug>` and quote `SCOPE: PASS`.
+   A necessary scope revision returns to Phase 2 for human review and Phase 2b for questions,
+   then repeats this phase and reseals. Keep earlier milestone commits and receipts.
 
 ## Close
 

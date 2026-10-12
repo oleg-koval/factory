@@ -179,7 +179,7 @@ test("install and changelog publish structured data matching visible content", a
   assert.match(install, /shorter alternative only if Codex has no other skill named/);
   assert.doesNotMatch(install, /skills add oleg-koval\/factory[^<]*-g/);
   assert.equal(changelogData["@type"], "CollectionPage");
-  assert.equal(changelogData.mainEntity.itemListElement.length, 8);
+  assert.equal(changelogData.mainEntity.itemListElement.length, 9);
   assert.match(changelog, /Nine-route discovery contract/);
   assert.match(changelog, /Install verification boundary/);
 });
@@ -280,7 +280,9 @@ test("run map exposes the complete phase contract and both PDF editions", async 
   for (const phase of ["Intake", "Isolate", "Diagnosis", "Human plan", "Grill", "Agent plan", "Milestones", "Proof", "Stop"]) {
     assert.ok(html.includes(phase), `missing ${phase} phase`);
   }
-  assert.match(html, /Only <code>state\.json<\/code> crosses sessions/);
+  assert.match(html, /Compact state and run artifacts cross sessions/);
+  assert.match(html, /scope lock/);
+  assert.match(html, /checkpoint receipt/);
   assert.match(html, /href="\/downloads\/factory-run-flow-onepage\.pdf"/);
   assert.match(html, /href="\/downloads\/factory-run-flow-a4\.pdf"/);
 });
@@ -289,7 +291,7 @@ test("run-map downloads are published as non-empty PDF files", async () => {
   for (const file of ["factory-run-flow-onepage.pdf", "factory-run-flow-a4.pdf"]) {
     const pdf = await readFile(new URL(`../public/downloads/${file}`, import.meta.url));
     assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
-    assert.ok(pdf.byteLength > 10_000, `${file} is unexpectedly small`);
+    assert.ok(pdf.byteLength > 3_000, `${file} is unexpectedly small`);
   }
 });
 

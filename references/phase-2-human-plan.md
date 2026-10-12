@@ -17,7 +17,10 @@ Write `.factory/<slug>/human-plan.md` with exactly these sections in this order:
    read that exact line. Also state rollback path, metrics and Sentry breadcrumbs to add.
 7. **Acceptance criteria**: AC-1..n from `intake.md`, each with how it will be proven:
    `e2e | integration | unit | manual`.
-8. **Milestones**: names and one-line goals only. No tasks.
+8. **Milestones**: names and one-line goals only. No tasks. Each must name an observable
+   demonstration and a release checkpoint target (`preview` or `none`). For a preview, name
+   how it will be verified and rolled back. `none` needs a reason. Production publishing
+   requires separate attended authority; a checkpoint never means `delivered`.
 9. **Open questions** (the question frontier, no cap): every open question, each with
    `blocking: yes|no`, `owner`, and `kind: fact|decision`. A `fact` is something the run can go
    find; the run's job, never the user's. A `decision` needs the user's judgment; theirs, never
@@ -30,6 +33,11 @@ Write `.factory/<slug>/human-plan.md` with exactly these sections in this order:
    blocking AND unanswered - it does not count as absent. That is deliberate: the first version
    of this rule was prose, the questions were written as bare strings, nothing could read them,
    and a run shipped `delivered` with five open.
+
+Optional ideas discovered after approval are not added to these milestones. Record each with
+`python3 <skill-dir>/scripts/deferred_ideas.py add .factory/<slug> "<idea>" "<why deferred>" "<source>"`.
+Add `--exploratory` when the idea is not yet actionable.
+Only a discovery required for an existing acceptance criterion reopens this plan for review.
 
 Gate, role `human-gate`: run the bound script as a BACKGROUND call with the plan path and
 `.factory/<slug>/human-plan-review.md`. Tell the user a review window opened. When it exits:

@@ -18,6 +18,8 @@
    `git -C <repo> worktree remove <worktree>`.
 7. Cost: sum of the `tokens` column in `receipts.md`, `state.budget.leaves_used`, and
    `state.budget.sessions_used`.
+8. Every deferred idea from `deferred-ideas.json`, its reason, and its linked issue URL or
+   pending handoff state. Deferred work is not part of the proven AC count.
 
 For `terminal: intentionally-unchanged` the report is the diagnosis and the reason no change is
 needed. For `terminal: blocked` the report says which loop maximum, gate or unanswered question
@@ -44,9 +46,8 @@ command has run and been quoted.
   state: unanswered blocking question or a `failed` AC means `blocked`; an `unrunnable` AC means
   `delivered-with-gaps`.
 
-This step exists because these rules used to be prose here, and prose gates do not fire. A real
-run set `terminal: delivered` with five open questions unanswered and two acceptance criteria
-marked "partly met", because nothing read the files.
+The executable gate prevents a past false delivery with five open questions and two criteria
+marked "partly met".
 
 ### What the gate checks
 
@@ -60,14 +61,18 @@ marked "partly met", because nothing read the files.
 | `state.isolation` present, mode known, worktree path a real directory | on `delivered*` |
 | `receipts.md` exists and is non-empty | on `delivered*` |
 
-A blocking question still open means `blocked`, whatever the tests say: the code can be correct
-against a reading of the requirement that nobody has confirmed, which is the one failure a
-passing suite cannot catch. The only way past it is the question being answered, or the user
-saying in their own words to ship with it open. Record their words verbatim in
-`state.open_questions[].answer` and repeat them in the report. Never clear the flag yourself, and
-never edit `ac-matrix.md` to get past the gate.
+A blocking question means `blocked`, even when tests pass. Only an answer or the user's own
+words accepting the open question can clear it. Record those words in
+`state.open_questions[].answer` and the report. Never clear the flag yourself or edit the AC
+matrix to pass the gate.
 
 ## 3. Ask
+
+At the attended handoff, run
+`python3 <skill-dir>/scripts/deferred_ideas.py handoff .factory/<slug> <owner/repo> --publish`
+for actionable ideas. It checks duplicates and reads back issue URLs. Omit `--publish` in
+unattended runs. GitHub failure leaves items pending without changing delivery status.
+Re-read `report.md` after updating it. Keep exploratory ideas for Discussions.
 
 Ask once which follow-ups the user wants: draft PR, assign reviewers, run sandbox, create the
 feature flag and its 14-day removal ticket, or none. Multiple selections allowed.
@@ -79,10 +84,8 @@ feature flag and its 14-day removal ticket, or none. Multiple selections allowed
 
 ## Open the PR
 
-Review bots can run on a draft PR at open and on every later push. Get the branch to its final
-state before step 2, and batch later fixes into as few pushes as possible. A gap accepted in the
-report is not exempt: bots read the diff, not the Gaps section. For each gap, fix it before
-pushing or pre-draft, in the report, the one-line reply for when a reviewer raises it.
+Review bots run on PR open and later pushes. Finalize the branch before step 2. For each
+accepted gap, fix it or draft the reviewer reply in the report before pushing.
 
 1. `git -C <worktree> status --porcelain` must print nothing. A dirty tree is reported, never
    staged: one line of why, since the previous binding staged the whole tree, including the

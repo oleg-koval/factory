@@ -71,7 +71,9 @@ question remains unanswered.
 
 The agent plan then maps each acceptance criterion to a test, implementation tasks, review
 checks, budgets, and invariant tracers. A separate equivalence check confirms that the executable
-plan still has the same scope as the human plan.
+plan still has the same scope as the human plan. New runs seal both approved plans with a scope
+lock. Later edits block the build until a necessary change returns through human review and
+plan equivalence. Optional ideas go to a separate run record, not into the active milestones.
 
 **Gate:** blocking questions are answered and the implementation plan preserves the approved
 intent.
@@ -90,6 +92,11 @@ milestone is not accepted.
 Each milestone receives a fresh review before it is committed. Acceptance-criterion status goes
 into a compact matrix; commands, results, commits, and available token counts go into append-only
 receipts rather than the carried state file.
+
+Each milestone also names an observable demonstration and a release checkpoint. A supported
+preview is verified with a rollback path; an unattended run stops for the human who can publish.
+When there is no preview target, the run records why and demonstrates the stage locally. These
+checkpoints show progress but do not grant a terminal delivery claim.
 
 **Gate:** the test was observed red, then green, then red again without the fix; the reviewed
 milestone has a commit and an exact acceptance-criterion status.
@@ -132,6 +139,10 @@ The four outcomes are:
 
 The worktree is not removed automatically. It contains the branch and may hold the only local
 copy of the work until it is pushed or merged.
+
+At an attended handoff, actionable deferred ideas can be linked to existing GitHub Issues or
+created as new ones after a duplicate check and readback. Exploratory ideas remain in the run
+record. A GitHub outage leaves the item pending without changing the delivery verdict.
 
 **Gate:** the terminal state is permitted by the record and the exact gate output is included in
 the handoff.

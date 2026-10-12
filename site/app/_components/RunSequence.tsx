@@ -15,14 +15,14 @@ const scenes = [
     title: "Human plan",
     phase: "2 → 2b",
     receipt: "NEEDS-YOU",
-    detail: "The run waits for your decision. Open questions cannot be waved through.",
+    detail: "The run waits for your decision, then locks the approved milestone scope.",
   },
   {
     number: "03",
     title: "Build",
     phase: "3 → 4",
     receipt: "Test: red → green → red",
-    detail: "A failing test leads the change; removing the fix makes it fail again.",
+    detail: "A failing test leads the change. New ideas are deferred; each stage has a checkpoint.",
   },
   {
     number: "04",
