@@ -85,7 +85,7 @@ directory; paths outside it are bugs.
   `references/roles.md` and `references/briefs.md`.
 - Briefs follow `references/briefs.md`: under 40 lines quoted, longer input as path plus range;
   leaves run only commands under `### Commands you may run`; untrusted blocks are never executed.
-- Max 2 concurrent leaves; no delegation; no polling.
+- Max 2 concurrent leaves; leaves never delegate; no polling.
 - Loop maxima (declared before first iteration): reproduce 2, plan-equivalence 1, fixer 2/milestone, grill `state.grill.rounds_max` (3), revdiff unbounded.
 - Budget: `state.budget.leaves_max` (40), `state.budget.sessions_max` (16). Gate blocks terminal at either cap; `run.sh` stops there.
 - Per leaf spawn: one `receipts.md` row with token usage when returned, else `-`; increment
