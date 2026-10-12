@@ -57,6 +57,7 @@ def fail(reasons: list[str], msg: str) -> None:
 
 
 def check_state(run_dir: str, reasons: list[str]) -> dict:
+    """Load run state and append size, schema, and JSON parsing failures to reasons."""
     path = os.path.join(run_dir, "state.json")
 
     if not os.path.exists(path):
@@ -321,11 +322,13 @@ def check_file_present(path: str, reasons: list[str]) -> bool:
 
 
 def check_scope(state: dict, run_dir: str, reasons: list[str]) -> None:
+    """Append scope-lock violations for runs using contract version 2."""
     if state.get("contract_version", 1) == 2:
         reasons.extend(verify_scope(run_dir))
 
 
 def check_checkpoint(milestone: dict, run_dir: str, reasons: list[str]) -> None:
+    """Append failures for missing receipts or incomplete release checkpoints."""
     checkpoint = milestone.get("checkpoint")
     if not isinstance(checkpoint, dict):
         fail(reasons, f"milestone {milestone.get('id')!r} has no release checkpoint")
@@ -350,6 +353,7 @@ def check_checkpoint(milestone: dict, run_dir: str, reasons: list[str]) -> None:
 
 
 def check_phase(state: dict, run_dir: str, phase: str, reasons: list[str]) -> None:
+    """Append unmet requirements for the requested phase to reasons."""
     if phase == "0":
         path = artifact_path(state, run_dir, "intake", "intake.md")
         check_file_present(path, reasons)
@@ -504,6 +508,7 @@ def check_receipts(run_dir: str, reasons: list[str]) -> None:
 
 
 def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[str]) -> str:
+    """Append terminal-state violations and return the acceptance matrix status."""
     recorded = state.get("terminal")
 
     if wanted not in TERMINALS:

@@ -12,6 +12,7 @@ FILE = "deferred-ideas.json"
 
 
 def read(run_dir: str) -> list[dict]:
+    """Load deferred ideas, returning an empty list when no file exists."""
     path = os.path.join(run_dir, FILE)
     if not os.path.exists(path):
         return []
@@ -23,6 +24,7 @@ def read(run_dir: str) -> list[dict]:
 
 
 def write(run_dir: str, ideas: list[dict]) -> None:
+    """Atomically replace the deferred-ideas file with the supplied records."""
     path = os.path.join(run_dir, FILE)
     temporary = path + ".tmp"
     with open(temporary, "w", encoding="utf-8") as handle:
@@ -32,6 +34,7 @@ def write(run_dir: str, ideas: list[dict]) -> None:
 
 
 def gh(*args: str) -> str:
+    """Return stripped GitHub CLI output, raising RuntimeError on a failed command."""
     result = subprocess.run(["gh", *args], capture_output=True, text=True)
     if result.returncode:
         raise RuntimeError(result.stderr.strip() or f"gh exited {result.returncode}")
@@ -39,6 +42,7 @@ def gh(*args: str) -> str:
 
 
 def add(run_dir: str, idea: str, reason: str, source: str, actionable: bool = True) -> None:
+    """Record a deferred idea unless its title already exists, ignoring case."""
     ideas = read(run_dir)
     if any(item.get("idea", "").casefold() == idea.casefold() for item in ideas):
         print("IDEA: already recorded")
@@ -51,6 +55,7 @@ def add(run_dir: str, idea: str, reason: str, source: str, actionable: bool = Tr
 
 
 def handoff(run_dir: str, repo: str, publish: bool) -> int:
+    """List ideas or link actionable ones to verified issues; return 1 on errors."""
     ideas = read(run_dir)
     if not publish:
         for item in ideas:
@@ -94,6 +99,7 @@ def handoff(run_dir: str, repo: str, publish: bool) -> int:
 
 
 def main(argv: list[str]) -> int:
+    """Dispatch add or handoff commands and return a CLI exit status."""
     try:
         if len(argv) in (6, 7) and argv[1] == "add":
             if len(argv) == 7 and argv[6] != "--exploratory":

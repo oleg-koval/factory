@@ -183,6 +183,7 @@ def draw_pill(c: Canvas, cx: float, cy: float, text: str, *, fill=PAPER, stroke=
 
 
 def page_one(c: Canvas) -> None:
+    """Draw the introductory run map and operating rules on the canvas."""
     page_header(c, 1, "Read this first")
     y = PAGE_H - 31 * mm
     section_label(c, "One ticket in / one verified draft PR out", MARGIN, y)
@@ -346,6 +347,7 @@ def page_two(c: Canvas) -> None:
 
 
 def page_three(c: Canvas) -> None:
+    """Draw the build, proof, and terminal-gate flow on the canvas."""
     page_header(c, 3, "Phases 3 to 6")
     cx = PAGE_W / 2
     x0 = cx - 58
@@ -423,6 +425,7 @@ def make_paragraph(text: str, *, bold: bool = False, mono: bool = False, size: f
 
 
 def page_four(c: Canvas) -> None:
+    """Draw the phase roles and runner stop conditions on the canvas."""
     page_header(c, 4, "Roles and stop conditions")
     y = PAGE_H - 25 * mm
     section_label(c, "Who does what, per phase", MARGIN, y)
@@ -505,6 +508,7 @@ def build(output: Path) -> None:
 
 
 def build_onepage(output: Path) -> None:
+    """Write the one-page A4 run map PDF, creating parent directories as needed."""
     output.parent.mkdir(parents=True, exist_ok=True)
     c = Canvas(str(output), pagesize=A4)
     c.setTitle("Factory Run Flow - one page")
@@ -567,6 +571,7 @@ def build_onepage(output: Path) -> None:
 
 
 def main() -> None:
+    """Build the A4 PDF and optional one-page edition from command-line options."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output",

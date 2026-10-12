@@ -13,11 +13,13 @@ LOCK_FILE = "scope-lock.json"
 
 
 def digest(path: str) -> str:
+    """Return the SHA-256 hex digest of a file, propagating read errors."""
     with open(path, "rb") as handle:
         return hashlib.sha256(handle.read()).hexdigest()
 
 
 def verify(run_dir: str) -> list[str]:
+    """Return scope-lock validation failures, or an empty list if both plans match."""
     path = os.path.join(run_dir, LOCK_FILE)
     try:
         with open(path, encoding="utf-8") as handle:
@@ -45,6 +47,7 @@ def verify(run_dir: str) -> list[str]:
 
 
 def seal(run_dir: str) -> None:
+    """Atomically save the current plan digests as the approved scope lock."""
     lock = {"version": 1}
     for name in PLAN_FILES:
         lock[name] = digest(os.path.join(run_dir, name))
@@ -57,6 +60,7 @@ def seal(run_dir: str) -> None:
 
 
 def main(argv: list[str]) -> int:
+    """Seal or verify a run scope and return success, blocked, or usage exit status."""
     if len(argv) != 3 or argv[1] not in {"seal", "verify"}:
         print("usage: scope_lock.py seal|verify <run-dir>", file=sys.stderr)
         return 2

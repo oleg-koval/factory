@@ -14,6 +14,7 @@ import scope_lock  # noqa: E402
 
 class ScopeAndIdeasTest(unittest.TestCase):
     def setUp(self):
+        """Create an isolated version 2 run with plans and checkpoint receipts."""
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.run_dir = Path(self.temp.name)
@@ -32,11 +33,13 @@ class ScopeAndIdeasTest(unittest.TestCase):
         }
 
     def gate(self, phase):
+        """Persist the fixture state and capture the gate result for a phase."""
         (self.run_dir / "state.json").write_text(json.dumps(self.state))
         return subprocess.run([sys.executable, str(ROOT / "scripts/gate.py"), str(self.run_dir),
                                "--phase", phase], capture_output=True, text=True)
 
     def test_approved_scope_blocks_unreviewed_change_and_allows_reapproval(self):
+        """Verify plan drift blocks progress until the changed scope is resealed."""
         self.assertIn("scope lock unavailable", self.gate("3").stdout)
         scope_lock.seal(str(self.run_dir))
         self.assertEqual(self.gate("3").returncode, 0)
@@ -50,6 +53,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.assertEqual(self.gate("4").returncode, 0)
 
     def test_legacy_run_and_checkpoint_receipts(self):
+        """Verify legacy compatibility and version 2 checkpoint requirements."""
         self.state.pop("contract_version")
         self.state["milestones"][0].pop("checkpoint")
         self.assertEqual(self.gate("4").returncode, 0)
@@ -64,6 +68,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.assertIn("pending", self.gate("4").stdout)
 
     def test_runner_stops_for_attended_preview(self):
+        """Verify a pending preview checkpoint requires an attended runner session."""
         run = self.run_dir / ".factory" / "scope-test"
         run.mkdir(parents=True)
         self.state["checkpoint_pending"] = "M1"
@@ -75,6 +80,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.assertIn("human=1", result.stdout)
 
     def test_deferred_idea_survives_unavailable_github_and_deduplicates(self):
+        """Verify ideas survive GitHub failures and reuse matching issues on retry."""
         deferred_ideas.add(str(self.run_dir), "Add export", "Outside M1", "review note")
         deferred_ideas.add(str(self.run_dir), "add export", "Outside M1", "review note")
         deferred_ideas.add(str(self.run_dir), "Maybe add chat", "Needs discovery", "review note", actionable=False)
@@ -85,6 +91,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
 
         calls = []
         def existing_issue(*args):
+            """Simulate finding and verifying an existing issue while rejecting creation."""
             calls.append(args)
             if args[:2] == ("issue", "list"):
                 return json.dumps([{"title": "Add export", "url": "https://github.com/owner/repo/issues/7"}])
