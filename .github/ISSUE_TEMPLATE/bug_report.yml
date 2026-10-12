@@ -1,0 +1,33 @@
+name: Bug report
+description: Something in Factory does not work as documented
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Commands or a minimal repository. Paste real output, not a summary.
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      options:
+        - Claude Code
+        - Codex
+        - Neither (running scripts directly)
+    validations:
+      required: true
+  - type: input
+    id: install
+    attributes:
+      label: Install command used
+      placeholder: npx --yes skills add oleg-koval/factory -a claude-code -a codex -y

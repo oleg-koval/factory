@@ -71,6 +71,27 @@ export default function RootLayout({
             gtag('config', 'G-0RRTME2WMJ');
           `}
         </Script>
+        <Script id="launch-events" strategy="afterInteractive">
+          {`
+            document.addEventListener('copy', function () {
+              var text = String(window.getSelection() || '');
+              if (text.indexOf('npx --yes skills add ') !== -1) {
+                gtag('event', 'install_command_copy', { page_path: location.pathname });
+              }
+            });
+            document.addEventListener('click', function (event) {
+              var link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+              if (!link) return;
+              var href = link.getAttribute('href') || '';
+              var base = 'https://github.com/oleg-koval/factory';
+              if (href === base || href.indexOf(base + '/') === 0) {
+                gtag('event', 'github_click', { link_url: href, page_path: location.pathname });
+              } else if (href === '/proof/') {
+                gtag('event', 'proof_open', { page_path: location.pathname });
+              }
+            });
+          `}
+        </Script>
       </head>
       <body
         className={`${plexSans.variable} ${plexMono.variable} antialiased`}

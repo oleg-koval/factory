@@ -43,5 +43,8 @@
     "vite": "8.3.0",
     "wrangler": "4.136.3"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "undici": "7.29.1"
+  }
 }
