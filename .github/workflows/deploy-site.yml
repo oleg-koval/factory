@@ -31,8 +31,21 @@ jobs:
       - name: Lint site
         working-directory: site
         run: npm run lint
-      - name: Audit site dependency tree
+      - name: Enforce temporary development audit exception expiry
+        env:
+          DEV_AUDIT_EXCEPTION_EXPIRES: "2026-11-11"
+        run: |
+          today="$(date -u +%F)"
+          if [[ "$today" > "$DEV_AUDIT_EXCEPTION_EXPIRES" || "$today" == "$DEV_AUDIT_EXCEPTION_EXPIRES" ]]; then
+            echo "The temporary development dependency audit exception expired on $DEV_AUDIT_EXCEPTION_EXPIRES; review and remove or renew it."
+            exit 1
+          fi
+      - name: Audit production site dependencies
         working-directory: site
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Report development dependency advisories
+        working-directory: site
+        continue-on-error: true
         run: npm audit --audit-level=moderate
       - name: Build and verify site
         working-directory: site

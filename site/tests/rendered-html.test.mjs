@@ -362,7 +362,9 @@ test("GitHub Actions validates the site without deploying it", async () => {
   assert.match(siteWorkflow, /name: Validate Factory site/);
   assert.match(siteWorkflow, /pull_request:/);
   assert.match(siteWorkflow, /push:/);
-  assert.match(siteWorkflow, /run: npm audit --audit-level=moderate/);
+  assert.match(siteWorkflow, /run: npm audit --omit=dev --audit-level=moderate/);
+  assert.match(siteWorkflow, /DEV_AUDIT_EXCEPTION_EXPIRES: "2026-11-11"/);
+  assert.match(siteWorkflow, /continue-on-error: true\s+run: npm audit --audit-level=moderate/);
   assert.match(siteWorkflow, /run: npm test/);
   assert.match(siteWorkflow, /HYDRATION_SERVER_MODE=production npm run test:hydration/);
   const deployCommand = /cloudflare\/wrangler-action|wrangler\s+deploy|secrets\.CLOUDFLARE_(?:API_TOKEN|ACCOUNT_ID)/i;
