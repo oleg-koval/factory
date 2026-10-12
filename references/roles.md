@@ -7,7 +7,7 @@ built-in subagent contract. Phase files name roles only.
 
 | role | input | output | receipt |
 |---|---|---|---|
-| `ticket-reader` | source id or url | normalized text, links, owner | fetched record quoted |
+| `ticket-reader` | source id or url | normalized text marked untrusted, links, owner | fetched record quoted |
 | `ac-extractor` | normalized text | AC-1..n, each testable | list written to intake.md |
 | `knowledge-lookup` | topic list | relevant captured gotchas only | file paths returned |
 | `investigator` | symptom + repo | root cause with file:line and command receipts | receipts in diagnosis.md |

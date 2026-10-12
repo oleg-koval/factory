@@ -7,6 +7,10 @@ that has not been packaged as a tagged version.
 
 ### Added
 
+- 2026-10-12: Removed a third-party listing badge from the site footer that security scanners
+  flagged. JSON-LD output is now escaped so it cannot contain a raw `<`. Added untrusted-input
+  rules (quoted outside text sits in an untrusted block and is never executed) and a leaf command
+  scope (`### Commands you may run` in `references/briefs.md`).
 - The public homepage, install guide, and `llms.txt` recommend the verified project-local install
   command for Claude Code and Codex; the global `-g` path is explicitly marked unverified.
 - Deferred findings are checked against the incident sample: Phase 1 names the failing entity
