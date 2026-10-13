@@ -53,10 +53,17 @@ def seal(run_dir: str) -> None:
         lock[name] = digest(os.path.join(run_dir, name))
     path = os.path.join(run_dir, LOCK_FILE)
     temporary = path + ".tmp"
-    with open(temporary, "w", encoding="utf-8") as handle:
-        json.dump(lock, handle, indent=2)
-        handle.write("\n")
-    os.replace(temporary, path)
+    try:
+        with open(temporary, "w", encoding="utf-8") as handle:
+            json.dump(lock, handle, indent=2)
+            handle.write("\n")
+        os.replace(temporary, path)
+    except OSError:
+        try:
+            os.remove(temporary)
+        except OSError:
+            pass
+        raise
 
 
 def main(argv: list[str]) -> int:

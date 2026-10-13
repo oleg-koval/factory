@@ -71,20 +71,32 @@ def handoff(run_dir: str, repo: str, publish: bool) -> int:
         try:
             if item.get("issue_url"):
                 url = item["issue_url"]
+                if item.pop("issue_creation_pending", False):
+                    write(run_dir, ideas)
             else:
-                matches = json.loads(gh("issue", "list", "--repo", repo, "--state", "all",
-                                        "--search", f'"{item["idea"]}" in:title',
-                                        "--json", "title,url", "--limit", "100"))
-                duplicate = next((issue for issue in matches if issue["title"].casefold() == item["idea"].casefold()), None)
+                pages = json.loads(gh("api", "--paginate", "--slurp",
+                                      f"repos/{repo}/issues?state=all&per_page=100"))
+                matches = [issue for page in pages for issue in page if "pull_request" not in issue]
+                duplicate = next((issue for issue in matches
+                                  if issue["title"].casefold() == item["idea"].casefold()), None)
                 if duplicate:
                     url = duplicate["url"]
+                    item["issue_url"] = url
+                    item["status"] = "unverified"
+                    write(run_dir, ideas)
+                elif item.get("issue_creation_pending"):
+                    raise RuntimeError("issue creation is pending; refusing to create a duplicate")
                 else:
                     body = (f"Deferred from Factory run `{os.path.basename(run_dir)}` ({item['id']}).\n\n"
                             f"Source: {item['source']}\n\nWhy deferred: {item['reason']}\n")
+                    item["issue_creation_pending"] = True
+                    write(run_dir, ideas)
                     url = gh("issue", "create", "--repo", repo, "--title", item["idea"], "--body", body)
-                item["issue_url"] = url
-                item["status"] = "unverified"
-                write(run_dir, ideas)
+                    item["issue_url"] = url
+                    item["status"] = "unverified"
+                    write(run_dir, ideas)
+                if item.pop("issue_creation_pending", False):
+                    write(run_dir, ideas)
 
             observed = json.loads(gh("issue", "view", url, "--repo", repo, "--json", "title,url"))
             if observed.get("url") != url or observed.get("title", "").casefold() != item["idea"].casefold():

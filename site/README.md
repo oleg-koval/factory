@@ -29,7 +29,7 @@ site build and rendered-route tests. It does not deploy or use Cloudflare deploy
 Production deployment remains a separate, manual release decision.
 
 The workflow blocks on moderate or higher production dependency advisories. The full development
-dependency audit is reported as a non-blocking diagnostic through 2026-11-11 because the current
+dependency audit is reported as a non-blocking diagnostic through 2026-11-12 because the current
 dependency tree includes advisories without a compatible upstream fix. The workflow has a blocking
 expiry guard; on or after that date it fails until the exception is reviewed and removed or renewed.
 

@@ -1,0 +1,7 @@
+[
+  {
+    "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+    "reason": "No patched braces release exists yet (latest 3.0.3 is in the vulnerable range); reached only through eslint-plugin-next and vinext at lint/build time, never at runtime.",
+    "review_by": "2026-11-12"
+  }
+]

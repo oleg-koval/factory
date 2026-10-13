@@ -341,7 +341,7 @@ def check_checkpoint(milestone: dict, run_dir: str, reasons: list[str]) -> None:
         return
     try:
         with open(os.path.join(run_dir, "receipts.md"), encoding="utf-8") as handle:
-            if receipt not in handle.read():
+            if receipt not in handle.read().splitlines():
                 fail(reasons, f"milestone {milestone.get('id')!r} checkpoint receipt is absent from receipts.md")
     except OSError as error:
         fail(reasons, f"cannot verify milestone {milestone.get('id')!r} checkpoint receipt: {error}")

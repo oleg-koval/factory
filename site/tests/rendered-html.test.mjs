@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { PDFDocument } from "pdf-lib";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { readFile, readdir } from "node:fs/promises";
@@ -165,6 +166,14 @@ test("proof page contains parseable structured data and visible boundaries", asy
   assert.match(html, /href="https:\/\/github\.com\/oleg-koval\/factory\/blob\/main\/proof\/terminal-gate\/false-delivery\/state\.json"/);
 });
 
+test("homepage JSON-LD is escaped so it cannot contain a raw angle bracket", async () => {
+  const html = await render("/").then((response) => response.text());
+  const body = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(body, "homepage must carry a JSON-LD block");
+  assert.ok(!body.includes("<"), "JSON-LD body must not contain a raw <");
+  assert.doesNotThrow(() => JSON.parse(body));
+});
+
 test("install and changelog publish structured data matching visible content", async () => {
   const [install, changelog] = await Promise.all([
     render("/install/").then((response) => response.text()),
@@ -287,12 +296,16 @@ test("run map exposes the complete phase contract and both PDF editions", async 
   assert.match(html, /href="\/downloads\/factory-run-flow-a4\.pdf"/);
 });
 
-test("run-map downloads are published as non-empty PDF files", async () => {
-  for (const file of ["factory-run-flow-onepage.pdf", "factory-run-flow-a4.pdf"]) {
-    const pdf = await readFile(new URL(`../public/downloads/${file}`, import.meta.url));
-    assert.equal(pdf.subarray(0, 5).toString(), "%PDF-");
-    assert.ok(pdf.byteLength > 3_000, `${file} is unexpectedly small`);
-  }
+test("run-map downloads are valid PDFs with the expected page counts", async () => {
+  const onePage = await readFile(new URL("../public/downloads/factory-run-flow-onepage.pdf", import.meta.url));
+  assert.equal(onePage.subarray(0, 5).toString(), "%PDF-");
+  assert.ok(onePage.byteLength > 3_000, "factory-run-flow-onepage.pdf is unexpectedly small");
+  assert.equal((await PDFDocument.load(onePage)).getPageCount(), 1);
+
+  const a4 = await readFile(new URL("../public/downloads/factory-run-flow-a4.pdf", import.meta.url));
+  assert.equal(a4.subarray(0, 5).toString(), "%PDF-");
+  assert.ok(a4.byteLength > 10_000, "factory-run-flow-a4.pdf is unexpectedly small");
+  assert.equal((await PDFDocument.load(a4)).getPageCount(), 4);
 });
 
 test("install page states verified counts and invocation limits", async () => {
@@ -362,9 +375,7 @@ test("GitHub Actions validates the site without deploying it", async () => {
   assert.match(siteWorkflow, /name: Validate Factory site/);
   assert.match(siteWorkflow, /pull_request:/);
   assert.match(siteWorkflow, /push:/);
-  assert.match(siteWorkflow, /run: npm audit --omit=dev --audit-level=moderate/);
-  assert.match(siteWorkflow, /DEV_AUDIT_EXCEPTION_EXPIRES: "2026-11-11"/);
-  assert.match(siteWorkflow, /continue-on-error: true\s+run: npm audit --audit-level=moderate/);
+  assert.match(siteWorkflow, /run: npm run audit/);
   assert.match(siteWorkflow, /run: npm test/);
   assert.match(siteWorkflow, /HYDRATION_SERVER_MODE=production npm run test:hydration/);
   const deployCommand = /cloudflare\/wrangler-action|wrangler\s+deploy|secrets\.CLOUDFLARE_(?:API_TOKEN|ACCOUNT_ID)/i;

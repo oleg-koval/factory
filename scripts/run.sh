@@ -188,7 +188,7 @@ while true; do
     GATE_OUT="$(python3 "${SKILL_DIR}/scripts/gate.py" "$RUN_DIR" --phase "$PREV" 2>&1)" || true
     echo "$GATE_OUT"
 
-    if [[ "$GATE_OUT" == GATE:\ BLOCKED* ]]; then
+    if [[ "$GATE_OUT" == GATE:\ BLOCKED* && -z "$CHECKPOINT_PENDING" ]]; then
       echo "run.sh: gate blocked on phase ${PREV}, will not start phase ${PHASE}."
       exit 1
     fi

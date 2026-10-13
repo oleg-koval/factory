@@ -9,19 +9,6 @@ export function SiteFooter() {
         </Link>
         <p>The verification layer for AI software factories.</p>
         <a
-          href="https://sellwithboost.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element -- Load the listing site's badge directly. */}
-          <img
-            src="https://sellwithboost.com/badge/listing.svg"
-            alt="Listed on Sell With boost"
-            loading="lazy"
-            style={{ height: 40, width: "auto" }}
-          />
-        </a>
-        <a
           href="https://peerpush.com/p/factory-agent-skills"
           target="_blank"
           rel="noopener noreferrer"

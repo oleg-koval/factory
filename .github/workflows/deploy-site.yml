@@ -42,11 +42,7 @@ jobs:
           fi
       - name: Audit production site dependencies
         working-directory: site
-        run: npm audit --omit=dev --audit-level=moderate
-      - name: Report development dependency advisories
-        working-directory: site
-        continue-on-error: true
-        run: npm audit --audit-level=moderate
+        run: npm run audit
       - name: Build and verify site
         working-directory: site
         run: npm test
