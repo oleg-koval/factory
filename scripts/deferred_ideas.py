@@ -80,7 +80,7 @@ def handoff(run_dir: str, repo: str, publish: bool) -> int:
                 duplicate = next((issue for issue in matches
                                   if issue["title"].casefold() == item["idea"].casefold()), None)
                 if duplicate:
-                    url = duplicate["url"]
+                    url = duplicate["html_url"]
                     item["issue_url"] = url
                     item["status"] = "unverified"
                     write(run_dir, ideas)

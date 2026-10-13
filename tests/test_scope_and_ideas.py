@@ -21,7 +21,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.run_dir = Path(self.temp.name)
         (self.run_dir / "human-plan.md").write_text("## Milestones\nM1: approved slice\nFlag key: none\n")
-        (self.run_dir / "agent-plan.md").write_text("## Invariants\nnone\nM1: approved slice\n  tracer: end to end\n")
+        (self.run_dir / "agent-plan.md").write_text("## Invariants\nnone\nM1: approved slice\n  tracer: end to end\n  checkpoint: target: none; demo: local demo\n")
         (self.run_dir / "receipts.md").write_text("M1 local demo\nM1 preview verification\n")
         self.state = {
             "slug": "scope-test", "source": "text", "input": "example", "class": "feature",
@@ -60,6 +60,8 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.state["milestones"][0].pop("checkpoint")
         self.assertEqual(self.gate("4").returncode, 0)
         self.state["contract_version"] = 2
+        plan = self.run_dir / "agent-plan.md"
+        plan.write_text(plan.read_text().replace("target: none", "target: preview"))
         scope_lock.seal(str(self.run_dir))
         self.assertIn("release checkpoint", self.gate("4").stdout)
         self.state["milestones"][0]["checkpoint"] = {"target": "preview", "status": "verified", "receipt": ""}
@@ -73,6 +75,64 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.assertEqual(self.gate("4").returncode, 0)
         self.state["checkpoint_pending"] = "M1"
         self.assertIn("pending", self.gate("4").stdout)
+
+    def test_sealed_run_without_version_still_checks_scope_and_checkpoints(self):
+        """Removing the version must not bypass a sealed run's gates."""
+        self.state.pop("contract_version")
+        self.state["isolation"] = {"mode": "in-place", "repo": "repo", "branch": "test",
+                                   "base": "main", "accepted_by": "Use this checkout"}
+        self.state["terminal"] = "delivered"
+        (self.run_dir / "ac-matrix.md").write_text("| AC | status |\n|---|---|\n| AC-1 | met |\n")
+        scope_lock.seal(str(self.run_dir))
+        for phase, next_phase in (("4", "4"), ("4", "5"), ("6", None)):
+            with self.subTest(phase=phase, next=next_phase):
+                self.state["next"] = next_phase
+                self.assertEqual(self.gate(phase).returncode, 0)
+                checkpoint = self.state["milestones"][0].pop("checkpoint")
+                try:
+                    self.assertIn("release checkpoint", self.gate(phase).stdout)
+                finally:
+                    self.state["milestones"][0]["checkpoint"] = checkpoint
+        with (self.run_dir / "human-plan.md").open("a") as handle:
+            handle.write("Unapproved scope\n")
+        for phase in ("3", "4", "5", "6"):
+            with self.subTest(phase=phase):
+                self.assertIn("changed after scope approval", self.gate(phase).stdout)
+
+    def test_checkpoint_receipt_must_identify_current_milestone(self):
+        """A different milestone's receipt cannot satisfy the current milestone."""
+        scope_lock.seal(str(self.run_dir))
+        for receipt in ("M2 local demo", "M10 local demo", "local demo"):
+            with self.subTest(receipt=receipt):
+                (self.run_dir / "receipts.md").write_text(receipt + "\n")
+                self.state["milestones"][0]["checkpoint"]["receipt"] = receipt
+                result = self.gate("4")
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("does not identify milestone", result.stdout)
+        receipt = "| now | 4 | demo | factory(M1): local demo | abc1234 | pass |"
+        (self.run_dir / "receipts.md").write_text(receipt + "\n")
+        self.state["milestones"][0]["checkpoint"]["receipt"] = receipt
+        self.assertEqual(self.gate("4").returncode, 0)
+
+    def test_checkpoint_target_must_match_approved_milestone(self):
+        """Neither another milestone nor a missing target permits skipping preview."""
+        plan = self.run_dir / "agent-plan.md"
+        original = plan.read_text()
+        for changed in (
+            original.replace("target: none", "target: preview"),
+            original.replace("target: none", "target: preview") + "M2: docs\n  checkpoint: target: none; demo: docs\n",
+            original.replace("  checkpoint: target: none; demo: local demo\n", ""),
+        ):
+            with self.subTest(plan=changed):
+                plan.write_text(changed)
+                scope_lock.seal(str(self.run_dir))
+                result = self.gate("4")
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("approved checkpoint target", result.stdout)
+        plan.write_text(original.replace("target: none", "target: preview"))
+        scope_lock.seal(str(self.run_dir))
+        self.state["milestones"][0]["checkpoint"].update(target="preview", status="verified")
+        self.assertEqual(self.gate("4").returncode, 0)
 
     def test_runner_stops_for_attended_preview(self):
         """Verify a pending preview checkpoint requires an attended runner session."""
@@ -124,8 +184,10 @@ class ScopeAndIdeasTest(unittest.TestCase):
             if args[:3] == ("api", "--paginate", "--slurp"):
                 self.assertNotIn("--search", args)
                 return json.dumps([
-                    [{"title": "Other", "url": "https://github.com/owner/repo/issues/6"}],
-                    [{"title": "Add \"export\"", "url": "https://github.com/owner/repo/issues/7"}],
+                    [{"title": "Other", "url": "https://api.github.com/repos/owner/repo/issues/6",
+                      "html_url": "https://github.com/owner/repo/issues/6"}],
+                    [{"title": "Add \"export\"", "url": "https://api.github.com/repos/owner/repo/issues/7",
+                      "html_url": "https://github.com/owner/repo/issues/7"}],
                 ])
             if args[:2] == ("issue", "view"):
                 return json.dumps({"title": 'Add "export"', "url": "https://github.com/owner/repo/issues/7"})
@@ -138,6 +200,10 @@ class ScopeAndIdeasTest(unittest.TestCase):
             self.assertEqual(deferred_ideas.handoff(str(self.run_dir), "owner/repo", True), 0)
         self.assertEqual(deferred_ideas.read(str(self.run_dir))[0]["status"], "linked")
         self.assertEqual(deferred_ideas.read(str(self.run_dir))[1]["status"], "pending")
+        self.assertEqual(deferred_ideas.read(str(self.run_dir))[0]["issue_url"],
+                         "https://github.com/owner/repo/issues/7")
+        with patch.object(deferred_ideas, "gh", side_effect=AssertionError("linked issue retried")):
+            self.assertEqual(deferred_ideas.handoff(str(self.run_dir), "owner/repo", True), 0)
         self.assertEqual(len(calls), 2)
 
     def test_deferred_issue_creation_marker_prevents_duplicate_after_write_failure(self):
@@ -173,7 +239,8 @@ class ScopeAndIdeasTest(unittest.TestCase):
 
         def recover_issue(*args):
             if args[:3] == ("api", "--paginate", "--slurp"):
-                return json.dumps([[{"title": 'Add a quoted "export"', "url": created_url}]])
+                return json.dumps([[{"title": 'Add a quoted "export"', "url": "https://api.github.com/repos/owner/repo/issues/8",
+                                     "html_url": created_url}]])
             if args[:2] == ("issue", "view"):
                 return json.dumps({"title": 'Add a quoted "export"', "url": created_url})
             if args[:2] == ("issue", "create"):

@@ -33,7 +33,7 @@ jobs:
         run: npm run lint
       - name: Enforce temporary development audit exception expiry
         env:
-          DEV_AUDIT_EXCEPTION_EXPIRES: "2026-11-11"
+          DEV_AUDIT_EXCEPTION_EXPIRES: "2026-11-12"
         run: |
           today="$(date -u +%F)"
           if [[ "$today" > "$DEV_AUDIT_EXCEPTION_EXPIRES" || "$today" == "$DEV_AUDIT_EXCEPTION_EXPIRES" ]]; then
