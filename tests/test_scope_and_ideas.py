@@ -148,6 +148,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         real_write = deferred_ideas.write
 
         def fail_url_write(run_dir, ideas):
+            """Simulate a disk error when first saving the newly created issue URL."""
             nonlocal writes
             writes += 1
             if writes == 2:
