@@ -188,7 +188,9 @@ test("install and changelog publish structured data matching visible content", a
   assert.match(install, /shorter alternative only if Codex has no other skill named/);
   assert.doesNotMatch(install, /skills add oleg-koval\/factory[^<]*-g/);
   assert.equal(changelogData["@type"], "CollectionPage");
-  assert.equal(changelogData.mainEntity.itemListElement.length, 9);
+  assert.equal(changelogData.mainEntity.itemListElement.length, 4);
+  assert.match(changelog, /Changelog \/ v1\.1\.0/);
+  assert.match(changelog, /Milestone release checkpoints/);
   assert.match(changelog, /Nine-route discovery contract/);
   assert.match(changelog, /Install verification boundary/);
 });

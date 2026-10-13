@@ -1,21 +1,22 @@
 # Changelog
 
-Evidence status: public repository history. Version 1.0.0 is the first tagged release; `Unreleased`
-describes behavior on the default branch that has not been packaged as a tagged version.
+Evidence status: public repository history. Version 1.0.0 was the first tagged release.
 
-## Unreleased
+## 1.1.0 - 2026-10-13
 
 ### Added
 
 - A scope lock for newly approved plans, per-milestone demonstration and release checkpoints,
   and a deferred-idea handoff to GitHub Issues that keeps optional features outside active runs.
+- Exact-line checkpoint receipt validation and a human handoff when a release checkpoint is pending.
+- Pending issue-creation state and safer exact-title matching for deferred ideas.
 
 ### Fixed
 
-- Removed a third-party listing badge from the site footer that security scanners flagged. JSON-LD
-  output is now escaped so it cannot contain a raw `<`. Added untrusted-input rules (quoted outside
-  text sits in an untrusted block and is never executed) and a leaf command scope
-  (`### Commands you may run` in `references/briefs.md`).
+- Removed a third-party listing badge from the site footer that security scanners flagged, and
+  escaped JSON-LD output so it cannot contain a raw `<`.
+- Added untrusted-input handling and leaf command-scope rules.
+- Updated site dependency auditing and its time-limited advisory policy.
 
 ## 1.0.0 - 2026-09-29
 
