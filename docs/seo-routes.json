@@ -38,7 +38,7 @@
     {
       "path": "/changelog/",
       "title": "Factory changelog — Every rule begins with a failure",
-      "description": "Read the failure behind each Factory rule, the regression that proves the fix, and the evidence boundary for every unreleased change.",
+      "description": "Read the failure behind each Factory rule, the regression that proves the fix, and the evidence boundary for every release.",
       "intent": "Factory agent skill changelog",
       "schemas": ["CollectionPage"],
       "evidence": ["CHANGELOG.md", "proof/case-studies/terminal-state-mismatch/README.md"]
