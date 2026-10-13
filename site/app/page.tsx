@@ -24,8 +24,8 @@ const gates = [
   ["01", "Intake", "Separate the reported symptom from evidence. Write acceptance criteria that can fail."],
   ["02", "Isolate", "Create a clean branch and worktree. Measure the baseline where the work will run."],
   ["03", "Diagnose", "Reproduce the problem, name the cause, and keep the unknowns visible."],
-  ["04", "Plan", "Write the human plan first. Close blocking questions before code begins."],
-  ["05", "Build", "Add the end-to-end test before implementation. Review one milestone at a time."],
+  ["04", "Plan", "Close blocking questions and lock the approved scope before code begins."],
+  ["05", "Build", "Test and review one milestone at a time. Demonstrate each release checkpoint."],
   ["06", "Prove", "Remove the fix and watch the test fail. Review callers and whole-change invariants."],
   ["07", "Stop", "Run the terminal gate. Report the one state the evidence actually permits."],
 ];

@@ -3,10 +3,12 @@
 Sequential per milestone. Never more than two leaves at once. Before the first milestone
 say: "fixer rounds max 2 per milestone".
 
-Everything in this phase runs in `state.isolation.worktree`, on the branch Phase 0b created.
-Every brief's cwd is that path, and every "files you may write" path is relative to it. A leaf
-given a path outside it would be editing the user's own checkout, which is what Phase 0b exists
-to prevent.
+Everything runs in `state.isolation.worktree`. Every brief uses that cwd and lists only
+relative writable paths, so leaves cannot edit the user's active checkout.
+
+Before each version 2 milestone, verify the scope lock with
+`python3 <skill-dir>/scripts/scope_lock.py verify .factory/<slug>`. Defer optional ideas with
+`deferred_ideas.py add`. A discovery required for an existing AC returns to Phases 2, 2b, 3.
 
 For milestone M<n> from `agent-plan.md`:
 
@@ -26,10 +28,8 @@ b2. **Teeth check**, role `teeth-check`, once per new test that is meant to prov
    way the repo's own command runs it** (not the single test in isolation), quotes the output,
    then restores the lines and re-runs to confirm the restore. Append the quoted failure to
    `receipts.md`.
-   Advance only when the output shows the test FAILING with the fix reverted. A test that still
-   passes with the fix reverted has no teeth and proves nothing: return to step a to rewrite it,
-   with the fix restored first. Isolation is not a defence - a test that fails alone but passes
-   in its file is a test the suite will never fail on.
+   Advance only if the whole file FAILS without the fix. Otherwise restore the fix and rewrite
+   the test in step a.
 c. **Checkpoint**, role `mechanical-leaf`: `git add` only the files the milestone block lists - never `git add .`, even in
    the worktree - commit `factory(M<n>): <goal>`, return the sha. Append a row to `receipts.md`
    and set the milestone's `sha` in `state.milestones`.
@@ -43,15 +43,20 @@ d. **Review**, role `milestone-reviewer` (fresh context, read-only). Skipped whe
    - `VERDICT: PASS` -> step f.
    - `VERDICT: FIX` -> step e.
 
-   The extra diffs are the point of this step. A reviewer holding one milestone's diff can only
-   find defects that fit inside it, and the expensive ones do not: a read taken outside a lock
-   that a later milestone writes inside it, a second writer on the same counter, a keyed
-   structure a later milestone lets hold two entries for one key. Ask explicitly whether each
-   listed invariant still holds across every commit shown, not just within this one.
+   Ask whether each invariant holds across every shown commit; one diff cannot reveal a later
+   writer that breaks an earlier read.
 e. **Fix loop**, role `fixer` with the reviewer's findings, then step c (new commit
    `factory(M<n>): fix <short>`), then step d again. Increment `state.loops.fixer["M<n>"]`.
    A third `VERDICT: FIX` means stop: set `terminal: blocked`, go to Phase 6 for the report with the findings.
-f. **State**: append one row per AC to `ac-matrix.md` (AC id, test id, kind, status, reason,
+f. **Release checkpoint**: demonstrate the result. For `preview`, deploy with required
+   authority; record target, verification, and rollback in `receipts.md`. An unattended run
+   sets `state.checkpoint_pending` to the milestone ID and stops with `NEEDS-YOU` before
+   publishing. Clear it after attended verification or plan revision. For `none`, record
+   the reason and local demo. Set the milestone's `checkpoint` to
+   `{"target":"preview","status":"verified","receipt":"<pointer>"}` or
+   `{"target":"none","status":"not-applicable","reason":"<reason>","receipt":"<demo>"}`.
+   The receipt value must occur in `receipts.md`. This is not terminal proof.
+g. **State**: append one row per AC to `ac-matrix.md` (AC id, test id, kind, status, reason,
    owner, sha). `status` is exactly one of `met`, `unrunnable` or `failed`; there is no fourth
    value and no prose hedge. Use `unrunnable` when the test exists but cannot execute in this
    environment, and fill `reason` (what is missing, one line) and `owner` (who can run it). An
@@ -61,7 +66,7 @@ f. **State**: append one row per AC to `ac-matrix.md` (AC id, test id, kind, sta
 
 The reviewer's verdict advances state, never the implementer's report.
 
-Before deferring a finding (an unfixed Minor, or a later Gaps entry), check it against the
+Do not log a bug or unmet AC as an optional idea. Before deferring a finding, check it against the
 incident sample in `diagnosis.md` `## Examination`. If the sample falls inside the deferred
 case, fix it in step e: deferring it silences the report instead of fixing it. Receipt it.
 

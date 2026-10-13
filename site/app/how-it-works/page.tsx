@@ -34,7 +34,7 @@ export default function HowItWorksPage() {
         "@type": "TechArticle",
         headline: "Factory run map — A verified AI coding agent workflow",
         description: metadata.description,
-        dateModified: "2026-09-23",
+        dateModified: "2026-10-12",
         author: {
           "@type": "Person",
           name: "Oleg Koval",

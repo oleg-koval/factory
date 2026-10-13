@@ -12,14 +12,14 @@ const macroStages = [
     number: "02",
     title: "Decide",
     phases: "2 Human plan / 2b Grill",
-    body: "You approve the plan and close the question frontier. Unanswered blockers stop the run.",
+    body: "You approve the scope and close the question frontier. Unanswered blockers stop the run.",
     tone: "decide",
   },
   {
     number: "03",
     title: "Build",
     phases: "3 Agent plan / 4 Milestones",
-    body: "Preserve approved intent, write the failing test, implement one milestone, review, and commit.",
+    body: "Lock approved scope, build reviewed milestones, and verify release checkpoints. Defer optional ideas.",
     tone: "build",
   },
   {
@@ -69,7 +69,7 @@ const phases = [
     runsAs: "You",
     speaks: "Plan + rediff",
     closesWhen: "The plan contains a Flag key line",
-    body: "Review what will change, the acceptance criteria, the decision flags, and the question frontier. Revise the diff until the plan is clean.",
+    body: "Review the acceptance criteria, milestone demonstrations, release targets, and open decisions. Revise the plan until it is clear.",
     gate: "NEEDS-YOU",
   },
   {
@@ -88,8 +88,8 @@ const phases = [
     stage: "Build",
     runsAs: "Opus",
     speaks: "Gate decision",
-    closesWhen: "Invariants, M1 tracer, and SAME-SCOPE are recorded",
-    body: "Translate the approved human plan into bounded milestones without changing its meaning. A plan-equivalence auditor gets one retry on mismatch.",
+    closesWhen: "SAME-SCOPE verdict and approved scope lock",
+    body: "Translate the human plan into bounded milestones. The equivalence review checks scope, then Factory seals both plans against unreviewed edits.",
     gate: "gate.py --phase 3",
   },
   {
@@ -98,8 +98,8 @@ const phases = [
     stage: "Build",
     runsAs: "Opus + leaves",
     speaks: "Per-milestone verdict",
-    closesWhen: "Every milestone is complete with a commit SHA",
-    body: "Work one milestone per fresh session. An end-to-end tester writes the failing test; implementation, review, and fixes stay bounded.",
+    closesWhen: "Every milestone has a commit and checkpoint receipt",
+    body: "Test and review one stage at a time. Defer optional ideas, demonstrate the result, and verify any authorized preview before continuing.",
     gate: "gate.py --phase 4",
   },
   {
@@ -125,6 +125,8 @@ const phases = [
 ] as const;
 
 const stopSignals = [
+  ["Approved plan changes", "Block the next milestone until human review and a new scope lock."],
+  ["Preview awaits publication", "Print NEEDS-YOU; an unattended run cannot publish."],
   ["Next phase is 2, 2b, or 6", "Print NEEDS-YOU and exit 0. Run /factory resume <slug>, then rerun."],
   ["The closed phase gate says BLOCKED", "Print the reasons and exit 1. Nothing starts on an unpassed predecessor."],
   ["state.terminal is set", "Exit 0. The run is over."],
@@ -182,7 +184,7 @@ export function RunMapOverview() {
       </ol>
       <div className="run-invariants" role="group" aria-label="Factory run invariants">
         <p>One phase per fresh session</p>
-        <p>Only <code>state.json</code> crosses sessions</p>
+        <p>Compact state and run artifacts cross sessions</p>
         <p>Stops whenever a human is needed</p>
       </div>
       <RunDownloads />
@@ -206,7 +208,7 @@ export function CompleteRunMap() {
         </div>
         <div className="run-invariants run-invariants-dark">
           <p>One phase per fresh session</p>
-          <p>Only <code>state.json</code> crosses sessions</p>
+          <p>Compact state and run artifacts cross sessions</p>
           <p>Every closed phase must pass its gate</p>
         </div>
         <div className="run-legend" role="group" aria-label="Run map legend">
@@ -262,14 +264,15 @@ export function CompleteRunMap() {
           <p className="eyebrow">Human boundary</p>
           <h2 id="run-decisions-heading">Factory knows when not to continue.</h2>
           <p>
-            Isolation consent, plan approval, unanswered product questions, exhausted
-            rounds, and the final claim remain explicit human boundaries.
+            Isolation consent, scope revisions, preview publication, unanswered product
+            questions, and the final claim remain explicit human boundaries.
           </p>
         </div>
         <div className="decision-grid">
           <article><span>01</span><h3>No worktree?</h3><p>Factory asks before working in place and records whose consent allowed it.</p></article>
           <article><span>02</span><h3>Open question?</h3><p>The grill returns one decision at a time. Code waits until the blocking frontier is empty.</p></article>
           <article><span>03</span><h3>Budget exhausted?</h3><p>The loop stops, names the cap, and reports what remains instead of quietly retrying.</p></article>
+          <article><span>04</span><h3>New idea?</h3><p>Factory records it for the handoff. The approved milestone continues unless an existing criterion requires a revised plan.</p></article>
         </div>
       </section>
 

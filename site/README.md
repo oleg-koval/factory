@@ -28,6 +28,11 @@ GitHub Actions checks pull requests and pushes to `main` with `npm ci`, lint, an
 site build and rendered-route tests. It does not deploy or use Cloudflare deployment secrets.
 Production deployment remains a separate, manual release decision.
 
+The workflow blocks on moderate or higher production dependency advisories. The full development
+dependency audit is reported as a non-blocking diagnostic through 2026-11-12 because the current
+dependency tree includes advisories without a compatible upstream fix. The workflow has a blocking
+expiry guard; on or after that date it fails until the exception is reviewed and removed or renewed.
+
 For a manual deployment from a clean `main` checkout, run:
 
 ```bash

@@ -28,8 +28,9 @@ You are the physician taking the history. Cheap, mostly reading. Write nothing o
 6. Role `knowledge-lookup` on the touched area (Shopify, @teifi-digital, team gotchas).
    Store what came back, verbatim, under `## Knowledge`.
 7. Write `intake.md` with sections `## Source`, `## Acceptance criteria`, `## Triage`,
-   `## Knowledge`. Write `state.json` with `phase: "0"`, `depth`, and `mode` set: `mode` is
-   `"interactive"` unless this invocation was `resume ... --driven`, in which case it is `"driven"`.
+   `## Knowledge`. Write `state.json` with `phase: "0"`, `depth`, and `contract_version: 2`.
+   Set `mode` to `"interactive"` unless resumed with `--driven`. Older runs without a contract
+   version remain valid.
 
 The baseline is NOT measured here. It is measured in Phase 0b, inside the tree the run will
 actually use, because a baseline taken in a different tree with different dependencies is not

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the print-safe A4 edition of the Factory run map."""
+"""Build the print-safe A4 and one-page editions of the Factory run map."""
 
 from __future__ import annotations
 
@@ -183,6 +183,7 @@ def draw_pill(c: Canvas, cx: float, cy: float, text: str, *, fill=PAPER, stroke=
 
 
 def page_one(c: Canvas) -> None:
+    """Draw the introductory run map and operating rules on the canvas."""
     page_header(c, 1, "Read this first")
     y = PAGE_H - 31 * mm
     section_label(c, "One ticket in / one verified draft PR out", MARGIN, y)
@@ -193,7 +194,7 @@ def page_one(c: Canvas) -> None:
     y -= 9 * mm
     y = draw_wrapped(
         c,
-        "One phase per fresh session. Each phase is gated before the next begins. The run stops whenever a human decision is required, and state.json is the only record carried between sessions.",
+        "One phase per fresh session. Each phase is gated before the next begins. Compact state and run artifacts carry decisions across sessions.",
         MARGIN,
         y,
         PAGE_W - 2 * MARGIN,
@@ -230,7 +231,7 @@ def page_one(c: Canvas) -> None:
         descriptions = [
             "Evidence, isolation, root cause",
             "Human plan, questions closed",
-            "Equivalent plan, bounded milestones",
+            "Locked scope, stage checkpoints",
             "Whole-change proof, terminal gate",
         ]
         draw_wrapped(c, descriptions[index], x + 8, y - 67, card_w - 16, size=7.4, leading=9, color=MUTED)
@@ -240,7 +241,7 @@ def page_one(c: Canvas) -> None:
     y -= 8 * mm
     rules = [
         ("01", "Fresh context", "The phase starts in a new session. Chat history is not treated as durable state."),
-        ("02", "Persistent evidence", "Only state.json and committed artifacts cross the session boundary."),
+        ("02", "Persistent evidence", "Compact state and run artifacts cross the session boundary."),
         ("03", "Executable gates", "A phase closes only when gate.py permits it. A failed predecessor blocks the next phase."),
     ]
     row_h = 25 * mm
@@ -346,6 +347,7 @@ def page_two(c: Canvas) -> None:
 
 
 def page_three(c: Canvas) -> None:
+    """Draw the build, proof, and terminal-gate flow on the canvas."""
     page_header(c, 3, "Phases 3 to 6")
     cx = PAGE_W / 2
     x0 = cx - 58
@@ -354,13 +356,13 @@ def page_three(c: Canvas) -> None:
     section_label(c, "Part 2 / Build and prove", MARGIN, PAGE_H - 23 * mm)
     draw_pill(c, cx, 748, "gate 2b passed / blocking frontier empty", fill=PAPER, stroke=INK)
     arrow(c, cx, 739, cx, 716)
-    draw_box(c, x0, 677, w, 38, "3  Agent plan", "M1..Mn + invariants + tracer", fill=BLUE_LIGHT, stroke=BLUE)
+    draw_box(c, x0, 677, w, 38, "3  Agent plan", "milestones + scope lock", fill=BLUE_LIGHT, stroke=BLUE)
     draw_box(c, 50, 676, 128, 38, "Plan-equivalence auditor", "SAME-SCOPE or one retry", fill=GREEN_LIGHT, stroke=GREEN, title_size=7.1)
     arrow(c, 178, 695, x0, 695)
     arrow(c, cx, 677, cx, 653)
-    draw_diamond(c, cx, 635, 88, 36, "gate 3 / invariants + M1 + tracer")
+    draw_diamond(c, cx, 635, 88, 36, "gate 3 / approved scope")
     arrow(c, cx, 617, cx, 593)
-    draw_box(c, x0, 553, w, 38, "4  Milestones", "one milestone per fresh session", fill=BLUE_LIGHT, stroke=BLUE)
+    draw_box(c, x0, 553, w, 38, "4  Milestones", "review + release checkpoint", fill=BLUE_LIGHT, stroke=BLUE)
 
     leaf_y = 489
     leaf_w = 112
@@ -372,7 +374,7 @@ def page_three(c: Canvas) -> None:
         draw_box(c, x, leaf_y, leaf_w, 34, title, subtitle, fill=GREEN_LIGHT, stroke=GREEN, title_size=7)
         arrow(c, cx, 553, x + leaf_w / 2, leaf_y + 34)
 
-    draw_diamond(c, cx, 446, 92, 40, "gate 4 / milestone done + SHA")
+    draw_diamond(c, cx, 446, 92, 40, "gate 4 / SHA + checkpoint")
     arrow(c, cx, 489, cx, 466)
     c.setStrokeColor(HexColor("#8C857A"))
     c.setLineWidth(0.65)
@@ -423,6 +425,7 @@ def make_paragraph(text: str, *, bold: bool = False, mono: bool = False, size: f
 
 
 def page_four(c: Canvas) -> None:
+    """Draw the phase roles and runner stop conditions on the canvas."""
     page_header(c, 4, "Roles and stop conditions")
     y = PAGE_H - 25 * mm
     section_label(c, "Who does what, per phase", MARGIN, y)
@@ -434,8 +437,8 @@ def page_four(c: Canvas) -> None:
         ["1 diagnosis", "opus", "root-cause synthesis", "diagnosis.md; skipped at light depth"],
         ["2 human plan", "you", "plan + rediff", "plan has a Flag key line"],
         ["2b grill", "you + leaf", "one summary per round", "no blocking question unanswered"],
-        ["3 agent plan", "opus", "gate decision", "invariants, M1 tracer, SAME-SCOPE"],
-        ["4 milestones", "opus + leaves", "per-milestone verdict", "every milestone done with a SHA"],
+        ["3 agent plan", "opus", "gate decision", "SAME-SCOPE and plan lock"],
+        ["4 milestones", "opus + leaves", "per-milestone verdict", "commit SHA and checkpoint receipt"],
         ["5 proof", "opus + leaves", "Phase 5 verdict", "scan + AC matrix + reviewer PASS"],
         ["6 stop", "you", "final report + PR URL", "terminal state set, gate quoted"],
     ]
@@ -504,16 +507,84 @@ def build(output: Path) -> None:
     c.save()
 
 
+def build_onepage(output: Path) -> None:
+    """Write the one-page A4 run map PDF, creating parent directories as needed."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    c = Canvas(str(output), pagesize=A4)
+    c.setTitle("Factory Run Flow - one page")
+    c.setAuthor("Factory")
+    c.setFillColor(PAPER)
+    c.rect(0, 0, PAGE_W, PAGE_H, stroke=0, fill=1)
+    c.setFillColor(INK)
+    c.setFont("Helvetica-Bold", 25)
+    c.drawString(MARGIN, 778, "Factory Run Flow")
+    draw_wrapped(c, "One approved scope. Reviewed stages. Proof before delivery.", MARGIN, 754,
+                 PAGE_W - 2 * MARGIN, size=10, color=MUTED)
+
+    cards = [
+        (MARGIN, 560, "01 / UNDERSTAND", "0 Intake  /  0b Isolate  /  1 Diagnose",
+         "Record source evidence, acceptance criteria, an isolated worktree, and the baseline.", BLUE_LIGHT, BLUE),
+        (PAGE_W / 2 + 5, 560, "02 / DECIDE", "2 Human plan  /  2b Grill",
+         "Close blocking questions. Name each stage's demo, preview target, verification, and rollback.", PINK_LIGHT, PINK),
+        (MARGIN, 384, "03 / BUILD", "3 Agent plan  /  4 Milestones",
+         "Seal the approved plans. Test, review, and commit one stage at a time. Verify its release checkpoint.", YELLOW_LIGHT, HexColor("#A07700")),
+        (PAGE_W / 2 + 5, 384, "04 / PROVE", "5 Proof  /  6 Stop",
+         "Review the whole change and acceptance matrix. The terminal gate decides the claim.", GREEN_LIGHT, GREEN),
+    ]
+    card_w = PAGE_W / 2 - MARGIN - 5
+    for x, y, label, title, body, fill, accent in cards:
+        c.setFillColor(fill)
+        c.setStrokeColor(RULE)
+        c.roundRect(x, y, card_w, 150, 7, stroke=1, fill=1)
+        c.setFillColor(accent)
+        c.rect(x, y + 143, card_w, 7, stroke=0, fill=1)
+        c.setFont("Courier-Bold", 9)
+        c.drawString(x + 14, y + 122, label)
+        draw_wrapped(c, title, x + 14, y + 99, card_w - 28, font="Helvetica-Bold", size=10, leading=13)
+        draw_wrapped(c, body, x + 14, y + 62, card_w - 28, size=9, leading=12)
+
+    section_label(c, "When a new idea appears", MARGIN, 346)
+    c.setStrokeColor(RULE)
+    c.line(MARGIN, 335, PAGE_W - MARGIN, 335)
+    draw_wrapped(c, "Optional: record it outside the active plan; link actionable follow-ups to GitHub Issues at the attended handoff.",
+                 MARGIN, 318, PAGE_W - 2 * MARGIN, size=9.4, leading=13)
+    draw_wrapped(c, "Required for an existing criterion: return to human review, close new questions, rerun plan equivalence, and reseal scope.",
+                 MARGIN, 282, PAGE_W - 2 * MARGIN, size=9.4, leading=13)
+
+    section_label(c, "Release boundary", MARGIN, 224)
+    c.setStrokeColor(RULE)
+    c.line(MARGIN, 213, PAGE_W - MARGIN, 213)
+    draw_wrapped(c, "A preview checkpoint has a target, verification receipt, and rollback. Unattended runs stop before publishing. A milestone preview is progress, not delivery.",
+                 MARGIN, 196, PAGE_W - 2 * MARGIN, size=9.4, leading=13)
+
+    section_label(c, "Terminal states", MARGIN, 140)
+    states = ["delivered", "delivered-with-gaps", "blocked", "intentionally-unchanged"]
+    for index, label in enumerate(states):
+        x = MARGIN + index * ((PAGE_W - 2 * MARGIN) / 4) + (PAGE_W - 2 * MARGIN) / 8
+        draw_pill(c, x, 113, label, fill=PURPLE_LIGHT, stroke=PURPLE)
+    c.setStrokeColor(RULE)
+    c.line(MARGIN, 49, PAGE_W - MARGIN, 49)
+    draw_wrapped(c, "One phase per fresh session. Compact state and run artifacts preserve the decisions.",
+                 MARGIN, 35, PAGE_W - 2 * MARGIN, size=8, color=MUTED)
+    c.showPage()
+    c.save()
+
+
 def main() -> None:
+    """Build the A4 PDF and optional one-page edition from command-line options."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output",
         type=Path,
         default=Path("output/pdf/factory-run-flow-a4.pdf"),
     )
+    parser.add_argument("--onepage-output", type=Path)
     args = parser.parse_args()
     build(args.output)
     print(args.output.resolve())
+    if args.onepage_output:
+        build_onepage(args.onepage_output)
+        print(args.onepage_output.resolve())
 
 
 if __name__ == "__main__":
