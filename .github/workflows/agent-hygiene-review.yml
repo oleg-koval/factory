@@ -1,0 +1,31 @@
+name: Shared repository quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  agent-hygiene:
+    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    with:
+      min-score: 75
+
+  secret-scan:
+    uses: oleg-koval/workflows/.github/workflows/secret-scan-gitleaks.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+
+  scorecard:
+    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    with:
+      publish-results: false
+
+  commitlint:
+    if: github.event_name == 'pull_request'
+    uses: oleg-koval/workflows/.github/workflows/commitlint.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    with:
+      base-sha: ${{ github.event.pull_request.base.sha }}
+      head-sha: ${{ github.event.pull_request.head.sha }}
