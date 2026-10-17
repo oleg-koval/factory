@@ -1,0 +1,55 @@
+name: Shared repository quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  agent-hygiene:
+    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    with:
+      min-score: 75
+
+  secret-scan:
+    uses: oleg-koval/workflows/.github/workflows/secret-scan-gitleaks.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+
+  scorecard:
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+      id-token: write
+    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    with:
+      publish-results: false
+
+  commitlint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Install commitlint
+        run: |
+          npm install --prefix "$RUNNER_TEMP/commitlint" --no-save --ignore-scripts \
+            @commitlint/cli@19.8.1 @commitlint/config-conventional@19.8.1
+          echo "module.exports = { extends: ['@commitlint/config-conventional'] };" \
+            > "$RUNNER_TEMP/commitlint/commitlint.config.cjs"
+      - name: Lint commit messages
+        env:
+          FROM_SHA: ${{ github.event.pull_request.base.sha }}
+          TO_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          "$RUNNER_TEMP/commitlint/node_modules/.bin/commitlint" \
+            --config "$RUNNER_TEMP/commitlint/commitlint.config.cjs" \
+            --from "$FROM_SHA" --to "$TO_SHA" --verbose
