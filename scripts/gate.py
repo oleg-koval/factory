@@ -19,6 +19,7 @@ import json
 import os
 import re
 import sys
+from urllib.parse import urlsplit
 
 from scope_lock import LOCK_FILE, verify as verify_scope
 
@@ -54,13 +55,14 @@ TERMINALS = {
     "delivered",
     "delivered-with-gaps",
     "ready-for-commit",
+    "pending-delivery",
     "blocked",
     "intentionally-unchanged",
     "withdrawn",
 }
 DELIVERED = {"delivered", "delivered-with-gaps"}
 # Strict checks run for every state that claims the work itself is finished.
-FINISHED = DELIVERED | {"ready-for-commit"}
+FINISHED = DELIVERED | {"ready-for-commit", "pending-delivery"}
 SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 
@@ -550,7 +552,9 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted not in TERMINALS:
         fail(reasons, f"requested terminal {wanted!r} is not one of {sorted(TERMINALS)}")
 
-    upgrade = recorded == "ready-for-commit" and wanted in DELIVERED
+    upgrade = (
+        recorded == "ready-for-commit" and wanted in DELIVERED | {"pending-delivery"}
+    ) or (recorded == "pending-delivery" and wanted in DELIVERED)
 
     if recorded is not None and recorded != wanted and not upgrade:
         fail(reasons, f"state.terminal {recorded!r} does not match requested terminal {wanted!r}")
@@ -582,7 +586,7 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted == "delivered" and matrix != "clean":
         fail(reasons, "terminal 'delivered' needs every acceptance criterion met; use 'delivered-with-gaps' and name each gap and its owner")
 
-    if wanted == "delivered-with-gaps" or (wanted == "ready-for-commit" and matrix != "clean"):
+    if wanted == "delivered-with-gaps" or (wanted in {"ready-for-commit", "pending-delivery"} and matrix != "clean"):
         gaps = state.get("gaps")
         accepted_by = gaps.get("accepted_by") if isinstance(gaps, dict) else None
 
@@ -595,8 +599,8 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted == "delivered":
         check_all_answered(state, reasons)
 
-    if wanted in DELIVERED:
-        check_delivery(state, reasons)
+    if wanted in DELIVERED | {"pending-delivery"}:
+        check_delivery(state, reasons, pending=wanted == "pending-delivery")
 
     return matrix
 
@@ -611,7 +615,7 @@ def check_all_answered(state: dict, reasons: list[str]) -> None:
 
         answer = question.get("answer")
 
-        if answer is None or (isinstance(answer, str) and not answer.strip()):
+        if not isinstance(answer, str) or not answer.strip():
             fail(
                 reasons,
                 f"state.open_questions[{index}] is unanswered; 'delivered' needs every question answered, "
@@ -619,16 +623,18 @@ def check_all_answered(state: dict, reasons: list[str]) -> None:
             )
 
 
-def check_delivery(state: dict, reasons: list[str]) -> None:
+def check_delivery(state: dict, reasons: list[str], *, pending: bool = False) -> None:
     """Delivered means landed where others can see it: pushed commit, open PR, green checks.
 
     Without this the gate passed a run whose code was uncommitted, with no PR and no CI run.
-    Work that is finished but not yet landed is 'ready-for-commit'.
+    Local finished work is 'ready-for-commit'; pushed work with an open PR and pending or
+    failing checks is 'pending-delivery'.
     """
     delivery = state.get("delivery")
 
     if not isinstance(delivery, dict):
-        fail(reasons, "state.delivery missing; delivered needs commit, pr and checks (else use 'ready-for-commit')")
+        label = "pending-delivery" if pending else "delivered"
+        fail(reasons, f"state.delivery missing; {label} needs commit, pr and checks")
         return
 
     commit = delivery.get("commit")
@@ -637,10 +643,24 @@ def check_delivery(state: dict, reasons: list[str]) -> None:
     if not isinstance(commit, str) or not SHA_RE.match(commit):
         fail(reasons, f"state.delivery.commit {commit!r} is not a pushed commit sha")
 
-    if not isinstance(pr, str) or not pr.startswith("https://"):
+    valid_pr = False
+    if isinstance(pr, str) and not any(char.isspace() for char in pr):
+        try:
+            parsed = urlsplit(pr)
+            valid_pr = (
+                parsed.scheme == "https"
+                and bool(parsed.hostname)
+                and re.fullmatch(r"/[^/]+/[^/]+/pull/[1-9][0-9]*/?", parsed.path) is not None
+            )
+        except ValueError:
+            pass
+
+    if not valid_pr:
         fail(reasons, f"state.delivery.pr {pr!r} is not a PR URL")
 
-    if delivery.get("checks") != "green":
+    if pending and delivery.get("checks") not in ("pending", "failing"):
+        fail(reasons, f"state.delivery.checks is {delivery.get('checks')!r}, not 'pending' or 'failing'")
+    elif not pending and delivery.get("checks") != "green":
         fail(reasons, f"state.delivery.checks is {delivery.get('checks')!r}, not 'green'; re-read the PR checks first")
 
 

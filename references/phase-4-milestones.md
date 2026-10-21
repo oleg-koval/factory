@@ -16,22 +16,23 @@ a. **Test first**, role `e2e-tester`. Brief per `briefs.md`: the milestone block
    test kind, allowed test paths, the repo's test command. Advance only when the report
    quotes new tests that FAIL for the right reason. A "already passes" report means the AC is
    met; record it and skip to step c with no implementation.
-   Light run with one milestone: skip this leaf. The implementer writes test and fix together,
-   b2 is mandatory for that test. Log `decision | e2e-tester skipped | light, one milestone`.
-b. **Implement**, role `implementer`. Brief: the milestone tasks, the failing test names, the
-   reuse index, human plan section 4 as a hard boundary, allowed files, and `state.baseline`.
-   Advance only on quoted output showing the new tests PASS and the rest of the suite no worse
-   than `state.baseline`. "Green" means "matches the baseline numbers", not "zero failures":
-   without that comparison the claim cannot be checked, and a repo with standing debt makes
-   every implementer's report read as a pass.
+   Light run with one milestone: skip this leaf; test first in b, b2 mandatory.
+   Log `decision | e2e-tester skipped | light, one milestone`.
+b. **Implement**, role `implementer`. Brief: milestone block, AC text, test kind,
+   allowed test paths, repo test command, reuse index, human plan section 4 as a hard boundary,
+   allowed files, `state.baseline`, and failing test names when a ran. Light run with one
+   milestone: create the test before implementing the fix.
+   Advance only on quoted new-test PASS output and baseline comparison: the suite must be no
+   worse than `state.baseline`, including standing debt. "Green" means matching baseline
+   numbers, not zero failures.
 b2. **Teeth check**, role `teeth-check`, once per new test that is meant to prove a fix or a
    guarantee. Brief: the exact line or lines of the fix, the test id, and the repo's own test
    command. The leaf reverts those lines to their pre-fix form, re-runs **the whole test file the
    way the repo's own command runs it** (not the single test in isolation), quotes the output,
    then restores the lines and re-runs to confirm the restore. Append the quoted failure to
    `receipts.md`.
-   Advance only if the whole file FAILS without the fix. Otherwise restore the fix and rewrite
-   the test in step a.
+   Advance only if the whole file FAILS without the fix. Otherwise restore it: light run with
+   one milestone -> implementer revises the test, reruns b2; otherwise -> step a.
 c. **Checkpoint**, role `mechanical-leaf`: `git add` only the files the milestone block lists - never `git add .`, even in
    the worktree - commit `factory(M<n>): <goal>`, return the sha. Append a row to `receipts.md`
    and set the milestone's `sha` in `state.milestones`.

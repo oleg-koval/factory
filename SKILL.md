@@ -95,10 +95,11 @@ directory; paths outside it are bugs.
 
 ## Terminal states
 
-`ready-for-commit` (gated, not pushed), `delivered` (pushed, PR open, checks green, all ACs met),
+`ready-for-commit` (gated, unpushed), `pending-delivery` (pushed, PR open, checks pending/failing),
+`delivered` (pushed, PR open, green checks, ACs met),
 `delivered-with-gaps` (≥1 AC `unrunnable`, needs `state.gaps.accepted_by`), `blocked`
 (loop max, unresolved role, open question),
 `intentionally-unchanged` (Phase 1 `no-change`/`config-or-data` confirmed).
 
-Isolation: `state.isolation.accepted_by` recorded in Phase 0b; gate blocks `delivered*` without
-it. Never set state before `scripts/gate.py` runs and its output is quoted.
+Isolation: `state.isolation.accepted_by` (Phase 0b) gates `delivered*`.
+Set state only after `scripts/gate.py` runs and its output is quoted.

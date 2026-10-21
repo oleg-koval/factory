@@ -313,7 +313,7 @@ root = sys.argv[1]
 gate = os.path.join(root, "scripts", "gate.py")
 state = json.load(open(os.path.join(root, "templates", "state.json")))
 state.pop("contract_version")  # legacy fixture: existing runs have no scope lock
-landed = {"commit": "abc1234", "pr": "https://example.invalid/pr/1", "checks": "green"}
+landed = {"commit": "abc1234", "pr": "https://example.invalid/owner/repo/pull/1", "checks": "green"}
 state["delivery"] = landed
 
 def run(run_dir, terminal):
@@ -377,10 +377,49 @@ with tempfile.TemporaryDirectory() as d:
     assert code == 1 and "state.delivery.commit" in out and "state.delivery.pr" in out, out
     code, out = run(d, "ready-for-commit")
     assert code == 0 and "GATE: PASS" in out, out
-    state["delivery"] = dict(landed, checks="pending")
+    code, out = run(d, "pending-delivery")
+    assert code == 1 and "state.delivery.commit" in out and "state.delivery.pr" in out, out
+    for checks in ("pending", "failing"):
+        state["delivery"] = dict(landed, checks=checks)
+        state["terminal"] = "ready-for-commit"
+        write(d, answered, "met")
+        code, out = run(d, "pending-delivery")
+        assert code == 0 and "GATE: PASS" in out, out
+        state["terminal"] = "pending-delivery"
+        write(d, answered, "met")
+        code, out = run(d, "pending-delivery")
+        assert code == 0 and "GATE: PASS" in out, out
+        code, out = run(d, "delivered")
+        assert code == 1 and "not 'green'" in out, out
+        write(d, open_q, "met")
+        code, out = run(d, "pending-delivery")
+        assert code == 1 and "blocking and unanswered" in out, out
+        write(d, answered, "failed")
+        code, out = run(d, "pending-delivery")
+        assert code == 1 and "failed" in out, out
+        write(d, answered, "unrunnable")
+        code, out = run(d, "pending-delivery")
+        assert code == 1 and "gaps.accepted_by" in out, out
+        state["gaps"]["accepted_by"] = "I accept the missing environment"
+        write(d, answered, "unrunnable")
+        code, out = run(d, "pending-delivery")
+        assert code == 0 and "GATE: PASS" in out, out
+        state["gaps"]["accepted_by"] = None
+    state["delivery"] = landed
     write(d, answered, "met")
     code, out = run(d, "delivered")
-    assert code == 1 and "not 'green'" in out, out
+    assert code == 0 and "GATE: PASS" in out, out
+    state["gaps"]["accepted_by"] = "I accept the missing environment"
+    write(d, answered, "unrunnable")
+    code, out = run(d, "delivered-with-gaps")
+    assert code == 0 and "GATE: PASS" in out, out
+    state["gaps"]["accepted_by"] = None
+    state["terminal"] = None
+    for checks in (None, "unknown", "green", False, []):
+        state["delivery"] = dict(landed, checks=checks)
+        write(d, answered, "met")
+        code, out = run(d, "pending-delivery")
+        assert code == 1 and "state.delivery.checks" in out, out
     state["delivery"] = landed
 
     # ready-for-commit with an unrunnable AC still needs the gaps accepted.
@@ -396,9 +435,32 @@ with tempfile.TemporaryDirectory() as d:
     state["terminal"] = None
 
     # 'delivered' leaves no question open, blocking or not.
-    write(d, answered + [{"id": "Q-2", "text": "q2", "blocking": False, "owner": "o", "answer": None}], "met")
-    code, out = run(d, "delivered")
-    assert code == 1 and "every question answered" in out, out
+    for answer in (None, False, 0, True, 1, [], {}, "", " \t\n"):
+        write(d, answered + [{"id": "Q-2", "text": "q2", "blocking": False, "owner": "o", "answer": answer}], "met")
+        code, out = run(d, "delivered")
+        assert code == 1 and "every question answered" in out, (answer, out)
+    for answer in ("no", "0", "  resolved  "):
+        write(d, answered + [{"id": "Q-2", "text": "q2", "blocking": False, "owner": "o", "answer": answer}], "met")
+        code, out = run(d, "delivered")
+        assert code == 0 and "GATE: PASS" in out, (answer, out)
+
+    # PR evidence must parse as an HTTPS URL with a host and a numbered PR path.
+    for pr in (None, False, "https://", "https:///owner/repo/pull/1", "https://[broken",
+               "http://example.invalid/owner/repo/pull/1", "https://example.invalid",
+               "https://example.invalid/owner/repo/issues/1", "https://example.invalid/owner/repo/pull/0",
+               "https://example.invalid/owner/repo/pull/no", "https://example.invalid/owner/repo/pull/1/extra",
+               "https://exam ple.invalid/owner/repo/pull/1"):
+        for terminal, checks in (("delivered", "green"), ("pending-delivery", "pending")):
+            state["delivery"] = dict(landed, pr=pr, checks=checks)
+            write(d, answered, "met")
+            code, out = run(d, terminal)
+            assert code == 1 and "state.delivery.pr" in out, (pr, out)
+    for pr in (landed["pr"], "https://github.example/owner/repo/pull/123/"):
+        state["delivery"] = dict(landed, pr=pr)
+        write(d, answered, "met")
+        code, out = run(d, "delivered")
+        assert code == 0 and "GATE: PASS" in out, (pr, out)
+    state["delivery"] = landed
 
     # The requested terminal cannot disagree with a terminal already recorded in state.
     state["terminal"] = "blocked"

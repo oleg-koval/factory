@@ -8,6 +8,8 @@ Evidence status: public repository history. Version 1.0.0 was the first tagged r
 
 - `ready-for-commit` terminal state: finished and gated, nothing pushed yet. A run can be
   upgraded from it to `delivered*` later.
+- `pending-delivery` terminal state for gated, pushed work with an open PR whose checks are
+  pending or failing; report the specific checks without polling.
 - Built-in `pre-undraft-review` role: checks the branch against a per-repo review-bot checklist
   before push, when its binding sets `checklist` (and the origin matches `remote_match`).
 
@@ -16,6 +18,13 @@ Evidence status: public repository history. Version 1.0.0 was the first tagged r
 - `delivered*` now requires `state.delivery` with the pushed commit sha, the PR url and
   `checks: "green"`. `delivered` also requires every question answered.
 - Light runs with one milestone skip `plan-equivalence` and the separate test-first leaf.
+
+### Fixed
+
+- Light one-milestone implementer briefs include AC text and test kind, require the test before
+  the fix, and return failed teeth checks to the implementer for test revision and another b2.
+- Delivery gates reject non-string or blank answers to non-blocking questions and malformed
+  PR URLs, including `https://`, that previously passed.
 
 ## 1.1.0 - 2026-10-13
 

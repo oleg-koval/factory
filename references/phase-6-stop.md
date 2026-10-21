@@ -31,7 +31,7 @@ For `delivered-with-gaps`: before the gate, ask the user whether they
 accept the named gaps. Record their answer verbatim, in their own words, in
 `state.gaps.accepted_by`. The gate refuses `delivered-with-gaps` without it.
 
-Pick the terminal state you believe the run has earned, then prove it:
+Prove the earned terminal state:
 
 ```bash
 python3 <skill-dir>/scripts/gate.py .factory/<slug> --terminal <wanted>
@@ -46,8 +46,8 @@ command has run and been quoted.
   state: unanswered blocking question or a `failed` AC means `blocked`; an `unrunnable` AC means
   `delivered-with-gaps`.
 
-Without a pushed commit, an open PR and green checks the earned state is `ready-for-commit`;
-`delivered*` needs `state.delivery` (`references/delivery.md`).
+Before push/PR use `ready-for-commit`; pending/failing PR checks mean `pending-delivery`.
+Gate transitions and name checks, statuses and links without polling per `references/delivery.md`.
 
 ### What the gate checks
 
@@ -60,13 +60,16 @@ Without a pushed commit, an open PR and green checks the earned state is `ready-
 | any `unrunnable` AC | `delivered` only; use `delivered-with-gaps` |
 | `state.isolation` present, mode known, worktree path a real directory | on `delivered*` |
 | `receipts.md` exists and is non-empty | on `delivered*` |
-| `state.delivery`: commit sha, PR url, `checks: "green"` | on `delivered*` |
+| `state.delivery`: pushed sha, HTTPS PR URL, `checks: "green"` | `delivered*` |
+| `state.delivery`: pushed sha, HTTPS PR URL, pending/failing checks | `pending-delivery` |
 | a non-blocking question unanswered | `delivered` only |
 
 A blocking question means `blocked`, even when tests pass. Only an answer or the user's own
 words accepting the open question can clear it. Record those words in
 `state.open_questions[].answer` and the report. Never clear the flag yourself or edit the AC
 matrix to pass the gate.
+
+Local checks and gap acceptance also apply to `ready-for-commit` and `pending-delivery`.
 
 ## 3. Ask
 
@@ -101,7 +104,8 @@ accepted gap, fix it or draft the reviewer reply in the report before pushing.
 5. `gh pr create --draft --base <base> --title "[<TICKET>] <short title>" --body-file .factory/<slug>/pr-body.md`,
    then `gh pr edit <url> --add-assignee @me`.
 6. Quote the PR url in the report.
-7. Upgrade to `delivered*` per `references/delivery.md` once the checks are green.
+7. Gate `pending-delivery` or `delivered*` per `references/delivery.md`; name pending/failing
+   checks without polling.
 
 Print the terminal state as the first line of your final message.
 

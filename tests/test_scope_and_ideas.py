@@ -82,7 +82,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.state["isolation"] = {"mode": "in-place", "repo": "repo", "branch": "test",
                                    "base": "main", "accepted_by": "Use this checkout"}
         self.state["terminal"] = "delivered"
-        self.state["delivery"] = {"commit": "abc1234", "pr": "https://example.invalid/pr/1",
+        self.state["delivery"] = {"commit": "abc1234", "pr": "https://example.invalid/owner/repo/pull/1",
                                   "checks": "green"}
         (self.run_dir / "ac-matrix.md").write_text("| AC | status |\n|---|---|\n| AC-1 | met |\n")
         scope_lock.seal(str(self.run_dir))
