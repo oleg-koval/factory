@@ -86,7 +86,7 @@ async function stopServer() {
 async function startServer(siteDir) {
   const port = await unusedPort();
   origin = `http://127.0.0.1:${port}`;
-  server = spawn("npm", ["run", "dev", "--", "--host", "127.0.0.1", "--port", String(port)], {
+  server = spawn("npm", ["run", "dev", "--", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: siteDir, detached: true, stdio: ["ignore", "pipe", "pipe"],
   });
   let output = "";
