@@ -5,6 +5,7 @@ const allowlistUrl = new URL("../audit-allowlist.json", import.meta.url);
 const allowlist = JSON.parse(readFileSync(allowlistUrl, "utf8"));
 const allowedUrls = new Set(allowlist.map((entry) => entry.url));
 
+// Development advisories have a separate, time-limited exception in the site workflow.
 const audit = spawnSync("npm", ["audit", "--omit=dev", "--json", "--audit-level=moderate"], {
   encoding: "utf8",
   maxBuffer: 64 * 1024 * 1024,
