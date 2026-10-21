@@ -33,7 +33,7 @@ async function startServer() {
   const command = mode === "production" ? "npx" : "npm";
   const args = mode === "production"
     ? ["wrangler", "dev", "--local", "--ip", "127.0.0.1", "--port", String(port)]
-    : ["run", "dev", "--", "--hostname", "127.0.0.1", "--port", String(port)];
+    : ["run", "dev", "--", "--host", "127.0.0.1", "--port", String(port)];
   const server = spawn(command, args, {
     cwd: siteDir,
     detached: true,
