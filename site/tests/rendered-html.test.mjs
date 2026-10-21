@@ -183,10 +183,11 @@ test("install and changelog publish structured data matching visible content", a
   const installData = JSON.parse(install.match(jsonLd)?.[1] ?? "null");
   const changelogData = JSON.parse(changelog.match(jsonLd)?.[1] ?? "null");
   assert.deepEqual(installData["@graph"].map((entry) => entry["@type"]), ["WebPage", "SoftwareSourceCode"]);
-  assert.match(install, /npx --yes skills add oleg-koval\/factory -a claude-code -a codex -y/);
+  const installCommand = install.match(/<code>(npx --yes skills add oleg-koval\/factory[^<]*)<\/code>/)?.[1];
+  assert.equal(installCommand, "npx --yes skills add oleg-koval/factory -a claude-code -a codex -y");
   assert.match(install, /\.agents\/skills\/factory\/SKILL\.md/);
   assert.match(install, /shorter alternative only if Codex has no other skill named/);
-  assert.doesNotMatch(install, /skills add oleg-koval\/factory[^<]*-g/);
+  assert.doesNotMatch(installCommand, /(?:^|\s)-g(?:\s|$)/);
   assert.equal(changelogData["@type"], "CollectionPage");
   assert.equal(changelogData.mainEntity.itemListElement.length, 4);
   assert.match(changelog, /Changelog \/ v1\.1\.0/);
