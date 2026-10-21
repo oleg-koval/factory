@@ -23,6 +23,7 @@ built-in subagent contract. Phase files name roles only.
 | `whole-change-review` | branch, target branch | findings with proof, optional fix | review file path (built-in `factory-whole-change-reviewer`) |
 | `polish` | diff | comments stripped, names fixed | diff stat |
 | `pr-opener` | branch | draft PR url | url (built-in, the steps in `phase-6-stop.md` section "Open the PR") |
+| `pre-undraft-review` | branch, base, the binding's `checklist` path | `VERDICT: PASS` or `FIX` with findings | verdict text (built-in: a fresh-context reviewer checks the branch diff against the checklist; runs only when `checklist` is set and the origin URL contains `remote_match`, if set) |
 | `human-gate` | plan file, annotations path | annotations file or "no annotations" | wrapper stdout |
 | `mechanical-leaf` | exact edit or commit instruction | done | sha or diff |
 

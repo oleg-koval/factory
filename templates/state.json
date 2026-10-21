@@ -48,6 +48,7 @@
     "pr_body": ".factory/gic-1414-order-tags/pr-body.md"
   },
   "loops": { "reproduce": 1, "plan_equivalence": 0, "fixer": { "M1": 0, "M2": 1 } },
+  "delivery": { "commit": null, "pr": null, "checks": null },
   "terminal": null,
   "next": null
 }

@@ -17,6 +17,7 @@
     "whole-change-review": { "kind": "built-in", "name": "factory-whole-change-reviewer", "source": "default" },
     "polish": { "kind": "built-in", "name": "polish", "source": "default" },
     "pr-opener": { "kind": "built-in", "name": "factory-pr-steps", "source": "default" },
+    "pre-undraft-review": { "kind": "built-in", "name": "factory-pre-undraft-steps", "source": "default", "checklist": null, "remote_match": null },
     "human-gate": { "kind": "none", "name": "none", "source": "default" },
     "mechanical-leaf": { "kind": "built-in", "name": "mechanical-leaf", "source": "default" }
   }

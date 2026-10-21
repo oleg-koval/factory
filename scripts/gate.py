@@ -19,6 +19,7 @@ import json
 import os
 import re
 import sys
+from urllib.parse import urlsplit
 
 from scope_lock import LOCK_FILE, verify as verify_scope
 
@@ -42,6 +43,7 @@ ALLOWED_KEYS = REQUIRED_KEYS | {
     "source_evidence",
     "contract_version",
     "checkpoint_pending",
+    "delivery",
 }
 # Keys that carried prose in earlier runs and pushed state.json to 43KB. They are not a
 # matter of taste: state.json is the one file carried across every compaction, so anything
@@ -49,7 +51,19 @@ ALLOWED_KEYS = REQUIRED_KEYS | {
 BANNED_KEYS = {"receipts", "blockers", "diagnosis", "notes", "log", "history"}
 
 AC_STATUSES = {"met", "unrunnable", "failed"}
-TERMINALS = {"delivered", "delivered-with-gaps", "blocked", "intentionally-unchanged", "withdrawn"}
+TERMINALS = {
+    "delivered",
+    "delivered-with-gaps",
+    "ready-for-commit",
+    "pending-delivery",
+    "blocked",
+    "intentionally-unchanged",
+    "withdrawn",
+}
+DELIVERED = {"delivered", "delivered-with-gaps"}
+# Strict checks run for every state that claims the work itself is finished.
+FINISHED = DELIVERED | {"ready-for-commit", "pending-delivery"}
+SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 
 def fail(reasons: list[str], msg: str) -> None:
@@ -538,10 +552,14 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted not in TERMINALS:
         fail(reasons, f"requested terminal {wanted!r} is not one of {sorted(TERMINALS)}")
 
-    if recorded is not None and recorded != wanted:
+    upgrade = (
+        recorded == "ready-for-commit" and wanted in DELIVERED | {"pending-delivery"}
+    ) or (recorded == "pending-delivery" and wanted in DELIVERED)
+
+    if recorded is not None and recorded != wanted and not upgrade:
         fail(reasons, f"state.terminal {recorded!r} does not match requested terminal {wanted!r}")
 
-    strict = wanted in {"delivered", "delivered-with-gaps"}
+    strict = wanted in FINISHED
     if strict:
         check_scope(state, run_dir, reasons)
         if state.get("checkpoint_pending"):
@@ -568,17 +586,82 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted == "delivered" and matrix != "clean":
         fail(reasons, "terminal 'delivered' needs every acceptance criterion met; use 'delivered-with-gaps' and name each gap and its owner")
 
-    if wanted == "delivered-with-gaps":
+    if wanted == "delivered-with-gaps" or (wanted in {"ready-for-commit", "pending-delivery"} and matrix != "clean"):
         gaps = state.get("gaps")
         accepted_by = gaps.get("accepted_by") if isinstance(gaps, dict) else None
 
         if not isinstance(accepted_by, str) or not accepted_by.strip():
             fail(
                 reasons,
-                "delivered-with-gaps needs gaps.accepted_by: the user accepts the gaps, in their own words",
+                f"{wanted} with gaps needs gaps.accepted_by: the user accepts the gaps, in their own words",
             )
 
+    if wanted == "delivered":
+        check_all_answered(state, reasons)
+
+    if wanted in DELIVERED | {"pending-delivery"}:
+        check_delivery(state, reasons, pending=wanted == "pending-delivery")
+
     return matrix
+
+
+def check_all_answered(state: dict, reasons: list[str]) -> None:
+    """'delivered' leaves nothing open. A non-blocking question still open is a gap."""
+    questions = state.get("open_questions", [])
+
+    for index, question in enumerate(questions if isinstance(questions, list) else []):
+        if not isinstance(question, dict) or question.get("blocking") is not False:
+            continue
+
+        answer = question.get("answer")
+
+        if not isinstance(answer, str) or not answer.strip():
+            fail(
+                reasons,
+                f"state.open_questions[{index}] is unanswered; 'delivered' needs every question answered, "
+                "else use 'delivered-with-gaps'",
+            )
+
+
+def check_delivery(state: dict, reasons: list[str], *, pending: bool = False) -> None:
+    """Delivered means landed where others can see it: pushed commit, open PR, green checks.
+
+    Without this the gate passed a run whose code was uncommitted, with no PR and no CI run.
+    Local finished work is 'ready-for-commit'; pushed work with an open PR and pending or
+    failing checks is 'pending-delivery'.
+    """
+    delivery = state.get("delivery")
+
+    if not isinstance(delivery, dict):
+        label = "pending-delivery" if pending else "delivered"
+        fail(reasons, f"state.delivery missing; {label} needs commit, pr and checks")
+        return
+
+    commit = delivery.get("commit")
+    pr = delivery.get("pr")
+
+    if not isinstance(commit, str) or not SHA_RE.match(commit):
+        fail(reasons, f"state.delivery.commit {commit!r} is not a pushed commit sha")
+
+    valid_pr = False
+    if isinstance(pr, str) and not any(char.isspace() for char in pr):
+        try:
+            parsed = urlsplit(pr)
+            valid_pr = (
+                parsed.scheme == "https"
+                and bool(parsed.hostname)
+                and re.fullmatch(r"/[^/]+/[^/]+/pull/[1-9][0-9]*/?", parsed.path) is not None
+            )
+        except ValueError:
+            pass
+
+    if not valid_pr:
+        fail(reasons, f"state.delivery.pr {pr!r} is not a PR URL")
+
+    if pending and delivery.get("checks") not in ("pending", "failing"):
+        fail(reasons, f"state.delivery.checks is {delivery.get('checks')!r}, not 'pending' or 'failing'")
+    elif not pending and delivery.get("checks") != "green":
+        fail(reasons, f"state.delivery.checks is {delivery.get('checks')!r}, not 'green'; re-read the PR checks first")
 
 
 def main(argv: list[str]) -> int:

@@ -24,6 +24,7 @@
   "loops": { "reproduce": 1, "plan_equivalence": 0, "fixer": {} },
   "budget": { "leaves_max": 40, "leaves_used": 4, "sessions_max": 16, "sessions_used": 6 },
   "gaps": { "accepted_by": null },
+  "delivery": { "commit": "0000000", "pr": "https://example.invalid/owner/repo/pull/1", "checks": "green" },
   "terminal": "delivered",
   "next": null
 }
