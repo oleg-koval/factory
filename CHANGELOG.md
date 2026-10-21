@@ -2,6 +2,21 @@
 
 Evidence status: public repository history. Version 1.0.0 was the first tagged release.
 
+## Unreleased
+
+### Added
+
+- `ready-for-commit` terminal state: finished and gated, nothing pushed yet. A run can be
+  upgraded from it to `delivered*` later.
+- Built-in `pre-undraft-review` role: checks the branch against a per-repo review-bot checklist
+  before push, when its binding sets `checklist` (and the origin matches `remote_match`).
+
+### Changed
+
+- `delivered*` now requires `state.delivery` with the pushed commit sha, the PR url and
+  `checks: "green"`. `delivered` also requires every question answered.
+- Light runs with one milestone skip `plan-equivalence` and the separate test-first leaf.
+
 ## 1.1.0 - 2026-10-13
 
 ### Added

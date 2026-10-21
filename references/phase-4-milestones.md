@@ -16,6 +16,8 @@ a. **Test first**, role `e2e-tester`. Brief per `briefs.md`: the milestone block
    test kind, allowed test paths, the repo's test command. Advance only when the report
    quotes new tests that FAIL for the right reason. A "already passes" report means the AC is
    met; record it and skip to step c with no implementation.
+   Light run with one milestone: skip this leaf. The implementer writes test and fix together,
+   b2 is mandatory for that test. Log `decision | e2e-tester skipped | light, one milestone`.
 b. **Implement**, role `implementer`. Brief: the milestone tasks, the failing test names, the
    reuse index, human plan section 4 as a hard boundary, allowed files, and `state.baseline`.
    Advance only on quoted output showing the new tests PASS and the rest of the suite no worse

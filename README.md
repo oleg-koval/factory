@@ -44,8 +44,8 @@ Factory moves one phase at a time:
 6. Prove: remove the fix, rerun the test, scan the full changed files, and review the branch.
 7. Stop: run the executable gate and issue one honest terminal state.
 
-Terminal states are `delivered`, `delivered-with-gaps`, `blocked`, and
-`intentionally-unchanged`.
+Terminal states are `ready-for-commit`, `delivered`, `delivered-with-gaps`, `blocked`, and
+`intentionally-unchanged`. `delivered` needs a pushed commit, an open PR and green checks.
 
 ## Install for AI agents
 

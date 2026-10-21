@@ -46,8 +46,8 @@ command has run and been quoted.
   state: unanswered blocking question or a `failed` AC means `blocked`; an `unrunnable` AC means
   `delivered-with-gaps`.
 
-The executable gate prevents a past false delivery with five open questions and two criteria
-marked "partly met".
+Without a pushed commit, an open PR and green checks the earned state is `ready-for-commit`;
+`delivered*` needs `state.delivery` (`references/delivery.md`).
 
 ### What the gate checks
 
@@ -60,6 +60,8 @@ marked "partly met".
 | any `unrunnable` AC | `delivered` only; use `delivered-with-gaps` |
 | `state.isolation` present, mode known, worktree path a real directory | on `delivered*` |
 | `receipts.md` exists and is non-empty | on `delivered*` |
+| `state.delivery`: commit sha, PR url, `checks: "green"` | on `delivered*` |
+| a non-blocking question unanswered | `delivered` only |
 
 A blocking question means `blocked`, even when tests pass. Only an answer or the user's own
 words accepting the open question can clear it. Record those words in
@@ -84,20 +86,22 @@ feature flag and its 14-day removal ticket, or none. Multiple selections allowed
 
 ## Open the PR
 
-Review bots run on PR open and later pushes. Finalize the branch before step 2. For each
+Review bots run on PR open and later pushes. Finalize the branch before step 3. For each
 accepted gap, fix it or draft the reviewer reply in the report before pushing.
 
 1. `git -C <worktree> status --porcelain` must print nothing. A dirty tree is reported, never
    staged: one line of why, since the previous binding staged the whole tree, including the
    user's own unrelated files.
-2. `git -C <worktree> push -u origin <branch>`.
-3. Write `.factory/<slug>/pr-body.md`. It opens with `## TL;DR (for humans)` (5-8 plain lines),
+2. Role `pre-undraft-review` when its binding applies (`references/delivery.md`).
+3. `git -C <worktree> push -u origin <branch>`.
+4. Write `.factory/<slug>/pr-body.md`. It opens with `## TL;DR (for humans)` (5-8 plain lines),
    then `---`, then sections What, Why, Proof (the AC matrix summary), Flag and rollback, Gaps.
    The body describes the change only; no tool, assistant or generator is named anywhere in the
    title or body, including any host-injected attribution footer: drop it, unasked.
-4. `gh pr create --draft --base <base> --title "[<TICKET>] <short title>" --body-file .factory/<slug>/pr-body.md`,
+5. `gh pr create --draft --base <base> --title "[<TICKET>] <short title>" --body-file .factory/<slug>/pr-body.md`,
    then `gh pr edit <url> --add-assignee @me`.
-5. Quote the PR url in the report.
+6. Quote the PR url in the report.
+7. Upgrade to `delivered*` per `references/delivery.md` once the checks are green.
 
 Print the terminal state as the first line of your final message.
 
@@ -105,8 +109,6 @@ Print the terminal state as the first line of your final message.
 
 1. Write `state.json`: `state.phase = "6"`, `state.next = null`.
 2. Run `python3 <skill-dir>/scripts/gate.py .factory/<slug> --phase 6` and quote its output.
-   `GATE: BLOCKED` means fix the named file or key and run it again; you may not advance past a
-   blocked gate.
+   `GATE: BLOCKED` means fix the named file or key and run it again.
 3. Stop. Say in one line that the run is closed; `scripts/run.sh <slug>` will see `terminal`
-   set and stop the loop. A fresh session per phase is the design; compaction is the fallback
-   when a phase is resumed inside an old session.
+   set and stop the loop.

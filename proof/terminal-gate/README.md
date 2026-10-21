@@ -7,7 +7,8 @@ it is not a complete Factory delivery.
 The historical run claimed `delivered` while five blocking questions were unanswered and two
 acceptance criteria were marked `partly met`. The `false-delivery/` fixture preserves those
 cardinalities without preserving private question text. The `honest-delivery/` fixture changes
-only the proof state: every question has an answer and every criterion is `met`.
+only the proof state: every question has an answer, every criterion is `met`, and `delivery`
+records the pushed commit, the PR and green checks (placeholder values).
 
 Run both through the same gate:
 
