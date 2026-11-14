@@ -70,6 +70,15 @@ Claude Code: /factory consult <request>
 Codex:       Use .agents/skills/factory/SKILL.md specifically, then consult <request>.
 ```
 
+## Inspect run progress
+
+Run the installed `scripts/status.py` with `"$slug"` as a separately quoted argument; its path is
+`.agents/skills/factory` in Codex and `.claude/skills/factory` in Claude Code. Add `--json` for
+JSON output. Append `progress.jsonl` events on assignment, result, gate, blocker and
+delivery changes. Running needs a recent runtime observation; CI needs a timestamp under 24 hours
+old and a SHA matching the remote SHA. Corrupt or missing data stays unknown, pending roadmap ACs
+are listed separately, and a slice terminal does not prove roadmap completion.
+
 The Codex skill picker may show a user-wide skill with the same name as the project-local one. The
 path-directed prompt avoids relying on ambiguous name selection and was verified to load the
 project-local copy. `$factory` is a shorter alternative only when there is no same-name conflict;
