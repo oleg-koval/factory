@@ -152,11 +152,16 @@ grep -q "baseline" $f0b || f "phase 0b does not measure the baseline"
 grep -q "isolation" $root/SKILL.md || f "SKILL.md does not mention isolation"
 grep -q "state.isolation.worktree" $root/SKILL.md || f "SKILL.md does not pin leaf cwd to the worktree"
 grep -q "delivered-with-gaps" $root/SKILL.md || f "SKILL.md lacks the delivered-with-gaps terminal"
-for s in gate.py change-scan.sh hard-rules.py; do
+grep -q 'status <slug>' $root/SKILL.md || f "SKILL.md lacks the status route"
+grep -q 'references/progress-events.md' $root/SKILL.md || f "SKILL.md lacks lifecycle progress guidance"
+grep -q 'Append one complete current' $root/references/progress-events.md || f "progress snapshots are not specified"
+for s in gate.py change-scan.sh hard-rules.py status.py; do
   [[ -x $root/scripts/$s ]] || f "scripts/$s missing or not executable"
 done
 grep -q "change-scan.sh" $f5 || f "phase 5 does not run the change scan"
 python3 -c "import ast;ast.parse(open('$root/scripts/gate.py').read())" || f "gate.py does not parse"
+python3 -c "import ast;ast.parse(open('$root/scripts/status.py').read())" || f "status.py does not parse"
+python3 "$root/tests/test_status.py" || f "status output/legacy behavior failed"
 python3 -c "import ast;ast.parse(open('$root/scripts/hard-rules.py').read())" || f "hard-rules.py does not parse"
 bash -n $root/scripts/change-scan.sh || f "change-scan.sh does not parse"
 # Phase 0 text intake records source provenance in state.json; the gate schema must accept it.

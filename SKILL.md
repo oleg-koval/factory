@@ -24,13 +24,14 @@ in Codex. `consult <request>` is read-only; other requests start delivery.
 | form | route |
 |---|---|
 | `consult [text]` | Phase 0 steps 1-3 only, answer in conversation, no writes |
+| `status <slug>` | read-only: `python3 .agents/skills/factory/scripts/status.py <slug> [--json]` |
 | `resume [slug] [--driven]` | load `.factory/<slug>/state.json`, set `state.mode` (`driven` if flagged, else `interactive`), continue `state.phase` |
 | `--config [role=skill ...]` | show bindings, rebind, save (`references/roles.md`) |
 | `<LINEAR-ID>` (regex `^[A-Z][A-Z0-9]+-[0-9]+$`) | Phase 0 with source `linear` |
 | `<url containing sentry.io>` | Phase 0 with source `sentry`, depth forced `full` |
 | anything else | Phase 0 with source `text` |
 
-A run from a ticket or text is `interactive` until `run.sh` resumes it `--driven`.
+Ticket or text runs stay `interactive` until resumed with `run.sh --driven`.
 
 ## Role resolution
 
@@ -40,8 +41,7 @@ unresolved. Both hosts share the bindings.
 
 ## Phase dispatch
 
-Read exactly one phase file at a time, in this order, and follow it. `state.next` is computed
-from this order, skipping `1` when `state.depth == "light"`:
+Read exactly one phase file at a time, in order; `state.next` skips phase 1 for light depth:
 
 0. `references/phase-0-intake.md`
 0b. `references/phase-0b-isolate.md` (worktree, branch, baseline; skipped in `consult` mode)
@@ -58,8 +58,9 @@ Each phase writes `state.json` and quotes `scripts/gate.py --phase <id>`. On `GA
 between phases. Human decisions pause either mode. `state.phase` is a string (e.g., `"0b"`).
 Receipts and prose stay in sibling files. Phase 6 gates terminal state.
 
-From Phase 0b on, every command and leaf brief uses `state.isolation.worktree` as working
-directory; paths outside it are bugs.
+For progress snapshots, follow [references/progress-events.md](references/progress-events.md).
+
+From Phase 0b, use `state.isolation.worktree` as cwd for every command and leaf brief.
 
 ## Scripts
 
