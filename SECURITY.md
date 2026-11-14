@@ -1,5 +1,9 @@
 # Security Policy
 
+Evidence status: support policy distributed from oleg-koval/fleet, not a verified support
+record. Tagged releases are v1.0.0 and v1.1.0; no security fix has been backported to an earlier
+minor yet.
+
 ## Supported Versions
 
 | Version        | Supported           |
