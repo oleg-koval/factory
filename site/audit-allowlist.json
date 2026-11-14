@@ -1,7 +1,7 @@
 [
   {
-    "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
-    "reason": "No patched braces release exists yet (latest 3.0.3 is in the vulnerable range); reached only through eslint-plugin-next and vinext at lint/build time, never at runtime.",
-    "review_by": "2026-11-12"
+    "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+    "reason": "Development-only typescript-estree 8.71.2 calls minimatch 10.2.6 with dot:true and default optimizationLevel 1; the advisory requires optimizationLevel >=2. This repo does not enable projectService or allowDefaultProject. No patched minimatch 10.x exists; upstream estree still requires ^10.2.2. Review upstream support before expiry; do not globally override to 11.x.",
+    "review_by": "2026-11-21"
   }
 ]
