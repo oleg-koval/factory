@@ -24,7 +24,7 @@ jobs:
       actions: read
       security-events: write
       id-token: write
-    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@237b3121e57ea0d5bbec787e873022739303418f # workflows PR #36
     with:
       publish-results: false
 
