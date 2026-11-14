@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   agent-hygiene:
-    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@237b3121e57ea0d5bbec787e873022739303418f # workflows PR #36
     with:
       min-score: 75
 
