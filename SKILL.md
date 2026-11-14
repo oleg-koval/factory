@@ -24,14 +24,15 @@ in Codex. `consult <request>` is read-only; other requests start delivery.
 | form | route |
 |---|---|
 | `consult [text]` | Phase 0 steps 1-3 only, answer in conversation, no writes |
-| `status <slug>` | read-only: `python3 .agents/skills/factory/scripts/status.py <slug> [--json]` |
+| `status <slug>` | read-only: run installed `scripts/status.py` with quoted argument `"$slug"` [--json] |
 | `resume [slug] [--driven]` | load `.factory/<slug>/state.json`, set `state.mode` (`driven` if flagged, else `interactive`), continue `state.phase` |
 | `--config [role=skill ...]` | show bindings, rebind, save (`references/roles.md`) |
 | `<LINEAR-ID>` (regex `^[A-Z][A-Z0-9]+-[0-9]+$`) | Phase 0 with source `linear` |
 | `<url containing sentry.io>` | Phase 0 with source `sentry`, depth forced `full` |
 | anything else | Phase 0 with source `text` |
 
-Ticket or text runs stay `interactive` until resumed with `run.sh --driven`.
+Ticket/text runs stay `interactive` until `resume <slug> --driven`; extra runner arguments follow
+`--`.
 
 ## Role resolution
 
@@ -72,7 +73,7 @@ From Phase 0b, use `state.isolation.worktree` as cwd for every command and leaf 
 | `scripts/deferred_ideas.py add\|handoff ...` | Phase 4 / attended handoff | record optional ideas outside the active scope and link actionable follow-ups to GitHub Issues. |
 | `scripts/change-scan.sh <worktree> <base-ref> [human-plan.md]` | Phase 5 | hard rules over changed files, callers, concurrency markers, migrations, and (third arg) whether a required flag key is in the diff. Reports, never judges. |
 | `scripts/hard-rules.py <file>...` | `change-scan.sh` | TS-1 / TS-2 / GQL-1 pass, comments and strings stripped first. |
-| `scripts/run.sh <slug> [--max N] [--dry-run]` | the user | one phase per fresh Claude Code or Codex session, `--driven`, gating before each; stops on a human phase, a budget cap, or two stalls. |
+| `scripts/run.sh <slug> [--runner auto|codex|claude] [--max N] [--dry-run] [-- <runner args>]` | user | one gated phase per fresh host session; stops on a human phase, budget cap, or two stalls. |
 
 ## Tier and token rules
 

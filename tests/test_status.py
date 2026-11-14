@@ -1,5 +1,6 @@
 import datetime as dt
 import json
+import os
 import runpy
 import subprocess
 import sys
@@ -89,6 +90,62 @@ class StatusTests(unittest.TestCase):
             with self.subTest(options=options):
                 self.assertEqual(self.result(self.fixture(**options))["execution"], "unknown")
 
+    def test_fresh_non_running_states_do_not_need_runtime_receipts(self):
+        for value in ("waiting", "idle", "blocked", "complete"):
+            with self.subTest(value=value):
+                self.assertEqual(self.result(self.fixture(execution=value, observation=False))["execution"], value)
+
+    def test_last_appended_event_wins_and_stale_event_fields_are_unknown(self):
+        run = self.fixture()
+        path = run / "progress.jsonl"
+        first = json.loads(path.read_text())
+        last = dict(first, at=(NOW - dt.timedelta(seconds=901)).isoformat(),
+                    execution="idle", scope="stale scope", next_owner="stale owner")
+        path.write_text(json.dumps(first) + "\n" + json.dumps(last) + "\n")
+        result = self.result(run)
+        self.assertEqual(result["scope"], "unknown")
+        self.assertEqual(result["next_owner"], "unknown")
+        self.assertEqual(result["execution"], "unknown")
+        self.assertFalse(result["evidence_fresh"])
+
+    def test_stale_snapshot_keeps_receipt_times_but_hides_conclusions(self):
+        run = self.fixture(event_age=901)
+        path = run / "progress.jsonl"
+        event = json.loads(path.read_text())
+        observed = (NOW - dt.timedelta(seconds=902)).isoformat()
+        event["execution_evidence"]["observed_at"] = observed
+        event["remote_sha"] = "a" * 40
+        event["remote_sha_at"] = observed
+        event["ci"] = {"status": "green", "at": observed, "sha": "a" * 40}
+        path.write_text(json.dumps(event) + "\n")
+        result = self.result(run)
+        self.assertEqual(result["execution_observed_at"], observed)
+        self.assertEqual(result["remote_sha_observed_at"], observed)
+        self.assertEqual(result["ci_observed_at"], observed)
+        self.assertEqual(result["execution"], "unknown")
+        self.assertEqual(result["ci"], "unknown")
+        self.assertEqual(result["remote_sha_freshness"], "unknown")
+
+    def test_bounded_reads_and_corrupt_files_are_reported(self):
+        run = self.fixture()
+        (run / "progress.jsonl").write_bytes(b"\xff")
+        self.assertEqual(self.result(run)["progress_status"], "corrupt")
+        (run / "progress.jsonl").write_bytes(b"x" * (1024 * 1024 + 1))
+        self.assertEqual(self.result(run)["progress_status"], "unavailable")
+        run = self.fixture()
+        os.mkfifo(run / "matrix.fifo")
+        state = json.loads((run / "state.json").read_text())
+        state["files"]["ac_matrix"] = "matrix.fifo"
+        (run / "state.json").write_text(json.dumps(state))
+        self.assertEqual(self.result(run)["acceptance_status"], "unavailable")
+
+    def test_concurrent_state_write_is_reported_without_using_matrix(self):
+        run = self.fixture()
+        (run / "state.json").write_text("{")
+        result = self.result(run)
+        self.assertEqual(result["state_status"], "corrupt")
+        self.assertEqual(result["acceptance_status"], "corrupt")
+
     def test_corrupt_progress_never_falls_back_to_an_older_event(self):
         run = self.fixture()
         valid = (run / "progress.jsonl").read_text()
@@ -102,13 +159,13 @@ class StatusTests(unittest.TestCase):
         run = self.fixture()
         path = run / "progress.jsonl"
         event = json.loads(path.read_text())
-        event["remote_sha"] = "sha-a"
+        event["remote_sha"] = "a" * 40
         event["remote_sha_at"] = NOW.isoformat()
-        event["ci"] = {"status": "green", "at": NOW.isoformat(), "sha": "sha-a"}
+        event["ci"] = {"status": "green", "at": NOW.isoformat(), "sha": "a" * 40}
         path.write_text(json.dumps(event) + "\n")
         self.assertEqual(self.result(run)["ci"], "green")
-        for ci, expected_freshness in (({"status": "green", "at": NOW.isoformat(), "sha": "sha-b"}, "sha-mismatch"),
-                                       ({"status": "green", "at": (NOW - dt.timedelta(days=2)).isoformat(), "sha": "sha-a"}, "before-remote-sha"),
+        for ci, expected_freshness in (({"status": "green", "at": NOW.isoformat(), "sha": "b" * 40}, "sha-mismatch"),
+                                       ({"status": "green", "at": (NOW - dt.timedelta(days=2)).isoformat(), "sha": "a" * 40}, "before-remote-sha"),
                                        (None, "missing")):
             event["ci"] = ci
             path.write_text(json.dumps(event) + "\n")
@@ -116,9 +173,22 @@ class StatusTests(unittest.TestCase):
             self.assertEqual(result["ci"], "unknown")
             self.assertEqual(result["ci_freshness"], expected_freshness)
         event.pop("remote_sha")
-        event["ci"] = {"status": "green", "at": NOW.isoformat(), "sha": "sha-a"}
+        event["ci"] = {"status": "green", "at": NOW.isoformat(), "sha": "a" * 40}
         path.write_text(json.dumps(event) + "\n")
         self.assertEqual(self.result(run)["ci_freshness"], "missing-sha")
+        event["remote_sha"] = "not-a-sha"
+        path.write_text(json.dumps(event) + "\n")
+        result = self.result(run)
+        self.assertEqual(result["remote_sha_freshness"], "unknown")
+        self.assertEqual(result["ci"], "unknown")
+        event["remote_sha"] = "a" * 40
+        event["remote_sha_at"] = (NOW - dt.timedelta(days=2)).isoformat()
+        event["ci"] = {"status": "green", "at": NOW.isoformat(), "sha": "a" * 40}
+        path.write_text(json.dumps(event) + "\n")
+        self.assertEqual(self.result(run)["ci"], "unknown")
+        event["remote_sha_at"] = None
+        path.write_text(json.dumps(event) + "\n")
+        self.assertEqual(self.result(run)["ci"], "unknown")
 
     def test_ac_paths_are_confined_and_pending_roadmap_is_visible(self):
         for path in (None, {}, "../outside.md", str(Path("/tmp/outside.md"))):
@@ -141,13 +211,56 @@ class StatusTests(unittest.TestCase):
         path.write_text(json.dumps(event) + "\n")
         self.assertEqual(self.result(run)["pending_roadmap_acceptance_criteria"], ["AC-2"])
 
+    def test_custom_matrix_header_order_and_backtick_cells(self):
+        run = self.fixture(ac_path="custom/matrix.md")
+        custom = run / "custom"
+        custom.mkdir()
+        (custom / "matrix.md").write_text(
+            "| `STATUS` | note | `ac` |\n|---|---|---|\n| `MET` | proof | `AC-9` |\n")
+        result = self.result(run)
+        self.assertEqual(result["acceptance_status"], "available")
+        self.assertEqual(result["remaining_acceptance_criteria"], [])
+
+    def test_truncated_recognized_ac_row_blocks_completion(self):
+        run = self.fixture(terminal="delivered", all_local_acs_met=True)
+        path = run / "ac-matrix.md"
+        path.write_text(
+            "| AC | test | kind | status |\n|---|---|---|---|\n"
+            "| AC-1 | test | unit | MET |\n| AC-2 | test | unit |\n")
+        event_path = run / "progress.jsonl"
+        event = json.loads(event_path.read_text())
+        event["roadmap_acceptance_criteria"] = [
+            {"id": "AC-1", "status": "met"}, {"id": "AC-2", "status": "met"}]
+        event["roadmap_acceptance_complete"] = True
+        event_path.write_text(json.dumps(event) + "\n")
+        result = self.result(run)
+        self.assertEqual(result["acceptance_status"], "corrupt")
+        self.assertEqual(result["roadmap_complete"], "unknown")
+
+    def test_status_in_test_id_does_not_hide_failed_ac_row(self):
+        run = self.fixture(terminal="delivered", all_local_acs_met=True)
+        (run / "ac-matrix.md").write_text(
+            "| AC | test id | kind | status |\n|---|---|---|---|\n"
+            "| AC-1 | unit-one | unit | met |\n"
+            "| AC-2 | status | unit | failed |\n")
+        event_path = run / "progress.jsonl"
+        event = json.loads(event_path.read_text())
+        event["roadmap_acceptance_criteria"] = [
+            {"id": "AC-1", "status": "met"}, {"id": "AC-2", "status": "met"}]
+        event["roadmap_acceptance_complete"] = True
+        event_path.write_text(json.dumps(event) + "\n")
+        result = self.result(run)
+        self.assertEqual(result["remaining_acceptance_criteria"], ["AC-2"])
+        self.assertEqual(result["roadmap_complete"], "incomplete")
+
     def test_null_state_and_corrupt_matrix_are_reported_safely(self):
         run = self.fixture()
         (run / "state.json").write_text("null")
-        with self.assertRaises(ValueError):
-            API["status"](run, now=NOW)
+        self.assertEqual(self.result(run)["state_status"], "corrupt")
         run = self.fixture()
-        (run / "ac-matrix.md").write_text("| AC-1 | test | unit | not-a-status |\n")
+        (run / "ac-matrix.md").write_text(
+            "| AC | test | kind | status |\n|---|---|---|---|\n"
+            "| AC-1 | test | unit | not-a-status |\n")
         result = self.result(run)
         self.assertEqual(result["acceptance_status"], "corrupt")
         self.assertEqual(result["remaining_acceptance_criteria"], "unknown")
@@ -156,15 +269,22 @@ class StatusTests(unittest.TestCase):
         run = self.fixture(terminal="delivered")
         path = run / "progress.jsonl"
         event = json.loads(path.read_text())
-        event["roadmap_acceptance_criteria"] = [{"id": "AC-1", "status": "met"}]
+        event["roadmap_acceptance_criteria"] = [
+            {"id": "AC-1", "status": "met"}, {"id": "AC-2", "status": "met"}]
+        event["roadmap_acceptance_complete"] = True
         path.write_text(json.dumps(event) + "\n")
-        self.assertFalse(self.result(run)["roadmap_complete"])
+        self.assertEqual(self.result(run)["roadmap_complete"], "incomplete")
         run = self.fixture(terminal="delivered", all_local_acs_met=True)
         path = run / "progress.jsonl"
         event = json.loads(path.read_text())
-        event["roadmap_acceptance_criteria"] = [{"id": "AC-1", "status": "met"}]
+        event["roadmap_acceptance_criteria"] = [
+            {"id": "AC-1", "status": "met"}, {"id": "AC-2", "status": "met"}]
+        event["roadmap_acceptance_complete"] = True
         path.write_text(json.dumps(event) + "\n")
-        self.assertTrue(self.result(run)["roadmap_complete"])
+        self.assertEqual(self.result(run)["roadmap_complete"], "complete")
+        del event["roadmap_acceptance_complete"]
+        path.write_text(json.dumps(event) + "\n")
+        self.assertEqual(self.result(run)["roadmap_complete"], "unknown")
 
 
 if __name__ == "__main__":

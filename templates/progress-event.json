@@ -29,5 +29,6 @@
   "roadmap_acceptance_criteria": [
     {"id": "AC-1", "status": "met"},
     {"id": "AC-2", "status": "pending"}
-  ]
+  ],
+  "roadmap_acceptance_complete": false
 }

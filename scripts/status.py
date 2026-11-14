@@ -3,11 +3,16 @@
 import argparse
 import datetime as dt
 import json
+import os
 import re
+import stat
 from pathlib import Path
 
 FRESH_SECONDS = 900
 CI_FRESH_SECONDS = 86400
+STATE_MAX_BYTES = 65536
+PROGRESS_MAX_BYTES = 1048576
+MATRIX_MAX_BYTES = 2097152
 EXECUTION_STATES = ("running", "waiting", "idle", "blocked", "complete")
 CI_STATES = ("green", "pending", "failing", "failed")
 
@@ -26,14 +31,49 @@ def known(value):
     return value if value is not None and value != "" else "unknown"
 
 
-def read_progress(path):
+def read_text(path, max_bytes):
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
     try:
-        lines = path.read_text().splitlines()
+        descriptor = os.open(path, flags)
     except OSError:
-        return "unavailable", {}
+        return "unavailable", None
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            return "unavailable", None
+        with os.fdopen(descriptor, "rb") as source:
+            descriptor = -1
+            contents = source.read(max_bytes + 1)
+        if len(contents) > max_bytes:
+            return "unavailable", None
+        return "available", contents.decode("utf-8")
+    except UnicodeDecodeError:
+        return "corrupt", None
+    except OSError:
+        return "unavailable", None
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+
+
+def read_state(path):
+    file_status, contents = read_text(path, STATE_MAX_BYTES)
+    if file_status != "available":
+        return file_status, {}
+    try:
+        state = json.loads(contents)
+    except json.JSONDecodeError:
+        return "corrupt", {}
+    return ("available", state) if isinstance(state, dict) else ("corrupt", {})
+
+
+def read_progress(path):
+    file_status, contents = read_text(path, PROGRESS_MAX_BYTES)
+    if file_status != "available":
+        return file_status, {}
+    lines = contents.splitlines()
     if not lines:
         return "unavailable", {}
-    events = []
+    latest = None
     for line in lines:
         if not line.strip():
             continue
@@ -43,11 +83,10 @@ def read_progress(path):
             return "corrupt", {}
         if not isinstance(item, dict) or parse_time(item.get("at")) is None:
             return "corrupt", {}
-        events.append(item)
-    if not events:
+        latest = item
+    if latest is None:
         return "unavailable", {}
-    event = max(events, key=lambda item: parse_time(item.get("at")))
-    return "available", event
+    return "available", latest
 
 
 def read_acceptance(run_dir, state):
@@ -65,22 +104,32 @@ def read_acceptance(run_dir, state):
         return "invalid-path", ()
     if path.is_absolute() or ".." in path.parts or not target.is_relative_to(root):
         return "invalid-path", ()
-    try:
-        lines = target.read_text().splitlines()
-    except ValueError:
-        return "invalid-path", ()
-    except OSError:
-        return "unavailable", ()
+    file_status, contents = read_text(target, MATRIX_MAX_BYTES)
+    if file_status != "available":
+        return file_status, ()
     rows = []
-    for line in lines:
+    ac_index = None
+    status_index = None
+    for line in contents.splitlines():
         if not line.startswith("|"):
             continue
-        cells = tuple(cell.strip() for cell in line.strip("|").split("|"))
-        if not cells or not re.fullmatch(r"AC-\d+", cells[0]):
+        cells = tuple(cell.strip().strip("`").strip()
+                      for cell in line.strip("|").split("|"))
+        lowered = tuple(cell.lower() for cell in cells)
+        if "ac" in lowered and "status" in lowered:
+            ac_index = lowered.index("ac")
+            status_index = lowered.index("status")
             continue
-        if len(cells) < 4 or cells[3] not in ("met", "unrunnable", "failed"):
+        if status_index is None or len(cells) <= ac_index:
+            continue
+        if not re.fullmatch(r"AC-\d+", cells[ac_index], re.IGNORECASE):
+            continue
+        if len(cells) <= status_index:
             return "corrupt", ()
-        rows.append((cells[0], cells[3]))
+        normalized_status = cells[status_index].strip("`").strip().lower()
+        if normalized_status not in ("met", "unrunnable", "failed"):
+            return "corrupt", ()
+        rows.append((cells[ac_index], normalized_status))
     return ("available", tuple(rows)) if rows else ("unavailable", ())
 
 
@@ -135,83 +184,91 @@ def roadmap_acceptance(event):
            or item.get("status") not in ("met", "pending", "unrunnable", "failed") for item in items):
         return "corrupt", []
     pending = [item["id"] for item in items if item["status"] != "met"]
-    return "available", pending
+    complete = event.get("roadmap_acceptance_complete")
+    return ("available" if complete is True else "partial"), pending
 
 
 def status(run_dir, now=None):
     now = now or dt.datetime.now(dt.timezone.utc)
-    state = json.loads((run_dir / "state.json").read_text())
-    if not isinstance(state, dict):
-        raise ValueError("state.json must contain an object")
+    state_status, state = read_state(run_dir / "state.json")
     progress_status, event = read_progress(run_dir / "progress.jsonl")
     at = parse_time(event.get("at"))
-    seconds_old = int((now - at).total_seconds()) if at else None
-    age = seconds_old if seconds_old is not None and seconds_old >= 0 else None
-    fresh = age is not None and age <= FRESH_SECONDS
+    event_age = (now - at).total_seconds() if at else None
+    age = int(event_age) if event_age is not None and event_age >= 0 else None
+    fresh = event_age is not None and 0 <= event_age <= FRESH_SECONDS
     observed_at = execution_observation(event)
     observed_age = (now - observed_at).total_seconds() if observed_at else None
     execution_fresh = observed_age is not None and 0 <= observed_age <= FRESH_SECONDS
     execution = event.get("execution", "unknown")
-    if execution not in EXECUTION_STATES or not fresh or not execution_fresh:
+    if execution not in EXECUTION_STATES or not fresh or (execution == "running" and not execution_fresh):
         execution = "unknown"
 
-    acceptance_status, acs = read_acceptance(run_dir, state)
+    acceptance_status, acs = (
+        read_acceptance(run_dir, state) if state_status == "available" else (state_status, ())
+    )
     remaining = [ac for ac, result in acs if result != "met"]
     terminal = state.get("terminal") or "unknown"
     delivery = state.get("delivery")
     delivery = delivery if isinstance(delivery, dict) else {}
-    remote_sha = event.get("remote_sha", "unknown")
+    remote_sha = event.get("remote_sha")
+    remote_sha_valid = isinstance(remote_sha, str) and bool(re.fullmatch(r"[0-9a-fA-F]{7,64}", remote_sha))
     remote_sha_at = parse_time(event.get("remote_sha_at"))
-    ci = ci_result(event, remote_sha, remote_sha_at, now)
+    ci = ci_result(event, remote_sha if remote_sha_valid else None, remote_sha_at, now)
     roadmap_status, pending_roadmap = roadmap_acceptance(event)
-    roadmap_complete = (
-        False if acceptance_status == "available" and remaining
-        else False if roadmap_status == "available" and pending_roadmap
-        else True if roadmap_status == "available" and not pending_roadmap
-        and acceptance_status == "available" and terminal == "delivered"
-        else "unknown"
-    )
+    if not fresh or acceptance_status != "available" or roadmap_status == "unknown":
+        roadmap_complete = "unknown"
+    elif remaining or pending_roadmap:
+        roadmap_complete = "incomplete"
+    elif roadmap_status == "available" and terminal == "delivered":
+        roadmap_complete = "complete"
+    else:
+        roadmap_complete = "unknown"
     assignment = event.get("assignment")
     assignment = assignment if isinstance(assignment, dict) else {}
+    event_value = lambda value: known(value) if fresh else "unknown"
+    remote_sha_freshness = (
+        "unknown" if not remote_sha_valid or remote_sha_at is None
+        else "fresh" if 0 <= (now - remote_sha_at).total_seconds() <= CI_FRESH_SECONDS else "stale"
+    )
     return {
         "slug": state.get("slug", run_dir.name),
-        "scope": known(event.get("scope")),
-        "active_slice": known(event.get("active_slice")),
+        "state_status": state_status,
+        "scope": event_value(event.get("scope")),
+        "active_slice": event_value(event.get("active_slice")),
         "phase": known(state.get("phase")),
         "execution": execution,
-        "assignment": {"owner": assignment.get("owner", "unknown"),
-                       "model": assignment.get("model", "unknown")},
+        "assignment": {"owner": event_value(assignment.get("owner")),
+                       "model": event_value(assignment.get("model"))},
         "progress_status": progress_status,
         "updated_at": event.get("at", "unknown"),
         "age_seconds": age if age is not None else "unknown",
         "evidence_fresh": fresh if at else "unknown",
-        "execution_evidence_source": known(event.get("execution_evidence", {}).get("source"))
+        "execution_evidence_source": event_value(event.get("execution_evidence", {}).get("source"))
         if isinstance(event.get("execution_evidence"), dict) else "unknown",
         "execution_observed_at": known(event.get("execution_evidence", {}).get("observed_at"))
         if isinstance(event.get("execution_evidence"), dict) else "unknown",
         "execution_evidence_fresh": execution_fresh if observed_at else "unknown",
-        "completed_prs": known(event.get("completed_prs")),
-        "blockers": known(event.get("blockers")),
-        "next_action": known(event.get("next_action")),
-        "next_owner": known(event.get("next_owner")),
+        "completed_prs": event_value(event.get("completed_prs")),
+        "blockers": event_value(event.get("blockers")),
+        "next_action": event_value(event.get("next_action")),
+        "next_owner": event_value(event.get("next_owner")),
         "acceptance_status": acceptance_status,
         "remaining_acceptance_criteria": remaining if acceptance_status == "available" else "unknown",
-        "pending_roadmap_acceptance_criteria": pending_roadmap if roadmap_status == "available" else "unknown",
-        "roadmap_acceptance_status": roadmap_status,
-        "local_proof": known(event.get("local_proof")),
-        "commit": known(event.get("commit", delivery.get("commit"))),
-        "remote_sha": known(remote_sha),
-        "remote_sha_observed_at": known(event.get("remote_sha_at")),
-        "remote_sha_freshness": (
-            "fresh" if remote_sha_at and 0 <= (now - remote_sha_at).total_seconds() <= CI_FRESH_SECONDS
-            else "stale" if remote_sha_at else "unknown"
+        "pending_roadmap_acceptance_criteria": (
+            pending_roadmap if fresh and roadmap_status in ("available", "partial") else "unknown"
         ),
-        "ci": ci["status"],
-        "ci_observed_at": ci["observed_at"],
-        "ci_sha": ci["sha"],
-        "ci_freshness": ci["freshness"],
-        "deployment": known(event.get("deployment")),
-        "live_acceptance": known(event.get("live_acceptance")),
+        "roadmap_acceptance_status": roadmap_status if fresh else "unknown",
+        "local_proof": event_value(event.get("local_proof")),
+        "commit": event_value(event.get("commit", delivery.get("commit"))),
+        "remote_sha": event_value(remote_sha),
+        "remote_sha_observed_at": known(event.get("remote_sha_at")),
+        "remote_sha_freshness": remote_sha_freshness if fresh else "unknown",
+        "ci": ci["status"] if fresh else "unknown",
+        "ci_observed_at": known(ci["observed_at"]),
+        "ci_sha": event_value(ci["sha"]),
+        "ci_freshness": ci["freshness"] if fresh else "unknown",
+        "deployment": event_value(event.get("deployment")),
+        "live_acceptance": event_value(event.get("live_acceptance")),
         "slice_terminal": terminal,
         "roadmap_complete": roadmap_complete,
     }
