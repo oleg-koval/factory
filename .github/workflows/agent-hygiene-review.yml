@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   agent-hygiene:
-    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@237b3121e57ea0d5bbec787e873022739303418f # workflows PR #36
+    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@c26f8e9203af25881b3fee85b218ec8ffbd1c6fb # workflows main (#36)
     with:
       min-score: 75
 
@@ -24,7 +24,7 @@ jobs:
       actions: read
       security-events: write
       id-token: write
-    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@237b3121e57ea0d5bbec787e873022739303418f # workflows PR #36
+    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@c26f8e9203af25881b3fee85b218ec8ffbd1c6fb # workflows main (#36)
     with:
       publish-results: false
 
