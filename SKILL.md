@@ -24,13 +24,15 @@ in Codex. `consult <request>` is read-only; other requests start delivery.
 | form | route |
 |---|---|
 | `consult [text]` | Phase 0 steps 1-3 only, answer in conversation, no writes |
+| `status <slug>` | read-only: run installed `scripts/status.py` with quoted argument `"$slug"` [--json] |
 | `resume [slug] [--driven]` | load `.factory/<slug>/state.json`, set `state.mode` (`driven` if flagged, else `interactive`), continue `state.phase` |
 | `--config [role=skill ...]` | show bindings, rebind, save (`references/roles.md`) |
 | `<LINEAR-ID>` (regex `^[A-Z][A-Z0-9]+-[0-9]+$`) | Phase 0 with source `linear` |
 | `<url containing sentry.io>` | Phase 0 with source `sentry`, depth forced `full` |
 | anything else | Phase 0 with source `text` |
 
-A run from a ticket or text is `interactive` until `run.sh` resumes it `--driven`.
+Ticket/text runs stay `interactive` until `resume <slug> --driven`; extra runner arguments follow
+`--`.
 
 ## Role resolution
 
@@ -40,8 +42,7 @@ unresolved. Both hosts share the bindings.
 
 ## Phase dispatch
 
-Read exactly one phase file at a time, in this order, and follow it. `state.next` is computed
-from this order, skipping `1` when `state.depth == "light"`:
+Read exactly one phase file at a time, in order; `state.next` skips phase 1 for light depth:
 
 0. `references/phase-0-intake.md`
 0b. `references/phase-0b-isolate.md` (worktree, branch, baseline; skipped in `consult` mode)
@@ -58,8 +59,9 @@ Each phase writes `state.json` and quotes `scripts/gate.py --phase <id>`. On `GA
 between phases. Human decisions pause either mode. `state.phase` is a string (e.g., `"0b"`).
 Receipts and prose stay in sibling files. Phase 6 gates terminal state.
 
-From Phase 0b on, every command and leaf brief uses `state.isolation.worktree` as working
-directory; paths outside it are bugs.
+For progress snapshots, follow [references/progress-events.md](references/progress-events.md).
+
+From Phase 0b, use `state.isolation.worktree` as cwd for every command and leaf brief.
 
 ## Scripts
 
@@ -71,7 +73,7 @@ directory; paths outside it are bugs.
 | `scripts/deferred_ideas.py add\|handoff ...` | Phase 4 / attended handoff | record optional ideas outside the active scope and link actionable follow-ups to GitHub Issues. |
 | `scripts/change-scan.sh <worktree> <base-ref> [human-plan.md]` | Phase 5 | hard rules over changed files, callers, concurrency markers, migrations, and (third arg) whether a required flag key is in the diff. Reports, never judges. |
 | `scripts/hard-rules.py <file>...` | `change-scan.sh` | TS-1 / TS-2 / GQL-1 pass, comments and strings stripped first. |
-| `scripts/run.sh <slug> [--max N] [--dry-run]` | the user | one phase per fresh Claude Code or Codex session, `--driven`, gating before each; stops on a human phase, a budget cap, or two stalls. |
+| `scripts/run.sh <slug> [--runner auto|codex|claude] [--max N] [--dry-run] [-- <runner args>]` | user | one gated phase per fresh host session; stops on a human phase, budget cap, or two stalls. |
 
 ## Tier and token rules
 
