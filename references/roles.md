@@ -33,8 +33,9 @@ Run when no config resolves a role, or when a bound name is not installed.
 
 1. Enumerate candidates from the skill list in this session, the active provider's skill and
    plugin directories, the repository's agent configuration, and the factory's own
-   `agents/factory-*.md` prompt contracts. Read only frontmatter name and description.
-   Read only frontmatter `name` and `description`.
+   `agents/factory-*.md` prompt contracts. Read only frontmatter `name` and `description`.
+   Shared role files without frontmatter, such as `<repo>/.agents/shared/olko/roles/*.md`,
+   are candidates too: use the file name as `name` and the first paragraph as `description`.
 2. For each role, rank candidates by description match to the contract row above. Keep at most
    three per role. Add `built-in` where `agents/factory-<role>.md` exists. Use `none` when the
    list is empty.

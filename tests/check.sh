@@ -33,6 +33,8 @@ for role, binding in b.items():
 " || f "roles.json binds whole-change-review/pr-opener wrong, or a skill binding matches lekker|push-pr"
 grep -q "## Discovery" $root/references/roles.md || f "roles.md missing Discovery section"
 grep -q "## Config resolution" $root/references/roles.md || f "roles.md missing Config resolution"
+grep -qF ".agents/shared/olko/roles/" $root/references/roles.md || f "roles.md discovery ignores shared olko roles"
+grep -qF ".agents/shared/olko/pipelines/delivery.md" $root/references/phase-0-intake.md || f "phase-0 does not load shared olko pipelines"
 python3 -c "import json,sys;d=json.load(open('$root/templates/roles.json'));assert d['version']==1;b=d['bindings'];assert set(b)=={$(printf "'%s'," $roles)};[b[k]['kind'] in ('skill','script','built-in','none') or sys.exit(1) for k in b]" || f "roles.json template invalid"
 
 # T3 agents
