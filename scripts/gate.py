@@ -19,7 +19,7 @@ import json
 import os
 import re
 import sys
-from urllib.parse import urlsplit
+from live_delivery import PR_URL, observe
 
 from scope_lock import LOCK_FILE, verify as verify_scope
 
@@ -600,7 +600,7 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
         check_all_answered(state, reasons)
 
     if wanted in DELIVERED | {"pending-delivery"}:
-        check_delivery(state, reasons, pending=wanted == "pending-delivery")
+        check_delivery(state, run_dir, reasons, pending=wanted == "pending-delivery")
 
     return matrix
 
@@ -623,45 +623,51 @@ def check_all_answered(state: dict, reasons: list[str]) -> None:
             )
 
 
-def check_delivery(state: dict, reasons: list[str], *, pending: bool = False) -> None:
-    """Delivered means landed where others can see it: pushed commit, open PR, green checks.
+def accepted_open_pr(delivery: dict) -> bool:
+    acceptance = delivery.get("open_accepted_by")
+    return isinstance(acceptance, str) and bool(acceptance.strip())
 
-    Without this the gate passed a run whose code was uncommitted, with no PR and no CI run.
-    Local finished work is 'ready-for-commit'; pushed work with an open PR and pending or
-    failing checks is 'pending-delivery'.
-    """
+
+def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bool) -> None:
     delivery = state.get("delivery")
-
     if not isinstance(delivery, dict):
-        label = "pending-delivery" if pending else "delivered"
-        fail(reasons, f"state.delivery missing; {label} needs commit, pr and checks")
+        fail(reasons, "state.delivery missing; record the PR URL and full pushed head")
         return
 
-    commit = delivery.get("commit")
+    head = delivery.get("commit")
     pr = delivery.get("pr")
+    valid_head = isinstance(head, str) and re.fullmatch(r"[0-9a-f]{40}", head)
+    match = PR_URL.fullmatch(pr) if isinstance(pr, str) else None
+    if not valid_head:
+        fail(reasons, "state.delivery.commit must be the full pushed head SHA")
+    if not match:
+        fail(reasons, "state.delivery.pr must be a github.com pull request URL")
+    if not valid_head or not match or reasons:
+        return
 
-    if not isinstance(commit, str) or not SHA_RE.match(commit):
-        fail(reasons, f"state.delivery.commit {commit!r} is not a pushed commit sha")
+    owner, repo, number = match.groups()
+    try:
+        receipt = observe(owner, repo, int(number), head)
+        with open(os.path.join(run_dir, "delivery-observations.jsonl"), "a") as handle:
+            handle.write(json.dumps(receipt) + "\n")
+    except (ValueError, OSError, KeyError, TypeError) as error:
+        fail(reasons, f"live delivery verification failed: {error}")
+        return
 
-    valid_pr = False
-    if isinstance(pr, str) and not any(char.isspace() for char in pr):
-        try:
-            parsed = urlsplit(pr)
-            valid_pr = (
-                parsed.scheme == "https"
-                and bool(parsed.hostname)
-                and re.fullmatch(r"/[^/]+/[^/]+/pull/[1-9][0-9]*/?", parsed.path) is not None
-            )
-        except ValueError:
-            pass
-
-    if not valid_pr:
-        fail(reasons, f"state.delivery.pr {pr!r} is not a PR URL")
-
-    if pending and delivery.get("checks") not in ("pending", "failing"):
-        fail(reasons, f"state.delivery.checks is {delivery.get('checks')!r}, not 'pending' or 'failing'")
-    elif not pending and delivery.get("checks") != "green":
-        fail(reasons, f"state.delivery.checks is {delivery.get('checks')!r}, not 'green'; re-read the PR checks first")
+    print(f"DELIVERY OBSERVED: {json.dumps(receipt)}")
+    if "error" in receipt:
+        fail(reasons, receipt["error"])
+    elif receipt["state"] == "CLOSED":
+        fail(reasons, "PR closed without merging")
+    elif pending:
+        if receipt["state"] != "OPEN" or receipt["verdict"] not in {"pending", "failing"}:
+            fail(reasons, "pending-delivery requires an open PR with pending or failing required checks")
+    elif receipt["verdict"] != "green":
+        fail(reasons, "live required checks are not 'green'")
+    elif receipt["state"] == "MERGED" and isinstance(receipt["mergedAt"], str) and receipt["mergedAt"].strip():
+        return
+    elif receipt["state"] != "OPEN" or not accepted_open_pr(delivery):
+        fail(reasons, "delivery requires mergedAt or explicit human acceptance of an open PR")
 
 
 def main(argv: list[str]) -> int:

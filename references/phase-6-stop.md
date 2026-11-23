@@ -47,7 +47,7 @@ command has run and been quoted.
   `delivered-with-gaps`.
 
 Before push/PR use `ready-for-commit`; pending/failing PR checks mean `pending-delivery`.
-Gate transitions and name checks, statuses and links without polling per `references/delivery.md`.
+Quote the live observation and follow `references/delivery.md` for transitions.
 
 ### What the gate checks
 
@@ -60,8 +60,8 @@ Gate transitions and name checks, statuses and links without polling per `refere
 | any `unrunnable` AC | `delivered` only; use `delivered-with-gaps` |
 | `state.isolation` present, mode known, worktree path a real directory | on `delivered*` |
 | `receipts.md` exists and is non-empty | on `delivered*` |
-| `state.delivery`: pushed sha, HTTPS PR URL, `checks: "green"` | `delivered*` |
-| `state.delivery`: pushed sha, HTTPS PR URL, pending/failing checks | `pending-delivery` |
+| Live exact PR head, green required checks, and `mergedAt` or explicit open-PR acceptance | `delivered*` |
+| Live exact PR head and pending/failing required checks on an open PR | `pending-delivery` |
 | a non-blocking question unanswered | `delivered` only |
 
 A blocking question means `blocked`, even when tests pass. Only an answer or the user's own
@@ -89,8 +89,7 @@ feature flag and its 14-day removal ticket, or none. Multiple selections allowed
 
 ## Open the PR
 
-Review bots run on PR open and later pushes. Finalize the branch before step 3. For each
-accepted gap, fix it or draft the reviewer reply in the report before pushing.
+Review bots run on PR open and later pushes. Finalize the branch and draft replies for accepted gaps before pushing.
 
 1. `git -C <worktree> status --porcelain` must print nothing. A dirty tree is reported, never
    staged: one line of why, since the previous binding staged the whole tree, including the
