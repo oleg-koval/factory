@@ -1,0 +1,1 @@
+Disposable Factory delivery check fixture.
