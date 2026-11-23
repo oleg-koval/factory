@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""GitHub CLI test double used only by the offline proof and gate tests."""
+
+import json
+import os
+import sys
+
+case = os.environ.get("FACTORY_GH_FIXTURE", "green")
+if case == "offline":
+    sys.exit(1)
+if "graphql" not in sys.argv:
+    print("[[]]")
+    sys.exit(0)
+
+number = int(next(arg.split("=")[1] for arg in sys.argv if arg.startswith("number=")))
+head = ("1" if case == "changed" else "0") * 40
+status = "IN_PROGRESS" if case == "pending" else "COMPLETED"
+conclusion = {"cancelled": "CANCELLED", "failing": "FAILURE"}.get(case, "SUCCESS")
+checks = [{"name": "ci", "isRequired": True, "status": status, "conclusion": conclusion}]
+pr = {
+    "number": number, "headRefOid": head, "baseRefName": "main",
+    "baseRef": {"branchProtectionRule": {"requiredStatusCheckContexts": ["ci", "missing"] if case == "missing" else ["ci"]}},
+    "state": {"pending": "OPEN", "failing": "OPEN", "closed": "CLOSED", "open": "OPEN"}.get(case, "MERGED"),
+    "mergedAt": "2026-10-01T12:00:00Z" if case == "green" else None,
+    "commits": {"nodes": [{"commit": {"oid": head, "statusCheckRollup": {
+        "contexts": {"pageInfo": {"hasNextPage": False}, "nodes": checks},
+    }}}]},
+}
+print(json.dumps({"data": {"repository": {"nameWithOwner": "owner/repo", "pullRequest": pr}}}))

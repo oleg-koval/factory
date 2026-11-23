@@ -17,7 +17,7 @@ built-in subagent contract. Phase files name roles only.
 | `implementer` | one milestone task, tests, reuse index, `state.baseline` | diff, new tests pass, rest of suite no worse than baseline | test run output compared to baseline |
 | `fixer` | verified findings | diff | re-run output |
 | `e2e-tester` | milestone AC, kind | failing e2e tests | run output shows FAIL for the right reason |
-| `teeth-check` | the fix lines, the test id, the repo test command | the test proven to fail without the fix | quoted failing run with the fix reverted, then the restore |
+| `teeth-check` | the fix lines, the test id, the repo test command | the test proven to fail without the fix | whole-file fail, pass, same regression failure after revert, and pass after restore |
 | `milestone-reviewer` | diff, agent-plan entry, checklist, the milestone's invariants and the earlier diffs touching them | PASS or FIX with findings | verdict text |
 | `plan-equivalence` | human-plan.md, agent-plan.md | SAME-SCOPE or MISMATCH with list | verdict text |
 | `whole-change-review` | branch, target branch | findings with proof, optional fix | review file path (built-in `factory-whole-change-reviewer`) |

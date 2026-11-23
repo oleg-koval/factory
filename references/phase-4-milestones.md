@@ -27,12 +27,10 @@ b. **Implement**, role `implementer`. Brief: milestone block, AC text, test kind
    numbers, not zero failures.
 b2. **Teeth check**, role `teeth-check`, once per new test that is meant to prove a fix or a
    guarantee. Brief: the exact line or lines of the fix, the test id, and the repo's own test
-   command. The leaf reverts those lines to their pre-fix form, re-runs **the whole test file the
-   way the repo's own command runs it** (not the single test in isolation), quotes the output,
-   then restores the lines and re-runs to confirm the restore. Append the quoted failure to
-   `receipts.md`.
-   Advance only if the whole file FAILS without the fix. Otherwise restore it: light run with
-   one milestone -> implementer revises the test, reruns b2; otherwise -> step a.
+   command. Run the whole test file before the fix, with the fix, and with only the fix
+   reverted. Both failures must show the named test and expected regression assertion.
+   Setup, collection and runner failures are inconclusive. Restore the fix, rerun the
+   file, and quote all runs in `receipts.md`. If the unfixed file passes, revise the test.
 c. **Checkpoint**, role `mechanical-leaf`: `git add` only the files the milestone block lists - never `git add .`, even in
    the worktree - commit `factory(M<n>): <goal>`, return the sha. Append a row to `receipts.md`
    and set the milestone's `sha` in `state.milestones`.

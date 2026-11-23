@@ -320,7 +320,8 @@ root = sys.argv[1]
 gate = os.path.join(root, "scripts", "gate.py")
 state = json.load(open(os.path.join(root, "templates", "state.json")))
 state.pop("contract_version")  # legacy fixture: existing runs have no scope lock
-landed = {"commit": "abc1234", "pr": "https://example.invalid/owner/repo/pull/1", "checks": "green"}
+landed = {"commit": "0" * 40, "pr": "https://github.com/owner/repo/pull/1", "checks": "green"}
+os.environ["PATH"] = os.path.join(root, "proof", "terminal-gate", "fake-bin") + os.pathsep + os.environ["PATH"]
 state["delivery"] = landed
 
 def run(run_dir, terminal):
@@ -387,7 +388,8 @@ with tempfile.TemporaryDirectory() as d:
     code, out = run(d, "pending-delivery")
     assert code == 1 and "state.delivery.commit" in out and "state.delivery.pr" in out, out
     for checks in ("pending", "failing"):
-        state["delivery"] = dict(landed, checks=checks)
+        os.environ["FACTORY_GH_FIXTURE"] = checks
+        state["delivery"] = landed
         state["terminal"] = "ready-for-commit"
         write(d, answered, "met")
         code, out = run(d, "pending-delivery")
@@ -412,6 +414,7 @@ with tempfile.TemporaryDirectory() as d:
         code, out = run(d, "pending-delivery")
         assert code == 0 and "GATE: PASS" in out, out
         state["gaps"]["accepted_by"] = None
+    os.environ.pop("FACTORY_GH_FIXTURE")
     state["delivery"] = landed
     write(d, answered, "met")
     code, out = run(d, "delivered")
@@ -422,12 +425,42 @@ with tempfile.TemporaryDirectory() as d:
     assert code == 0 and "GATE: PASS" in out, out
     state["gaps"]["accepted_by"] = None
     state["terminal"] = None
-    for checks in (None, "unknown", "green", False, []):
-        state["delivery"] = dict(landed, checks=checks)
+    for case, reason in {
+        "changed": "head mismatch", "missing": "missing or ambiguous",
+        "cancelled": "cancelled", "offline": "GitHub evidence unavailable",
+        "closed": "closed without merging", "open": "requires mergedAt",
+        "bad-merge": "requires mergedAt",
+    }.items():
+        os.environ["FACTORY_GH_FIXTURE"] = case
         write(d, answered, "met")
-        code, out = run(d, "pending-delivery")
-        assert code == 1 and "state.delivery.checks" in out, out
+        code, out = run(d, "delivered")
+        assert code == 1 and reason in out, (case, out)
+    os.environ["FACTORY_GH_FIXTURE"] = "open"
+    state["delivery"] = dict(landed, open_accepted_by="An open PR satisfies this task")
+    write(d, answered, "met")
+    code, out = run(d, "delivered")
+    assert code == 0 and "GATE: PASS" in out, out
+    with open(os.path.join(d, "delivery-observations.jsonl")) as handle:
+        receipt = json.loads(list(handle)[-1])
+    assert receipt["head"] == landed["commit"] and receipt["verdict"] == "green"
+    assert receipt["observedAt"] and receipt["mergedAt"] is None
+    os.environ.pop("FACTORY_GH_FIXTURE")
     state["delivery"] = landed
+
+    # A resumed run must recheck its recorded delivery verdict before reporting it.
+    resume_dir = os.path.join(d, ".factory", "resume")
+    os.makedirs(resume_dir)
+    state["terminal"] = "delivered"
+    write(resume_dir, answered, "met")
+    os.environ["FACTORY_GH_FIXTURE"] = "pending"
+    resumed = subprocess.run(
+        ["bash", os.path.join(root, "scripts", "run.sh"), "resume", "--runner", "codex"],
+        cwd=d, capture_output=True, text=True,
+    )
+    assert resumed.returncode == 1 and "live required checks are not 'green'" in resumed.stdout, resumed.stdout
+    assert "terminal=delivered, stopping" not in resumed.stdout, resumed.stdout
+    os.environ.pop("FACTORY_GH_FIXTURE")
+    state["terminal"] = None
 
     # ready-for-commit with an unrunnable AC still needs the gaps accepted.
     write(d, answered, "unrunnable")
@@ -462,7 +495,7 @@ with tempfile.TemporaryDirectory() as d:
             write(d, answered, "met")
             code, out = run(d, terminal)
             assert code == 1 and "state.delivery.pr" in out, (pr, out)
-    for pr in (landed["pr"], "https://github.example/owner/repo/pull/123/"):
+    for pr in (landed["pr"], "https://github.com/owner/repo/pull/123/"):
         state["delivery"] = dict(landed, pr=pr)
         write(d, answered, "met")
         code, out = run(d, "delivered")
