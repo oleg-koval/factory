@@ -18,7 +18,9 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
 import sys
+from datetime import datetime, timezone
 from live_delivery import PR_URL, observe
 
 from scope_lock import LOCK_FILE, verify as verify_scope
@@ -623,15 +625,25 @@ def check_all_answered(state: dict, reasons: list[str]) -> None:
             )
 
 
-def accepted_open_pr(delivery: dict) -> bool:
+def accepted_open_pr(delivery: dict, state: dict) -> bool:
     acceptance = delivery.get("open_accepted_by")
-    return isinstance(acceptance, str) and bool(acceptance.strip())
+    approver = state.get("isolation", {}).get("accepted_by") if isinstance(state.get("isolation"), dict) else None
+    return (isinstance(acceptance, str) and bool(acceptance.strip())
+            and isinstance(approver, str) and bool(approver.strip())
+            and acceptance.strip() == approver.strip())
 
 
 def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bool) -> None:
+    audit_path = os.path.join(run_dir, "delivery-observations.jsonl")
+    receipt = {"verdict": "unavailable", "observedAt": datetime.now(timezone.utc).isoformat()}
+    def audit():
+        with open(audit_path, "a") as handle:
+            handle.write(json.dumps(receipt) + "\n")
+
     delivery = state.get("delivery")
     if not isinstance(delivery, dict):
         fail(reasons, "state.delivery missing; record the PR URL and full pushed head")
+        audit()
         return
 
     head = delivery.get("commit")
@@ -643,16 +655,28 @@ def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bo
     if not match:
         fail(reasons, "state.delivery.pr must be a github.com pull request URL")
     if not valid_head or not match or reasons:
+        receipt.update(pr=pr, head=head, error="delivery blocked before GitHub observation")
+        audit()
         return
 
     owner, repo, number = match.groups()
     try:
-        receipt = observe(owner, repo, int(number), head)
-        with open(os.path.join(run_dir, "delivery-observations.jsonl"), "a") as handle:
-            handle.write(json.dumps(receipt) + "\n")
+        isolation = state.get("isolation", {})
+        checkout = isolation.get("worktree")
+        if not isinstance(checkout, str) or not checkout:
+            raise ValueError("state.isolation.worktree unavailable")
+        remote = subprocess.check_output(["git", "-C", checkout, "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL).strip()
+        local_head = subprocess.check_output(["git", "-C", checkout, "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
+        remote_match = re.search(r"github\.com[:/]([^/]+/[^/.]+)(?:\.git)?$", remote, re.ASCII | re.IGNORECASE)
+        if not remote_match or f"{owner}/{repo}".lower() != remote_match.group(1).lower() or head != local_head:
+            raise ValueError("PR repository or head does not match this run checkout")
+        receipt = observe(owner, repo, int(number), head, isolation.get("base"))
     except (ValueError, OSError, KeyError, TypeError) as error:
+        receipt.update(pr=pr, head=head, error=str(error))
+        audit()
         fail(reasons, f"live delivery verification failed: {error}")
         return
+    audit()
 
     print(f"DELIVERY OBSERVED: {json.dumps(receipt)}")
     if "error" in receipt:
@@ -666,7 +690,7 @@ def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bo
         fail(reasons, "live required checks are not 'green'")
     elif receipt["state"] == "MERGED" and isinstance(receipt["mergedAt"], str) and receipt["mergedAt"].strip():
         return
-    elif receipt["state"] != "OPEN" or not accepted_open_pr(delivery):
+    elif receipt["state"] != "OPEN" or not accepted_open_pr(delivery, state):
         fail(reasons, "delivery requires mergedAt or explicit human acceptance of an open PR")
 
 

@@ -333,6 +333,7 @@ def write(run_dir, questions, ac_status):
     state["open_questions"] = questions
     state["isolation"]["repo"] = run_dir
     state["isolation"]["worktree"] = run_dir
+    state["isolation"]["base"] = "main"
     json.dump(state, open(os.path.join(run_dir, "state.json"), "w"))
     open(os.path.join(run_dir, "receipts.md"), "w").write("| at | phase | role | command | sha | result |\n")
     open(os.path.join(run_dir, "ac-matrix.md"), "w").write(
@@ -437,6 +438,7 @@ with tempfile.TemporaryDirectory() as d:
         assert code == 1 and reason in out, (case, out)
     os.environ["FACTORY_GH_FIXTURE"] = "open"
     state["delivery"] = dict(landed, open_accepted_by="An open PR satisfies this task")
+    state["isolation"]["accepted_by"] = "An open PR satisfies this task"
     write(d, answered, "met")
     code, out = run(d, "delivered")
     assert code == 0 and "GATE: PASS" in out, out
@@ -444,6 +446,7 @@ with tempfile.TemporaryDirectory() as d:
         receipt = json.loads(list(handle)[-1])
     assert receipt["head"] == landed["commit"] and receipt["verdict"] == "green"
     assert receipt["observedAt"] and receipt["mergedAt"] is None
+    state["isolation"]["accepted_by"] = None
     os.environ.pop("FACTORY_GH_FIXTURE")
     state["delivery"] = landed
 

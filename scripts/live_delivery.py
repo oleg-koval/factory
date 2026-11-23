@@ -8,7 +8,7 @@ from urllib.parse import quote
 
 PR_URL = re.compile(r"https://github\.com/([\w.-]+)/([\w.-]+)/pull/([1-9][0-9]*)/?", re.ASCII)
 QUERY = """
-query($owner: String!, $repo: String!, $number: Int!) {
+query($owner: String!, $repo: String!, $number: Int!, $cursor: String) {
   repository(owner: $owner, name: $repo) {
     nameWithOwner
     pullRequest(number: $number) {
@@ -16,8 +16,8 @@ query($owner: String!, $repo: String!, $number: Int!) {
       baseRef { branchProtectionRule { requiredStatusCheckContexts } }
       commits(last: 1) {
         pageInfo { hasNextPage }
-        nodes { commit { oid statusCheckRollup { contexts(first: 100) {
-          pageInfo { hasNextPage }
+        nodes { commit { oid statusCheckRollup { contexts(first: 100, after: $cursor) {
+          pageInfo { hasNextPage endCursor }
           nodes {
             ... on CheckRun { name isRequired(pullRequestNumber: $number) status conclusion detailsUrl }
             ... on StatusContext { context isRequired(pullRequestNumber: $number) state targetUrl }
@@ -44,10 +44,12 @@ def read_gh(*args: str):
         raise ValueError("GitHub evidence unavailable through authenticated gh") from error
 
 
-def required_contexts(repository, pr):
+def required_contexts(repository, pr, expected_base):
     if pr["baseRef"] is None:
         raise ValueError("PR base ref unavailable")
     classic = pr["baseRef"]["branchProtectionRule"]
+    if pr["baseRefName"] != expected_base:
+        raise ValueError(f"PR base mismatch: expected {expected_base!r}, observed {pr['baseRefName']!r}")
     expected = set(classic["requiredStatusCheckContexts"]) if classic else set()
     branch = quote(pr["baseRefName"], safe="")
     rules = read_gh(f"repos/{repository}/rules/branches/{branch}?per_page=100", "--paginate", "--slurp")
@@ -57,6 +59,9 @@ def required_contexts(repository, pr):
         for rule in page:
             if rule["type"] == "required_status_checks":
                 expected.update(check["context"] for check in rule["parameters"]["required_status_checks"])
+            elif rule["type"] == "workflows":
+                # GitHub classifies the corresponding workflow-run checks as required.
+                expected.add("__required_workflow_checks__")
     return expected
 
 
@@ -75,6 +80,9 @@ def check_verdict(contexts, expected):
         status = row.get("status")
         state = row["conclusion"] if status == "COMPLETED" else status or row["state"]
         checks[name] = {"state": state, "url": row.get("detailsUrl") or row.get("targetUrl")}
+    if "__required_workflow_checks__" in expected:
+        expected.remove("__required_workflow_checks__")
+        expected.update(checks)
     if not expected or checks.keys() != expected:
         raise ValueError("missing or ambiguous required-check evidence")
     values = {check["state"] for check in checks.values()}
@@ -84,10 +92,15 @@ def check_verdict(contexts, expected):
     return verdict, checks
 
 
-def observe(owner, repo, number, head):
+def observe(owner, repo, number, head, expected_base):
     repository = f"{owner}/{repo}"
-    data = read_gh("graphql", "-f", f"query={QUERY}", "-f", f"owner={owner}",
-                   "-f", f"repo={repo}", "-F", f"number={number}")["data"]["repository"]
+    def page(cursor=None):
+        args = ["graphql", "-f", f"query={QUERY}", "-f", f"owner={owner}",
+                "-f", f"repo={repo}", "-F", f"number={number}"]
+        if cursor:
+            args += ["-f", f"cursor={cursor}"]
+        return read_gh(*args)["data"]["repository"]
+    data = page()
     pr = data["pullRequest"]
     if data["nameWithOwner"].lower() != repository.lower() or pr["number"] != number:
         raise ValueError("GitHub reported a different repository or PR number")
@@ -101,7 +114,11 @@ def observe(owner, repo, number, head):
         if len(commits) != 1 or commits[0]["commit"]["oid"] != head:
             raise ValueError("required-check evidence is not bound to the recorded head")
         contexts = commits[0]["commit"]["statusCheckRollup"]["contexts"]
-        receipt["verdict"], receipt["checks"] = check_verdict(contexts, required_contexts(repository, pr))
+        nodes = list(contexts["nodes"])
+        while contexts["pageInfo"]["hasNextPage"]:
+            contexts = page(contexts["pageInfo"]["endCursor"])["pullRequest"]["commits"]["nodes"][0]["commit"]["statusCheckRollup"]["contexts"]
+            nodes.extend(contexts["nodes"])
+        receipt["verdict"], receipt["checks"] = check_verdict({"pageInfo": {"hasNextPage": False}, "nodes": nodes}, required_contexts(repository, pr, expected_base))
     except (KeyError, TypeError, ValueError) as error:
         receipt["error"] = str(error) if isinstance(error, ValueError) else "required-check evidence unavailable"
     return receipt
