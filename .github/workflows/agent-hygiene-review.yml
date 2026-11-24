@@ -43,10 +43,16 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/commitlint" --no-save --ignore-scripts \
             @commitlint/cli@19.8.1 @commitlint/config-conventional@19.8.1
-          echo "module.exports = { extends: ['@commitlint/config-conventional'] };" \
-            > "$RUNNER_TEMP/commitlint/commitlint.config.cjs"
+          cat > "$RUNNER_TEMP/commitlint/commitlint.config.cjs" <<'EOF'
+          module.exports = {
+            extends: ['@commitlint/config-conventional'],
+            // Dependabot generates unwrapped Markdown release notes in commit bodies.
+            rules: process.env.PR_AUTHOR === 'dependabot[bot]' ? { 'body-max-line-length': [0] } : {},
+          };
+          EOF
       - name: Lint commit messages
         env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           FROM_SHA: ${{ github.event.pull_request.base.sha }}
           TO_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
