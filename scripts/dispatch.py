@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlencode
 
+import claims
 from live_delivery import read_gh
 
 ELIGIBLE = "factory-eligible"
@@ -90,11 +91,56 @@ def dispatch(args, *, worker):
     return 0
 
 
+def dispatch_concurrent(args):
+    remote = f"git@github.com:{args.repo}.git"
+    try:
+        reserved = claims.reservations(args.claim_repo, remote)
+        if args.abandon is not None:
+            head = reserved.get(args.abandon)
+            if head is not None:
+                claims.release(args.claim_repo, remote, args.abandon, head)
+            report(args.repo, {"decision": "explicitly-abandoned" if head else "no-reservation",
+                              "issue": args.abandon})
+            return 0
+        review = claims.review_issues(args.repo, REVIEW_READY)
+        eligible = queue(args.repo, ELIGIBLE, pulls=False)
+        decision, issue = claims.admission(eligible, reserved, review, args.review_cap)
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        report(args.repo, {"decision": "queue-unreadable", "reason": str(error)})
+        return 1
+
+    report(args.repo, {"decision": decision, "issue": issue, "reservations": reserved,
+                      "awaiting_review": sorted(review), "cap": args.review_cap})
+    if args.dry_run:
+        return 0
+
+    for landed in sorted((set(reserved) & review) - eligible):
+        claims.release(args.claim_repo, remote, landed, reserved[landed])
+        report(args.repo, {"decision": "handoff-released", "issue": landed})
+    if issue is None:
+        return 0
+    head = claims.claim(args.claim_repo, remote, issue)
+    report(args.repo, {"decision": "claimed", "issue": issue, "head": head})
+    url = f"https://github.com/{args.repo}/issues/{issue}"
+    log = args.scheduler_dir / f"worker-{issue}-{head}.log"
+    env = {**os.environ, "FACTORY_CLAIM_SHA": head, "FACTORY_WORK_BRANCH": f"factory/issue-{issue}",
+           "FACTORY_HANDOFF_FILE": str(log.with_suffix(".handoff.json"))}
+    with log.open("x") as handle:
+        process = subprocess.Popen([*args.worker, url], env=env, stdin=subprocess.DEVNULL,
+                                   stdout=handle, stderr=subprocess.STDOUT, start_new_session=True)
+    report(args.repo, {"decision": "worker-started", "issue": issue, "pid": process.pid, "log": str(log)})
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", required=True)
     parser.add_argument("--review-cap", type=int, required=True)
     parser.add_argument("--scheduler-dir", type=Path)
+    parser.add_argument("--concurrent", action="store_true")
+    parser.add_argument("--claim-repo", type=Path)
+    parser.add_argument("--abandon", type=int, metavar="ISSUE")
+    parser.add_argument("--confirm-worker-stopped", action="store_true")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--enable", action="store_true")
     mode.add_argument("--dry-run", action="store_true")
@@ -102,11 +148,17 @@ def main():
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+", args.repo) or args.review_cap < 1:
         parser.error("use owner/repository and a positive review cap")
+    if args.concurrent and (not args.claim_repo or not args.claim_repo.is_absolute()):
+        parser.error("--concurrent requires an absolute --claim-repo Git checkout")
+    if args.abandon is not None and not (
+        args.concurrent and args.enable and args.confirm_worker_stopped and args.abandon > 0
+    ):
+        parser.error("--abandon requires --concurrent --enable --confirm-worker-stopped and a positive issue")
     if args.dry_run:
-        return dispatch(args, worker=None)
+        return dispatch_concurrent(args) if args.concurrent else dispatch(args, worker=None)
     if args.worker[:1] == ["--"]:
         args.worker = args.worker[1:]
-    if not args.scheduler_dir or not args.scheduler_dir.is_absolute() or not args.worker:
+    if not args.scheduler_dir or not args.scheduler_dir.is_absolute() or (not args.worker and args.abandon is None):
         parser.error("--enable requires an absolute --scheduler-dir and a foreground worker command")
 
     try:
@@ -121,8 +173,15 @@ def main():
             if active.exists():
                 report(args.repo, {"decision": "recovery-required", "active": active.read_text().strip()})
                 return 1
+            concurrent_marker = args.scheduler_dir / "concurrent"
+            if not args.concurrent and concurrent_marker.exists():
+                report(args.repo, {"decision": "concurrent-scheduler-required"})
+                return 1
+            if args.concurrent:
+                concurrent_marker.touch(exist_ok=True)
+                return dispatch_concurrent(args)
             return dispatch(args, worker=lock.fileno())
-    except OSError as error:
+    except (OSError, ValueError) as error:
         report(args.repo, {"decision": "scheduler-unavailable", "reason": str(error)})
         return 1
 
