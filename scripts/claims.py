@@ -53,15 +53,24 @@ def release(path, remote, issue, head):
     git(path, "push", remote, f":{PREFIX}{issue}")
 
 
-def review_issues(repo, label):
-    pages = read_gh(f"repos/{repo}/pulls?state=open&per_page=100", "--paginate", "--slurp")
+def review_issues(repo, label, *, closed_pr=None):
+    state = "open" if closed_pr is None else "closed"
+    if closed_pr is None:
+        pages = read_gh(f"repos/{repo}/pulls?state=open&per_page=100", "--paginate", "--slurp")
+    else:
+        pr = read_gh(f"repos/{repo}/pulls/{closed_pr}")
+        if pr["number"] != closed_pr:
+            raise ValueError("handoff response returned a different PR")
+        if pr["state"] == "open":
+            return set()
+        pages = [[pr]]
     if not isinstance(pages, list) or not pages or any(not isinstance(page, list) for page in pages):
         raise ValueError("incomplete review queue")
     seen = set()
     issues = set()
     for page in pages:
         for pr in page:
-            if pr["number"] in seen or pr["state"] != "open":
+            if pr["number"] in seen or pr["state"] != state:
                 raise ValueError("review queue changed during pagination")
             seen.add(pr["number"])
             if label not in {entry["name"] for entry in pr["labels"]}:

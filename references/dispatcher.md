@@ -48,12 +48,15 @@ one claim. The scheduler counts the union of occupied issues from
 `refs/heads/factory/claims/<issue>` and open `factory-review-ready` PRs. Each worker receives
 `FACTORY_CLAIM_SHA` and `FACTORY_WORK_BRANCH`. Use that branch in an isolated worktree and
 run the Factory scope, human checkpoints, and terminal gates. Finish implementation before
-marking the same-repository PR review-ready. Remove `factory-eligible` after marking the PR.
+marking the same-repository PR review-ready. Write its number to
+`FACTORY_HANDOFF_FILE` before marking it review-ready. Remove `factory-eligible` after marking the PR.
 Active claims and review-ready PRs for the same issue use one slot throughout the handoff.
 Consume the eligibility of completed issues before closing their review PR.
 
 A later scheduler invocation releases a claim once it sees the matching review-ready PR
-and cleared eligibility. A stopped worker's claim survives without a PR. Inspect the reservation
+and cleared eligibility. If the PR closed between invocations, the dispatcher uses the
+claim-specific handoff file to verify that PR. Older claims without a receipt still use
+the recovery procedure. A stopped worker's claim survives without a PR. Inspect the reservation
 in a concurrent dry run, recover the existing worker from its recorded state, or confirm it
 stopped and explicitly abandon the reservation with:
 

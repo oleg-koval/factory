@@ -69,8 +69,7 @@ def required_contexts(repository, pr, expected_base):
             if rule["type"] == "required_status_checks":
                 expected.update(check["context"] for check in rule["parameters"]["required_status_checks"])
             elif rule["type"] == "workflows":
-                # GitHub classifies the corresponding workflow-run checks as required.
-                expected.add("__required_workflow_checks__")
+                raise ValueError("required workflow coverage cannot be verified from status checks")
     return expected
 
 
@@ -89,9 +88,6 @@ def check_verdict(contexts, expected):
         status = row.get("status")
         state = row["conclusion"] if status == "COMPLETED" else status or row["state"]
         checks[name] = {"state": state, "url": row.get("detailsUrl") or row.get("targetUrl")}
-    if "__required_workflow_checks__" in expected:
-        expected.remove("__required_workflow_checks__")
-        expected.update(checks)
     if not expected or checks.keys() != expected:
         raise ValueError("missing or ambiguous required-check evidence")
     values = {check["state"] for check in checks.values()}

@@ -65,6 +65,23 @@ class DispatcherTest(unittest.TestCase):
                     self.assertEqual(dispatch.dispatch(args, worker=1), 0 if released else 1)
                 self.assertEqual((scheduler / "active").exists(), not released)
 
+    def test_closed_handoff_releases_only_the_claim_named_in_the_receipt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            scheduler = Path(temp)
+            args = SimpleNamespace(repo="owner/repo", review_cap=1, scheduler_dir=scheduler,
+                                   claim_repo=scheduler, abandon=None, dry_run=True)
+            head = "a" * 40
+            receipt = scheduler / f"worker-7-{head}.handoff.json"
+            with patch.object(dispatch.claims, "reservations", return_value={7: head}), \
+                 patch.object(dispatch, "queue", return_value={8}), patch.object(dispatch, "report") as report, \
+                 patch.object(dispatch.claims, "review_issues", side_effect=[set(), set(), {7}]) as reviews:
+                self.assertEqual(dispatch.dispatch_concurrent(args), 0)
+                self.assertEqual(report.call_args.args[1]["decision"], "review-capacity")
+                receipt.write_text("12")
+                self.assertEqual(dispatch.dispatch_concurrent(args), 0)
+                self.assertEqual(report.call_args.args[1]["issue"], 8)
+                self.assertEqual(reviews.call_args.kwargs, {"closed_pr": 12})
+
     def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
         with tempfile.TemporaryDirectory() as temp:
             folder = Path(temp)
