@@ -45,7 +45,11 @@ Declare: "plan-equivalence retries max 1".
    the tracer bullet is what runs behind it first.
 4. Role `plan-equivalence` on the two files. `VERDICT: MISMATCH` -> fix the listed items,
    run once more. Second mismatch -> ask the user which plan is wrong.
-5. After `SAME-SCOPE`, for `contract_version: 2` run
+   Skip this step when `state.depth == "light"` and the agent plan has one milestone: with one
+   milestone and no diagnosis phase the audit costs more than the drift it can catch. Log
+   `decision | plan-equivalence skipped | light, one milestone` in `receipts.md`. Run it for
+   every multi-milestone plan, whatever the depth.
+5. After `SAME-SCOPE` (or the logged skip), for `contract_version: 2` run
    `python3 <skill-dir>/scripts/scope_lock.py seal .factory/<slug>` and quote `SCOPE: PASS`.
    A necessary scope revision returns to Phase 2 for human review and Phase 2b for questions,
    then repeats this phase and reseals. Keep earlier milestone commits and receipts.

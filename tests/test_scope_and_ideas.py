@@ -81,7 +81,7 @@ class ScopeAndIdeasTest(unittest.TestCase):
         self.state.pop("contract_version")
         self.state["isolation"] = {"mode": "in-place", "repo": "repo", "branch": "test",
                                    "base": "main", "accepted_by": "Use this checkout"}
-        self.state["terminal"] = "delivered"
+        self.state["terminal"] = "ready-for-commit"
         (self.run_dir / "ac-matrix.md").write_text("| AC | status |\n|---|---|\n| AC-1 | met |\n")
         scope_lock.seal(str(self.run_dir))
         for phase, next_phase in (("4", "4"), ("4", "5"), ("6", None)):

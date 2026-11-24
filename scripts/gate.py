@@ -18,7 +18,10 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
 import sys
+from datetime import datetime, timezone
+from live_delivery import PR_URL, observe
 
 from scope_lock import LOCK_FILE, verify as verify_scope
 
@@ -42,6 +45,7 @@ ALLOWED_KEYS = REQUIRED_KEYS | {
     "source_evidence",
     "contract_version",
     "checkpoint_pending",
+    "delivery",
 }
 # Keys that carried prose in earlier runs and pushed state.json to 43KB. They are not a
 # matter of taste: state.json is the one file carried across every compaction, so anything
@@ -49,7 +53,19 @@ ALLOWED_KEYS = REQUIRED_KEYS | {
 BANNED_KEYS = {"receipts", "blockers", "diagnosis", "notes", "log", "history"}
 
 AC_STATUSES = {"met", "unrunnable", "failed"}
-TERMINALS = {"delivered", "delivered-with-gaps", "blocked", "intentionally-unchanged", "withdrawn"}
+TERMINALS = {
+    "delivered",
+    "delivered-with-gaps",
+    "ready-for-commit",
+    "pending-delivery",
+    "blocked",
+    "intentionally-unchanged",
+    "withdrawn",
+}
+DELIVERED = {"delivered", "delivered-with-gaps"}
+# Strict checks run for every state that claims the work itself is finished.
+FINISHED = DELIVERED | {"ready-for-commit", "pending-delivery"}
+SHA_RE = re.compile(r"^[0-9a-f]{7,40}$")
 
 
 def fail(reasons: list[str], msg: str) -> None:
@@ -538,10 +554,14 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted not in TERMINALS:
         fail(reasons, f"requested terminal {wanted!r} is not one of {sorted(TERMINALS)}")
 
-    if recorded is not None and recorded != wanted:
+    upgrade = (
+        recorded == "ready-for-commit" and wanted in DELIVERED | {"pending-delivery"}
+    ) or (recorded == "pending-delivery" and wanted in DELIVERED)
+
+    if recorded is not None and recorded != wanted and not upgrade:
         fail(reasons, f"state.terminal {recorded!r} does not match requested terminal {wanted!r}")
 
-    strict = wanted in {"delivered", "delivered-with-gaps"}
+    strict = wanted in FINISHED
     if strict:
         check_scope(state, run_dir, reasons)
         if state.get("checkpoint_pending"):
@@ -568,17 +588,110 @@ def run_terminal_checks(state: dict, run_dir: str, wanted: str, reasons: list[st
     if wanted == "delivered" and matrix != "clean":
         fail(reasons, "terminal 'delivered' needs every acceptance criterion met; use 'delivered-with-gaps' and name each gap and its owner")
 
-    if wanted == "delivered-with-gaps":
+    if wanted == "delivered-with-gaps" or (wanted in {"ready-for-commit", "pending-delivery"} and matrix != "clean"):
         gaps = state.get("gaps")
         accepted_by = gaps.get("accepted_by") if isinstance(gaps, dict) else None
 
         if not isinstance(accepted_by, str) or not accepted_by.strip():
             fail(
                 reasons,
-                "delivered-with-gaps needs gaps.accepted_by: the user accepts the gaps, in their own words",
+                f"{wanted} with gaps needs gaps.accepted_by: the user accepts the gaps, in their own words",
             )
 
+    if wanted == "delivered":
+        check_all_answered(state, reasons)
+
+    if wanted in DELIVERED | {"pending-delivery"}:
+        check_delivery(state, run_dir, reasons, pending=wanted == "pending-delivery")
+
     return matrix
+
+
+def check_all_answered(state: dict, reasons: list[str]) -> None:
+    """'delivered' leaves nothing open. A non-blocking question still open is a gap."""
+    questions = state.get("open_questions", [])
+
+    for index, question in enumerate(questions if isinstance(questions, list) else []):
+        if not isinstance(question, dict) or question.get("blocking") is not False:
+            continue
+
+        answer = question.get("answer")
+
+        if not isinstance(answer, str) or not answer.strip():
+            fail(
+                reasons,
+                f"state.open_questions[{index}] is unanswered; 'delivered' needs every question answered, "
+                "else use 'delivered-with-gaps'",
+            )
+
+
+def accepted_open_pr(delivery: dict) -> bool:
+    acceptance = delivery.get("open_accepted_by")
+    return isinstance(acceptance, str) and bool(acceptance.strip())
+
+
+def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bool) -> None:
+    audit_path = os.path.join(run_dir, "delivery-observations.jsonl")
+    receipt = {"verdict": "unavailable", "observedAt": datetime.now(timezone.utc).isoformat()}
+    def audit():
+        with open(audit_path, "a") as handle:
+            handle.write(json.dumps(receipt) + "\n")
+
+    delivery = state.get("delivery")
+    if not isinstance(delivery, dict):
+        fail(reasons, "state.delivery missing; record the PR URL and full pushed head")
+        audit()
+        return
+
+    head = delivery.get("commit")
+    pr = delivery.get("pr")
+    valid_head = isinstance(head, str) and re.fullmatch(r"[0-9a-f]{40}", head)
+    match = PR_URL.fullmatch(pr) if isinstance(pr, str) else None
+    if not valid_head:
+        fail(reasons, "state.delivery.commit must be the full pushed head SHA")
+    if not match:
+        fail(reasons, "state.delivery.pr must be a github.com pull request URL")
+    if not valid_head or not match or reasons:
+        receipt.update(pr=pr, head=head, error="delivery blocked before GitHub observation")
+        audit()
+        return
+
+    owner, repo, number = match.groups()
+    try:
+        isolation = state.get("isolation", {})
+        checkout = isolation.get("worktree")
+        if not isinstance(checkout, str) or not checkout:
+            raise ValueError("state.isolation.worktree unavailable")
+        remote = subprocess.check_output(["git", "-C", checkout, "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL).strip()
+        local_head = subprocess.check_output(["git", "-C", checkout, "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
+        remote_match = re.search(r"github\.com[:/]([^/]+)/([^/]+)$", remote, re.ASCII | re.IGNORECASE)
+        remote_repo = f"{remote_match.group(1)}/{remote_match.group(2)}" if remote_match else None
+        if remote_repo and remote_repo.lower().endswith(".git"):
+            remote_repo = remote_repo[:-4]
+        if not remote_match or f"{owner}/{repo}".lower() != remote_repo.lower() or head != local_head:
+            raise ValueError("PR repository or head does not match this run checkout")
+        receipt = observe(owner, repo, int(number), head, isolation.get("base"))
+    except (ValueError, OSError, subprocess.SubprocessError, KeyError, TypeError) as error:
+        receipt.update(pr=pr, head=head, error=str(error))
+        audit()
+        fail(reasons, f"live delivery verification failed: {error}")
+        return
+    audit()
+
+    print(f"DELIVERY OBSERVED: {json.dumps(receipt)}")
+    if "error" in receipt:
+        fail(reasons, receipt["error"])
+    elif receipt["state"] == "CLOSED":
+        fail(reasons, "PR closed without merging")
+    elif pending:
+        if receipt["state"] != "OPEN" or receipt["verdict"] not in {"pending", "failing"}:
+            fail(reasons, "pending-delivery requires an open PR with pending or failing required checks")
+    elif receipt["verdict"] != "green":
+        fail(reasons, "live required checks are not 'green'")
+    elif receipt["state"] == "MERGED" and isinstance(receipt["mergedAt"], str) and receipt["mergedAt"].strip():
+        return
+    elif receipt["state"] != "OPEN" or not accepted_open_pr(delivery):
+        fail(reasons, "delivery requires mergedAt or explicit human acceptance of an open PR")
 
 
 def main(argv: list[str]) -> int:

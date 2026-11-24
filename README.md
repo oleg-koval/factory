@@ -44,8 +44,9 @@ Factory moves one phase at a time:
 6. Prove: remove the fix, rerun the test, scan the full changed files, and review the branch.
 7. Stop: run the executable gate and issue one honest terminal state.
 
-Terminal states are `delivered`, `delivered-with-gaps`, `blocked`, and
-`intentionally-unchanged`.
+Terminal states are `ready-for-commit`, `pending-delivery`, `delivered`, `delivered-with-gaps`,
+`blocked`, and `intentionally-unchanged`. `pending-delivery` has a pushed commit and an open PR
+with pending or failing checks. `delivered` needs green checks.
 
 ## Install for AI agents
 
@@ -68,6 +69,15 @@ Once installed:
 Claude Code: /factory consult <request>
 Codex:       Use .agents/skills/factory/SKILL.md specifically, then consult <request>.
 ```
+
+## Inspect run progress
+
+Run the installed `scripts/status.py` with `"$slug"` as a separately quoted argument; its path is
+`.agents/skills/factory` in Codex and `.claude/skills/factory` in Claude Code. Add `--json` for
+JSON output. Append `progress.jsonl` events on assignment, result, gate, blocker and
+delivery changes. Running needs a recent runtime observation; CI needs a timestamp under 24 hours
+old and a SHA matching the remote SHA. Corrupt or missing data stays unknown, pending roadmap ACs
+are listed separately, and a slice terminal does not prove roadmap completion.
 
 The Codex skill picker may show a user-wide skill with the same name as the project-local one. The
 path-directed prompt avoids relying on ambiguous name selection and was verified to load the

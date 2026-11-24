@@ -26,7 +26,10 @@ You are the physician taking the history. Cheap, mostly reading. Write nothing o
    `full`: incident, bug, unknown cause, or AC that contradict observed behaviour. A sentry
    source is always `full`. Record the reason in one sentence.
 6. Role `knowledge-lookup` on the touched area (Shopify, @teifi-digital, team gotchas).
-   Store what came back, verbatim, under `## Knowledge`.
+   Store what came back, verbatim, under `## Knowledge`. If the repository has
+   `.agents/shared/olko/pipelines/delivery.md`, read it and `review.md` there, plus `charter.md`
+   when `.charter/` exists; record their paths under `## Knowledge` as repository delivery
+   policy that later phases follow alongside, never instead of, Factory gates.
 7. Write `intake.md` with sections `## Source`, `## Acceptance criteria`, `## Triage`,
    `## Knowledge`. Write `state.json` with `phase: "0"`, `depth`, and `contract_version: 2`.
    Set `mode` to `"interactive"` unless resumed with `--driven`. Older runs without a contract
