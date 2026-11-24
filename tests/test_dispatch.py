@@ -48,8 +48,8 @@ class DispatcherTest(unittest.TestCase):
     def test_release_requires_visible_handoff_and_consumed_eligibility(self):
         eligible = item(7, dispatch.ELIGIBLE)
         handed_off = item(12, dispatch.REVIEW_READY, pull=True)
-        for visible in (False, True):
-            with self.subTest(visible=visible), tempfile.TemporaryDirectory() as temp:
+        for visible, consumed in ((False, True), (True, False), (True, True)):
+            with self.subTest(visible=visible, consumed=consumed), tempfile.TemporaryDirectory() as temp:
                 scheduler = Path(temp)
                 args = SimpleNamespace(repo="owner/repo", review_cap=2, scheduler_dir=scheduler,
                                        worker=["factory-worker"])
@@ -59,10 +59,11 @@ class DispatcherTest(unittest.TestCase):
                     return subprocess.CompletedProcess([], 0)
 
                 with patch.object(dispatch, "read_gh", side_effect=[
-                    [[]], [[eligible]], [[handed_off] if visible else []], [[]],
+                    [[]], [[eligible]], [[handed_off] if visible else []], [[] if consumed else [eligible]],
                 ]), patch.object(dispatch, "report"), patch.object(dispatch.subprocess, "run", worker):
-                    self.assertEqual(dispatch.dispatch(args, worker=1), 0 if visible else 1)
-                self.assertEqual((scheduler / "active").exists(), not visible)
+                    released = visible and consumed
+                    self.assertEqual(dispatch.dispatch(args, worker=1), 0 if released else 1)
+                self.assertEqual((scheduler / "active").exists(), not released)
 
     def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
         with tempfile.TemporaryDirectory() as temp:
