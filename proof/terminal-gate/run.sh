@@ -4,12 +4,17 @@ set -u
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 GATE="$ROOT/scripts/gate.py"
 FAIL=0
+scratch="$(mktemp -d)" || exit 1
+trap 'rm -rf -- "$scratch"' EXIT
+export PATH="$ROOT/proof/terminal-gate/fake-bin:$PATH"
+export FACTORY_GH_FIXTURE=green
 
 run_case() {
   local name="$1"
   local expected_rc="$2"
   local expected_verdict="$3"
-  local run_dir="$ROOT/proof/terminal-gate/$name"
+  local run_dir="$scratch/$name"
+  cp -R "$ROOT/proof/terminal-gate/$name" "$run_dir" || exit 1
   local output
   local rc
 

@@ -156,6 +156,15 @@ while true; do
   TERMINAL="$(py_get terminal)"
 
   if [[ -n "$TERMINAL" ]]; then
+    case "$TERMINAL" in
+      delivered|delivered-with-gaps|pending-delivery)
+        if [[ "$DRY_RUN" -eq 1 ]]; then
+          echo "run.sh: recorded terminal=${TERMINAL}, live gate skipped in dry run."
+          exit 0
+        fi
+        python3 "${SKILL_DIR}/scripts/gate.py" "$RUN_DIR" --terminal "$TERMINAL"
+        ;;
+    esac
     echo "run.sh: terminal=${TERMINAL}, stopping."
     exit 0
   fi
@@ -185,12 +194,11 @@ while true; do
   PREV="$(py_get phase)"
 
   if [[ -n "$PREV" ]]; then
-    GATE_OUT="$(python3 "${SKILL_DIR}/scripts/gate.py" "$RUN_DIR" --phase "$PREV" 2>&1)" || true
-    echo "$GATE_OUT"
-
-    if [[ "$GATE_OUT" == GATE:\ BLOCKED* && -z "$CHECKPOINT_PENDING" ]]; then
-      echo "run.sh: gate blocked on phase ${PREV}, will not start phase ${PHASE}."
-      exit 1
+    if ! python3 "${SKILL_DIR}/scripts/gate.py" "$RUN_DIR" --phase "$PREV"; then
+      if [[ -z "$CHECKPOINT_PENDING" ]]; then
+        echo "run.sh: gate blocked on phase ${PREV}, will not start phase ${PHASE}."
+        exit 1
+      fi
     fi
   fi
 

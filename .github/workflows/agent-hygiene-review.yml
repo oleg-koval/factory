@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   agent-hygiene:
-    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    uses: oleg-koval/workflows/.github/workflows/agent-hygiene-review.yml@c26f8e9203af25881b3fee85b218ec8ffbd1c6fb # workflows main (#36)
     with:
       min-score: 75
 
@@ -24,7 +24,7 @@ jobs:
       actions: read
       security-events: write
       id-token: write
-    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@f4ad5f2aa325a7fd61b2f7c2fb096e77570b963b # workflows v1
+    uses: oleg-koval/workflows/.github/workflows/scorecard.yml@c26f8e9203af25881b3fee85b218ec8ffbd1c6fb # workflows main (#36)
     with:
       publish-results: false
 
@@ -43,10 +43,16 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/commitlint" --no-save --ignore-scripts \
             @commitlint/cli@19.8.1 @commitlint/config-conventional@19.8.1
-          echo "module.exports = { extends: ['@commitlint/config-conventional'] };" \
-            > "$RUNNER_TEMP/commitlint/commitlint.config.cjs"
+          cat > "$RUNNER_TEMP/commitlint/commitlint.config.cjs" <<'EOF'
+          module.exports = {
+            extends: ['@commitlint/config-conventional'],
+            // Dependabot generates unwrapped Markdown release notes in commit bodies.
+            rules: process.env.PR_AUTHOR === 'dependabot[bot]' ? { 'body-max-line-length': [0] } : {},
+          };
+          EOF
       - name: Lint commit messages
         env:
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           FROM_SHA: ${{ github.event.pull_request.base.sha }}
           TO_SHA: ${{ github.event.pull_request.head.sha }}
         run: |

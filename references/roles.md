@@ -17,7 +17,7 @@ built-in subagent contract. Phase files name roles only.
 | `implementer` | one milestone task, tests, reuse index, `state.baseline` | diff, new tests pass, rest of suite no worse than baseline | test run output compared to baseline |
 | `fixer` | verified findings | diff | re-run output |
 | `e2e-tester` | milestone AC, kind | failing e2e tests | run output shows FAIL for the right reason |
-| `teeth-check` | the fix lines, the test id, the repo test command | the test proven to fail without the fix | quoted failing run with the fix reverted, then the restore |
+| `teeth-check` | the fix lines, test id, repo test command, and recorded whole-file baseline | named regression test passes with the fix and fails for the expected assertion without it; remaining whole-file results are no worse than baseline | baseline, fixed, reverted, and restored runs; retain the fix/revert/restore checks |
 | `milestone-reviewer` | diff, agent-plan entry, checklist, the milestone's invariants and the earlier diffs touching them | PASS or FIX with findings | verdict text |
 | `plan-equivalence` | human-plan.md, agent-plan.md | SAME-SCOPE or MISMATCH with list | verdict text |
 | `whole-change-review` | branch, target branch | findings with proof, optional fix | review file path (built-in `factory-whole-change-reviewer`) |
@@ -33,8 +33,9 @@ Run when no config resolves a role, or when a bound name is not installed.
 
 1. Enumerate candidates from the skill list in this session, the active provider's skill and
    plugin directories, the repository's agent configuration, and the factory's own
-   `agents/factory-*.md` prompt contracts. Read only frontmatter name and description.
-   Read only frontmatter `name` and `description`.
+   `agents/factory-*.md` prompt contracts. Read only frontmatter `name` and `description`.
+   Shared role files without frontmatter, such as `<repo>/.agents/shared/olko/roles/*.md`,
+   are candidates too: use the file name as `name` and the first paragraph as `description`.
 2. For each role, rank candidates by description match to the contract row above. Keep at most
    three per role. Add `built-in` where `agents/factory-<role>.md` exists. Use `none` when the
    list is empty.

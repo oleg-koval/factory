@@ -15,6 +15,9 @@ Evidence status: public repository history. Version 1.0.0 was the first tagged r
 
 ### Changed
 
+- Discovery treats shared role files without frontmatter (`.agents/shared/olko/roles/*.md`)
+  as candidates, and Phase 0 records the repository's shared delivery, review, and Charter
+  pipelines as delivery policy alongside Factory gates.
 - `delivered*` now requires `state.delivery` with the pushed commit sha, the PR url and
   `checks: "green"`. `delivered` also requires every question answered.
 - Light runs with one milestone skip `plan-equivalence` and the separate test-first leaf.
