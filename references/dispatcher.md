@@ -15,7 +15,7 @@ python3 scripts/dispatch.py --repo owner/repo --review-cap 2 --dry-run
 After the dry run, schedule the enabled command with the same cap and directory each time.
 
 ```sh
-python3 scripts/dispatch.py --repo owner/repo --review-cap 2 --enable \
+python3 /absolute/factory-checkout/scripts/dispatch.py --repo owner/repo --review-cap 2 --enable \
   --scheduler-dir /absolute/persistent/factory-scheduler -- /absolute/factory-worker
 ```
 
@@ -32,7 +32,8 @@ covers opening that draft.
 Send the dispatcher's JSON stdout to the scheduler log. It rereads both queues on the next
 invocation. A failed queue read blocks the worker. A failed or interrupted worker leaves
 the issue in the `active` marker. Recover the existing run, or explicitly abandon it after
-confirming the worker stopped, before removing the marker. Use only this scheduler directory
+confirming the worker stopped. If the run already handed off a PR, confirm it is in the
+review queue and remove the issue's eligibility before removing the marker. Use only this scheduler directory
 on one host for enabled invocations. Keep the GitHub CLI authenticated for every invocation.
 
 ## Concurrent workers
