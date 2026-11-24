@@ -104,7 +104,21 @@ def dispatch_concurrent(args):
             return 0
         review = claims.review_issues(args.repo, REVIEW_READY)
         eligible = queue(args.repo, ELIGIBLE, pulls=False)
-        decision, issue = claims.admission(eligible, reserved, review, args.review_cap)
+        handoffs = (set(reserved) & review) - eligible
+        if args.scheduler_dir:
+            for closed in sorted(set(reserved) - review - eligible):
+                receipt = args.scheduler_dir / f"worker-{closed}-{reserved[closed]}.handoff.json"
+                try:
+                    pr = json.loads(receipt.read_text())
+                except FileNotFoundError:
+                    continue
+                if pr is None:
+                    continue
+                if type(pr) is not int or pr < 1:
+                    raise ValueError("invalid claim handoff receipt")
+                if closed in claims.review_issues(args.repo, REVIEW_READY, closed_pr=pr):
+                    handoffs.add(closed)
+        decision, issue = claims.admission(eligible, set(reserved) - handoffs, review, args.review_cap)
     except (OSError, ValueError, KeyError, TypeError) as error:
         report(args.repo, {"decision": "queue-unreadable", "reason": str(error)})
         return 1
@@ -114,7 +128,7 @@ def dispatch_concurrent(args):
     if args.dry_run:
         return 0
 
-    for landed in sorted((set(reserved) & review) - eligible):
+    for landed in sorted(handoffs):
         claims.release(args.claim_repo, remote, landed, reserved[landed])
         report(args.repo, {"decision": "handoff-released", "issue": landed})
     if issue is None:

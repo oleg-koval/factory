@@ -659,7 +659,7 @@ def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bo
     owner, repo, number = match.groups()
     try:
         isolation = state.get("isolation", {})
-        checkout = isolation.get("worktree")
+        checkout = isolation.get("repo" if isolation.get("mode") == "in-place" else "worktree")
         if not isinstance(checkout, str) or not checkout:
             raise ValueError("state.isolation.worktree unavailable")
         remote = subprocess.check_output(["git", "-C", checkout, "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL).strip()

@@ -332,7 +332,7 @@ def run(run_dir, terminal):
 def write(run_dir, questions, ac_status):
     state["open_questions"] = questions
     state["isolation"]["repo"] = run_dir
-    state["isolation"]["worktree"] = run_dir
+    state["isolation"]["worktree"] = None if state["isolation"]["mode"] == "in-place" else run_dir
     state["isolation"]["base"] = "main"
     json.dump(state, open(os.path.join(run_dir, "state.json"), "w"))
     open(os.path.join(run_dir, "receipts.md"), "w").write("| at | phase | role | command | sha | result |\n")
@@ -431,6 +431,7 @@ with tempfile.TemporaryDirectory() as d:
         "changed-after-checks": "PR changed before the delivery verdict",
         "missing-cursor": "pagination did not advance",
         "repeated-cursor": "pagination did not advance",
+        "required-workflow": "required workflow coverage cannot be verified",
         "missing": "missing or ambiguous",
         "cancelled": "cancelled", "offline": "GitHub evidence unavailable",
         "closed": "closed without merging", "open": "requires mergedAt",

@@ -9,7 +9,7 @@ case = os.environ.get("FACTORY_GH_FIXTURE", "green")
 if case == "offline":
     sys.exit(1)
 if "graphql" not in sys.argv:
-    print("[[]]")
+    print('[ [{"type":"workflows"}] ]' if case == "required-workflow" else "[[]]")
     sys.exit(0)
 
 number = int(next(arg.split("=")[1] for arg in sys.argv if arg.startswith("number=")))
@@ -25,7 +25,7 @@ pr = {
     "number": number, "headRefOid": head, "baseRefName": "main",
     "baseRef": {"branchProtectionRule": {"requiredStatusCheckContexts": ["ci", "missing"] if case == "missing" else ["ci"]}},
     "state": {"pending": "OPEN", "failing": "OPEN", "closed": "CLOSED", "open": "OPEN"}.get(case, "MERGED"),
-    "mergedAt": "2026-10-01T12:00:00Z" if case in {"green", "changed-after-checks"} else None,
+    "mergedAt": "2026-10-01T12:00:00Z" if case in {"green", "changed-after-checks", "required-workflow"} else None,
     "commits": {"nodes": [{"commit": {"oid": head, "statusCheckRollup": {
         "contexts": {"pageInfo": pagination, "nodes": checks},
     }}}]},
