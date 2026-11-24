@@ -13,7 +13,11 @@ if "graphql" not in sys.argv:
     sys.exit(0)
 
 number = int(next(arg.split("=")[1] for arg in sys.argv if arg.startswith("number=")))
-head = ("1" if case == "changed" else "0") * 40
+query = next(arg for arg in sys.argv if arg.startswith("query="))
+read_checks = "statusCheckRollup" in query
+head = ("1" if case == "changed" or (case == "changed-after-checks" and not read_checks) else "0") * 40
+pagination = {"hasNextPage": case in {"missing-cursor", "repeated-cursor"},
+              "endCursor": "same" if case == "repeated-cursor" else None}
 status = "IN_PROGRESS" if case == "pending" else "COMPLETED"
 conclusion = {"cancelled": "CANCELLED", "failing": "FAILURE"}.get(case, "SUCCESS")
 checks = [{"name": "ci", "isRequired": True, "status": status, "conclusion": conclusion}]
@@ -21,9 +25,9 @@ pr = {
     "number": number, "headRefOid": head, "baseRefName": "main",
     "baseRef": {"branchProtectionRule": {"requiredStatusCheckContexts": ["ci", "missing"] if case == "missing" else ["ci"]}},
     "state": {"pending": "OPEN", "failing": "OPEN", "closed": "CLOSED", "open": "OPEN"}.get(case, "MERGED"),
-    "mergedAt": "2026-10-01T12:00:00Z" if case == "green" else None,
+    "mergedAt": "2026-10-01T12:00:00Z" if case in {"green", "changed-after-checks"} else None,
     "commits": {"nodes": [{"commit": {"oid": head, "statusCheckRollup": {
-        "contexts": {"pageInfo": {"hasNextPage": False}, "nodes": checks},
+        "contexts": {"pageInfo": pagination, "nodes": checks},
     }}}]},
 }
 print(json.dumps({"data": {"repository": {"nameWithOwner": "owner/repo", "pullRequest": pr}}}))

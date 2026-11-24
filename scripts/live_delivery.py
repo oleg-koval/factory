@@ -28,6 +28,15 @@ query($owner: String!, $repo: String!, $number: Int!, $cursor: String) {
   }
 }
 """
+PR_QUERY = """
+query($owner: String!, $repo: String!, $number: Int!) {
+  repository(owner: $owner, name: $repo) {
+    nameWithOwner
+    pullRequest(number: $number) { number headRefOid state mergedAt baseRefName }
+  }
+}
+"""
+PR_FIELDS = ("headRefOid", "baseRefName", "state", "mergedAt")
 SUCCESS = {"SUCCESS", "NEUTRAL", "SKIPPED"}
 PENDING = {"EXPECTED", "PENDING", "QUEUED", "IN_PROGRESS", "WAITING", "REQUESTED"}
 FAILURE = {"ACTION_REQUIRED", "ERROR", "FAILURE", "STALE", "STARTUP_FAILURE", "TIMED_OUT"}
@@ -94,16 +103,18 @@ def check_verdict(contexts, expected):
 
 def observe(owner, repo, number, head, expected_base):
     repository = f"{owner}/{repo}"
-    def page(cursor=None):
-        args = ["graphql", "-f", f"query={QUERY}", "-f", f"owner={owner}",
+    def page(query=QUERY, cursor=None):
+        args = ["graphql", "-f", f"query={query}", "-f", f"owner={owner}",
                 "-f", f"repo={repo}", "-F", f"number={number}"]
         if cursor:
             args += ["-f", f"cursor={cursor}"]
-        return read_gh(*args)["data"]["repository"]
-    data = page()
-    pr = data["pullRequest"]
-    if data["nameWithOwner"].lower() != repository.lower() or pr["number"] != number:
-        raise ValueError("GitHub reported a different repository or PR number")
+        data = read_gh(*args)["data"]["repository"]
+        pr = data["pullRequest"]
+        if data["nameWithOwner"].lower() != repository.lower() or pr["number"] != number:
+            raise ValueError("GitHub reported a different repository or PR number")
+        return pr
+
+    pr = page()
     receipt = dict(repository=repository, number=number, head=pr["headRefOid"],
                    verdict="unavailable", observedAt=datetime.now(timezone.utc).isoformat(),
                    state=pr["state"], mergedAt=pr["mergedAt"])
@@ -115,15 +126,25 @@ def observe(owner, repo, number, head, expected_base):
             raise ValueError("required-check evidence is not bound to the recorded head")
         contexts = commits[0]["commit"]["statusCheckRollup"]["contexts"]
         nodes = list(contexts["nodes"])
+        seen_cursors = set()
         while contexts["pageInfo"]["hasNextPage"]:
-            next_pr = page(contexts["pageInfo"]["endCursor"])["pullRequest"]
+            cursor = contexts["pageInfo"].get("endCursor")
+            if not isinstance(cursor, str) or not cursor or cursor in seen_cursors:
+                raise ValueError("required-check pagination did not advance")
+            seen_cursors.add(cursor)
+            next_pr = page(cursor=cursor)
             next_commits = next_pr["commits"]["nodes"]
-            if (next_pr["headRefOid"] != head or len(next_commits) != 1
+            if (any(next_pr[field] != pr[field] for field in PR_FIELDS) or len(next_commits) != 1
                     or next_commits[0]["commit"]["oid"] != head):
-                raise ValueError("paginated required-check evidence is not bound to the recorded head")
+                raise ValueError("PR changed during required-check pagination")
             contexts = next_commits[0]["commit"]["statusCheckRollup"]["contexts"]
             nodes.extend(contexts["nodes"])
-        receipt["verdict"], receipt["checks"] = check_verdict({"pageInfo": {"hasNextPage": False}, "nodes": nodes}, required_contexts(repository, pr, expected_base))
+        expected = required_contexts(repository, pr, expected_base)
+        verdict, checks = check_verdict({"pageInfo": {"hasNextPage": False}, "nodes": nodes}, expected)
+        confirmed = page(PR_QUERY)
+        if any(confirmed[field] != pr[field] for field in PR_FIELDS):
+            raise ValueError("PR changed before the delivery verdict could be confirmed")
+        receipt.update(verdict=verdict, checks=checks, observedAt=datetime.now(timezone.utc).isoformat())
     except (KeyError, TypeError, ValueError) as error:
         receipt["error"] = str(error) if isinstance(error, ValueError) else "required-check evidence unavailable"
     return receipt

@@ -427,7 +427,11 @@ with tempfile.TemporaryDirectory() as d:
     state["gaps"]["accepted_by"] = None
     state["terminal"] = None
     for case, reason in {
-        "changed": "head mismatch", "missing": "missing or ambiguous",
+        "changed": "head mismatch",
+        "changed-after-checks": "PR changed before the delivery verdict",
+        "missing-cursor": "pagination did not advance",
+        "repeated-cursor": "pagination did not advance",
+        "missing": "missing or ambiguous",
         "cancelled": "cancelled", "offline": "GitHub evidence unavailable",
         "closed": "closed without merging", "open": "requires mergedAt",
         "bad-merge": "requires mergedAt",
