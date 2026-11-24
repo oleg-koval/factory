@@ -571,6 +571,7 @@ with tempfile.TemporaryDirectory() as d:
 GATEPY
 
 python3 "$root/tests/test_dispatch.py" || f "dispatcher behavior failed"
+python3 "$root/tests/test_claims.py" || f "remote reservation behavior failed"
 
 # Final review: every blocked exit routes to Phase 6
 python3 "$root/tests/test_scope_and_ideas.py" || f "scope and deferred-idea behavior failed"

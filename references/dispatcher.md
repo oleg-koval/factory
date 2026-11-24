@@ -34,3 +34,36 @@ invocation. A failed queue read blocks the worker. A failed or interrupted worke
 the issue in the `active` marker. Recover the existing run, or explicitly abandon it after
 confirming the worker stopped, before removing the marker. Use only this scheduler directory
 on one host for enabled invocations. Keep the GitHub CLI authenticated for every invocation.
+
+## Concurrent workers
+
+After the disposable queue checks pass, add `--concurrent --claim-repo /absolute/git-checkout`
+to the same scheduler's command. Use a Git checkout with an identity for creating the claim
+commits and SSH access to the configured GitHub repository. Use the same scheduler directory
+for every invocation. Recover any single-worker `active` marker before switching.
+
+Admission holds the scheduler lock while it reads review and reservation state and publishes
+one claim. The scheduler counts the union of occupied issues from
+`refs/heads/factory/claims/<issue>` and open `factory-review-ready` PRs. Each worker receives
+`FACTORY_CLAIM_SHA` and `FACTORY_WORK_BRANCH`. Use that branch in an isolated worktree and
+run the Factory scope, human checkpoints, and terminal gates. Finish implementation before
+marking the same-repository PR review-ready. Remove `factory-eligible` after marking the PR.
+Active claims and review-ready PRs for the same issue use one slot throughout the handoff.
+Consume the eligibility of completed issues before closing their review PR.
+
+A later scheduler invocation releases a claim once it sees the matching review-ready PR
+and cleared eligibility. A stopped worker's claim survives without a PR. Inspect the reservation
+in a concurrent dry run, recover the existing worker from its recorded state, or confirm it
+stopped and explicitly abandon the reservation with:
+
+```sh
+python3 scripts/dispatch.py --repo owner/repo --review-cap 2 \
+  --enable --concurrent --claim-repo /absolute/git-checkout \
+  --scheduler-dir /absolute/persistent/factory-scheduler \
+  --abandon 17 --confirm-worker-stopped
+```
+
+Keep claim refs under sole dispatcher control. Keep the scheduler log and its per-worker logs
+for recovery. A labeled legacy PR without the expected branch identity blocks concurrent
+admission until resolved. Drain concurrent reservations and review handoffs before rolling back
+to single-worker mode and retiring the scheduler's concurrent marker.
