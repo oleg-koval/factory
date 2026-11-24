@@ -15,24 +15,24 @@ For milestone M<n> from `agent-plan.md`:
 a. **Test first**, role `e2e-tester`. Brief per `briefs.md`: the milestone block, AC text,
    test kind, allowed test paths, the repo's test command. Advance only when the report
    quotes new tests that FAIL for the right reason. A "already passes" report means the AC is
-   met; record it and skip to step c with no implementation.
+   met; record it and skip to step c with no implementation. Record the whole-file baseline
+   before implementation, including existing failures.
    Light run with one milestone: skip this leaf; test first in b, b2 mandatory.
    Log `decision | e2e-tester skipped | light, one milestone`.
 b. **Implement**, role `implementer`. Brief: milestone block, AC text, test kind,
    allowed test paths, repo test command, reuse index, human plan section 4 as a hard boundary,
    allowed files, `state.baseline`, and failing test names when a ran. Light run with one
-   milestone: create the test before implementing the fix.
+   milestone: create the test before implementing the fix. If absent, record the baseline first.
    Advance only on quoted new-test PASS output and baseline comparison: the suite must be no
    worse than `state.baseline`, including standing debt. "Green" means matching baseline
    numbers, not zero failures.
-b2. **Teeth check**, role `teeth-check`, once per new test that is meant to prove a fix or a
-   guarantee. Brief: the exact line or lines of the fix, the test id, and the repo's own test
-   command. The leaf reverts those lines to their pre-fix form, re-runs **the whole test file the
-   way the repo's own command runs it** (not the single test in isolation), quotes the output,
-   then restores the lines and re-runs to confirm the restore. Append the quoted failure to
-   `receipts.md`.
-   Advance only if the whole file FAILS without the fix. Otherwise restore it: light run with
-   one milestone -> implementer revises the test, reruns b2; otherwise -> step a.
+b2. **Teeth check**, role `teeth-check`, for each new regression test. Brief: the exact fix
+   lines, test id, and repo test command. Record baseline, fixed, reverted, and restored
+   whole-file runs; if a or b omitted
+   the baseline, revert the fix to capture it. The named regression must pass fixed and fail
+   with the expected assertion after revert; whole-file failures must be no worse than baseline.
+   Setup, collection and runner failures are inconclusive. Restore the fix, rerun the file,
+   and quote all runs in `receipts.md`. If the reverted test passes, revise it.
 c. **Checkpoint**, role `mechanical-leaf`: `git add` only the files the milestone block lists - never `git add .`, even in
    the worktree - commit `factory(M<n>): <goal>`, return the sha. Append a row to `receipts.md`
    and set the milestone's `sha` in `state.milestones`.
