@@ -570,6 +570,9 @@ with tempfile.TemporaryDirectory() as d:
     assert out2.returncode == 1 and "Flag key" in (out2.stdout + out2.stderr), out2.stdout + out2.stderr
 GATEPY
 
+python3 "$root/tests/test_dispatch.py" || f "dispatcher behavior failed"
+python3 "$root/tests/test_claims.py" || f "remote reservation behavior failed"
+
 # Final review: every blocked exit routes to Phase 6
 python3 "$root/tests/test_scope_and_ideas.py" || f "scope and deferred-idea behavior failed"
 for p in phase-1-diagnosis phase-2-human-plan phase-4-milestones; do

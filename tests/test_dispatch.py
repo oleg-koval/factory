@@ -1,0 +1,103 @@
+"""Exercise one scheduler's admission decisions and recovery boundary."""
+
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+
+SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+import dispatch
+
+
+def item(number, label, *, pull=False):
+    return {"number": number, "state": "open", "labels": [{"name": label}],
+            **({"pull_request": {}} if pull else {})}
+
+
+class DispatcherTest(unittest.TestCase):
+    def test_capacity_and_a_human_decision_frees_a_slot(self):
+        ready = [item(n, dispatch.REVIEW_READY, pull=True) for n in (1, 2, 3)]
+        eligible = [item(12, dispatch.ELIGIBLE), item(11, dispatch.ELIGIBLE)]
+        with patch.object(dispatch, "read_gh", side_effect=[
+            [[ready[0]], ready[1:]], [ready[:2]], [ready[:1]], [eligible],
+        ]) as gh:
+            self.assertEqual(dispatch.decide("owner/repo", 2)["decision"], "review-capacity")
+            self.assertEqual(dispatch.decide("owner/repo", 2)["decision"], "review-capacity")
+            admitted = dispatch.decide("owner/repo", 2)
+            self.assertEqual((admitted["decision"], admitted["issue"]), ("admit", 11))
+            self.assertEqual(gh.call_count, 4)
+
+    def test_unreadable_queue_stops_before_admission(self):
+        args = type("Args", (), {"repo": "owner/repo", "review_cap": 2})
+        with patch.object(dispatch, "read_gh", side_effect=ValueError("offline")), \
+             patch.object(dispatch, "report") as report, patch.object(dispatch.subprocess, "run") as run:
+            self.assertEqual(dispatch.dispatch(args, worker=1), 1)
+            self.assertEqual(report.call_args.args[1]["decision"], "queue-unreadable")
+            run.assert_not_called()
+
+    def test_incomplete_pages_fail_closed(self):
+        with patch.object(dispatch, "read_gh", return_value=[[], None]):
+            with self.assertRaisesRegex(ValueError, "incomplete"):
+                dispatch.decide("owner/repo", 2)
+
+    def test_release_requires_visible_handoff_and_consumed_eligibility(self):
+        eligible = item(7, dispatch.ELIGIBLE)
+        handed_off = item(12, dispatch.REVIEW_READY, pull=True)
+        for visible, consumed in ((False, True), (True, False), (True, True)):
+            with self.subTest(visible=visible, consumed=consumed), tempfile.TemporaryDirectory() as temp:
+                scheduler = Path(temp)
+                args = SimpleNamespace(repo="owner/repo", review_cap=2, scheduler_dir=scheduler,
+                                       worker=["factory-worker"])
+
+                def worker(_command, *, env, pass_fds):
+                    Path(env["FACTORY_HANDOFF_FILE"]).write_text("12")
+                    return subprocess.CompletedProcess([], 0)
+
+                with patch.object(dispatch, "read_gh", side_effect=[
+                    [[]], [[eligible]], [[handed_off] if visible else []], [[] if consumed else [eligible]],
+                ]), patch.object(dispatch, "report"), patch.object(dispatch.subprocess, "run", worker):
+                    released = visible and consumed
+                    self.assertEqual(dispatch.dispatch(args, worker=1), 0 if released else 1)
+                self.assertEqual((scheduler / "active").exists(), not released)
+
+    def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
+        with tempfile.TemporaryDirectory() as temp:
+            folder = Path(temp)
+            gh = folder / "gh"
+            gh.write_text(
+                "#!/bin/sh\n"
+                "case \"$*\" in\n"
+                "  *factory-review-ready*) echo '[[]]' ;;\n"
+                """  *) echo '[[{"number":7,"state":"open","labels":[{"name":"factory-eligible"}]}]]' ;;\n"""
+                "esac\n"
+            )
+            gh.chmod(0o755)
+            scheduler = folder / "scheduler"
+            command = [sys.executable, str(SCRIPTS / "dispatch.py"), "--repo", "owner/repo",
+                       "--review-cap", "2", "--enable", "--scheduler-dir", str(scheduler)]
+            env = {**os.environ, "PATH": f"{folder}{os.pathsep}{os.environ['PATH']}"}
+            worker = folder / "worker.py"
+            worker.write_text(
+                "import subprocess, sys\n"
+                "assert sys.argv[-1] == 'https://github.com/owner/repo/issues/7'\n"
+                "out = subprocess.check_output(sys.argv[1:-1] + ['--', 'false'], text=True)\n"
+                "assert 'scheduler-busy' in out, out\n"
+                "raise SystemExit(7)\n"
+            )
+            result = subprocess.run(command + ["--", sys.executable, str(worker), *command],
+                                    text=True, capture_output=True, env=env)
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn('"exit": 7', result.stdout)
+            self.assertEqual((scheduler / "active").read_text().strip(), "owner/repo#7")
+            again = subprocess.run(command + ["--", "false"], capture_output=True, text=True, env=env)
+            self.assertIn('"active": "owner/repo#7"', again.stdout)
+            self.assertNotIn('"decision": "admit"', again.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

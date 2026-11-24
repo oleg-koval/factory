@@ -92,6 +92,8 @@ for Factory; see the [install verification record](docs/install-verification.md)
 Use `consult` to get the CTO view without writing files. Start a full run with a ticket id,
 Sentry URL, or plain-language request. Use `resume <slug>` to continue a gated run.
 
+[Configure the opt-in unattended dispatcher](references/dispatcher.md).
+
 ## Inspect the machinery
 
 - [`SKILL.md`](SKILL.md) is the compact operating contract.
