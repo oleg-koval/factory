@@ -116,7 +116,12 @@ def observe(owner, repo, number, head, expected_base):
         contexts = commits[0]["commit"]["statusCheckRollup"]["contexts"]
         nodes = list(contexts["nodes"])
         while contexts["pageInfo"]["hasNextPage"]:
-            contexts = page(contexts["pageInfo"]["endCursor"])["pullRequest"]["commits"]["nodes"][0]["commit"]["statusCheckRollup"]["contexts"]
+            next_pr = page(contexts["pageInfo"]["endCursor"])["pullRequest"]
+            next_commits = next_pr["commits"]["nodes"]
+            if (next_pr["headRefOid"] != head or len(next_commits) != 1
+                    or next_commits[0]["commit"]["oid"] != head):
+                raise ValueError("paginated required-check evidence is not bound to the recorded head")
+            contexts = next_commits[0]["commit"]["statusCheckRollup"]["contexts"]
             nodes.extend(contexts["nodes"])
         receipt["verdict"], receipt["checks"] = check_verdict({"pageInfo": {"hasNextPage": False}, "nodes": nodes}, required_contexts(repository, pr, expected_base))
     except (KeyError, TypeError, ValueError) as error:

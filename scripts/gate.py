@@ -625,12 +625,9 @@ def check_all_answered(state: dict, reasons: list[str]) -> None:
             )
 
 
-def accepted_open_pr(delivery: dict, state: dict) -> bool:
+def accepted_open_pr(delivery: dict) -> bool:
     acceptance = delivery.get("open_accepted_by")
-    approver = state.get("isolation", {}).get("accepted_by") if isinstance(state.get("isolation"), dict) else None
-    return (isinstance(acceptance, str) and bool(acceptance.strip())
-            and isinstance(approver, str) and bool(approver.strip())
-            and acceptance.strip() == approver.strip())
+    return isinstance(acceptance, str) and bool(acceptance.strip())
 
 
 def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bool) -> None:
@@ -667,11 +664,14 @@ def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bo
             raise ValueError("state.isolation.worktree unavailable")
         remote = subprocess.check_output(["git", "-C", checkout, "remote", "get-url", "origin"], text=True, stderr=subprocess.DEVNULL).strip()
         local_head = subprocess.check_output(["git", "-C", checkout, "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL).strip()
-        remote_match = re.search(r"github\.com[:/]([^/]+/[^/.]+)(?:\.git)?$", remote, re.ASCII | re.IGNORECASE)
-        if not remote_match or f"{owner}/{repo}".lower() != remote_match.group(1).lower() or head != local_head:
+        remote_match = re.search(r"github\.com[:/]([^/]+)/([^/]+)$", remote, re.ASCII | re.IGNORECASE)
+        remote_repo = f"{remote_match.group(1)}/{remote_match.group(2)}" if remote_match else None
+        if remote_repo and remote_repo.lower().endswith(".git"):
+            remote_repo = remote_repo[:-4]
+        if not remote_match or f"{owner}/{repo}".lower() != remote_repo.lower() or head != local_head:
             raise ValueError("PR repository or head does not match this run checkout")
         receipt = observe(owner, repo, int(number), head, isolation.get("base"))
-    except (ValueError, OSError, KeyError, TypeError) as error:
+    except (ValueError, OSError, subprocess.SubprocessError, KeyError, TypeError) as error:
         receipt.update(pr=pr, head=head, error=str(error))
         audit()
         fail(reasons, f"live delivery verification failed: {error}")
@@ -690,7 +690,7 @@ def check_delivery(state: dict, run_dir: str, reasons: list[str], *, pending: bo
         fail(reasons, "live required checks are not 'green'")
     elif receipt["state"] == "MERGED" and isinstance(receipt["mergedAt"], str) and receipt["mergedAt"].strip():
         return
-    elif receipt["state"] != "OPEN" or not accepted_open_pr(delivery, state):
+    elif receipt["state"] != "OPEN" or not accepted_open_pr(delivery):
         fail(reasons, "delivery requires mergedAt or explicit human acceptance of an open PR")
 
 

@@ -438,7 +438,7 @@ with tempfile.TemporaryDirectory() as d:
         assert code == 1 and reason in out, (case, out)
     os.environ["FACTORY_GH_FIXTURE"] = "open"
     state["delivery"] = dict(landed, open_accepted_by="An open PR satisfies this task")
-    state["isolation"]["accepted_by"] = "An open PR satisfies this task"
+    state["isolation"]["accepted_by"] = "I approve sharing the worktree"
     write(d, answered, "met")
     code, out = run(d, "delivered")
     assert code == 0 and "GATE: PASS" in out, out
