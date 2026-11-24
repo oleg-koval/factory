@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""Admit at most one foreground Factory worker on the configured scheduler."""
+
+import argparse
+import fcntl
+import json
+import os
+import re
+import subprocess
+from pathlib import Path
+from urllib.parse import urlencode
+
+from live_delivery import read_gh
+
+ELIGIBLE = "factory-eligible"
+REVIEW_READY = "factory-review-ready"
+
+
+def queue(repo, label, *, pulls):
+    params = urlencode({"state": "open", "labels": label, "per_page": 100})
+    pages = read_gh(f"repos/{repo}/issues?{params}", "--paginate", "--slurp")
+    if not isinstance(pages, list) or not pages or any(not isinstance(page, list) for page in pages):
+        raise ValueError(f"incomplete {label} queue")
+    numbers = set()
+    seen = set()
+    for page in pages:
+        for item in page:
+            number = item["number"]
+            if type(number) is not int or number < 1 or item["state"] != "open":
+                raise ValueError(f"invalid {label} queue entry")
+            if label not in {entry["name"] for entry in item["labels"]}:
+                raise ValueError(f"incomplete {label} queue entry")
+            if number in seen:
+                raise ValueError(f"{label} queue changed during pagination")
+            seen.add(number)
+            if ("pull_request" in item) == pulls:
+                numbers.add(number)
+    return numbers
+
+
+def decide(repo, cap):
+    review = queue(repo, REVIEW_READY, pulls=True)
+    if len(review) >= cap:
+        return {"decision": "review-capacity", "awaiting_review": len(review), "cap": cap}
+    eligible = queue(repo, ELIGIBLE, pulls=False)
+    if not eligible:
+        return {"decision": "no-eligible-issue"}
+    return {"decision": "admit", "issue": min(eligible), "awaiting_review": len(review), "cap": cap}
+
+
+def report(repo, result):
+    print(json.dumps({"repo": repo, **result}), flush=True)
+
+
+def dispatch(args, *, worker):
+    try:
+        result = decide(args.repo, args.review_cap)
+    except (ValueError, TypeError, KeyError) as error:
+        report(args.repo, {"decision": "queue-unreadable", "reason": str(error)})
+        return 1
+    report(args.repo, result)
+    if worker is None or result["decision"] != "admit":
+        return 0
+
+    issue = result["issue"]
+    # Retain a durable local recovery marker if the worker or scheduler stops mid-run.
+    active = args.scheduler_dir / "active"
+    with active.open("x") as handle:
+        handle.write(f"{args.repo}#{issue}\n")
+        handle.flush()
+    url = f"https://github.com/{args.repo}/issues/{issue}"
+    handoff = args.scheduler_dir / "handoff.json"
+    handoff.unlink(missing_ok=True)
+    env = {**os.environ, "FACTORY_HANDOFF_FILE": str(handoff)}
+    completed = subprocess.run([*args.worker, url], env=env, pass_fds=(worker,))
+    if completed.returncode:
+        report(args.repo, {"decision": "recovery-required", "issue": issue, "exit": completed.returncode})
+        return 1
+    try:
+        pr = json.loads(handoff.read_text())
+        if pr is not None and (type(pr) is not int or pr not in queue(args.repo, REVIEW_READY, pulls=True)):
+            raise ValueError("review handoff is not visible in the queue")
+        if issue in queue(args.repo, ELIGIBLE, pulls=False):
+            raise ValueError("issue eligibility is still visible")
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        report(args.repo, {"decision": "recovery-required", "issue": issue, "reason": str(error)})
+        return 1
+    active.unlink()
+    handoff.unlink()
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repo", required=True)
+    parser.add_argument("--review-cap", type=int, required=True)
+    parser.add_argument("--scheduler-dir", type=Path)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--enable", action="store_true")
+    mode.add_argument("--dry-run", action="store_true")
+    parser.add_argument("worker", nargs=argparse.REMAINDER)
+    args = parser.parse_args()
+    if not re.fullmatch(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+", args.repo) or args.review_cap < 1:
+        parser.error("use owner/repository and a positive review cap")
+    if args.dry_run:
+        return dispatch(args, worker=None)
+    if args.worker[:1] == ["--"]:
+        args.worker = args.worker[1:]
+    if not args.scheduler_dir or not args.scheduler_dir.is_absolute() or not args.worker:
+        parser.error("--enable requires an absolute --scheduler-dir and a foreground worker command")
+
+    try:
+        args.scheduler_dir.mkdir(parents=True, exist_ok=True)
+        with (args.scheduler_dir / "scheduler.lock").open("a") as lock:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                report(args.repo, {"decision": "scheduler-busy"})
+                return 0
+            active = args.scheduler_dir / "active"
+            if active.exists():
+                report(args.repo, {"decision": "recovery-required", "active": active.read_text().strip()})
+                return 1
+            return dispatch(args, worker=lock.fileno())
+    except OSError as error:
+        report(args.repo, {"decision": "scheduler-unavailable", "reason": str(error)})
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
