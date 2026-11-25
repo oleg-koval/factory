@@ -66,6 +66,8 @@ def dispatch(args, *, worker):
     issue = result["issue"]
     # Retain a durable local recovery marker if the worker or scheduler stops mid-run.
     active = args.scheduler_dir / "active"
+    succeeded = args.scheduler_dir / "worker-succeeded"
+    succeeded.unlink(missing_ok=True)
     with active.open("x") as handle:
         handle.write(f"{args.repo}#{issue}\n")
         handle.flush()
@@ -77,6 +79,12 @@ def dispatch(args, *, worker):
     if completed.returncode:
         report(args.repo, {"decision": "recovery-required", "issue": issue, "exit": completed.returncode})
         return 1
+    succeeded.write_text(f"{args.repo}#{issue}\n")
+    return reconcile_handoff(args, issue)
+
+
+def reconcile_handoff(args, issue):
+    handoff = args.scheduler_dir / "handoff.json"
     try:
         pr = json.loads(handoff.read_text())
         if pr is not None and (type(pr) is not int or pr not in queue(args.repo, REVIEW_READY, pulls=True)):
@@ -86,8 +94,10 @@ def dispatch(args, *, worker):
     except (OSError, ValueError, KeyError, TypeError) as error:
         report(args.repo, {"decision": "recovery-required", "issue": issue, "reason": str(error)})
         return 1
-    active.unlink()
+    (args.scheduler_dir / "active").unlink()
+    (args.scheduler_dir / "worker-succeeded").unlink()
     handoff.unlink()
+    report(args.repo, {"decision": "handoff-reconciled", "issue": issue})
     return 0
 
 
@@ -185,8 +195,14 @@ def main():
                 return 0
             active = args.scheduler_dir / "active"
             if active.exists():
-                report(args.repo, {"decision": "recovery-required", "active": active.read_text().strip()})
-                return 1
+                marker = active.read_text().strip()
+                issue = re.fullmatch(re.escape(args.repo) + r"#([1-9][0-9]*)", marker)
+                succeeded = args.scheduler_dir / "worker-succeeded"
+                if args.concurrent or not issue or not succeeded.is_file() or succeeded.read_text().strip() != marker:
+                    report(args.repo, {"decision": "recovery-required", "active": marker})
+                    return 1
+                if reconcile_handoff(args, int(issue[1])):
+                    return 1
             concurrent_marker = args.scheduler_dir / "concurrent"
             if not args.concurrent and concurrent_marker.exists():
                 report(args.repo, {"decision": "concurrent-scheduler-required"})

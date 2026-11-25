@@ -82,6 +82,25 @@ class DispatcherTest(unittest.TestCase):
                 self.assertEqual(report.call_args.args[1]["issue"], 8)
                 self.assertEqual(reviews.call_args.kwargs, {"closed_pr": 12})
 
+    def test_next_invocation_reconciles_successful_handoff_without_restarting_worker(self):
+        with tempfile.TemporaryDirectory() as temp:
+            scheduler = Path(temp)
+            (scheduler / "active").write_text("owner/repo#7\n")
+            (scheduler / "worker-succeeded").write_text("owner/repo#7\n")
+            (scheduler / "handoff.json").write_text("12")
+            argv = ["dispatch", "--repo", "owner/repo", "--review-cap", "1", "--enable",
+                    "--scheduler-dir", temp, "--", "factory-worker"]
+            ready = item(12, dispatch.REVIEW_READY, pull=True)
+            with patch.object(sys, "argv", argv), patch.object(dispatch, "report") as report, \
+                 patch.object(dispatch, "read_gh", side_effect=[[[]], [[ready]], [[]], [[ready]]]), \
+                 patch.object(dispatch.subprocess, "run") as worker:
+                self.assertEqual(dispatch.main(), 1)
+                self.assertTrue((scheduler / "active").exists())
+                self.assertEqual(dispatch.main(), 0)
+                self.assertFalse((scheduler / "active").exists())
+                self.assertEqual(report.call_args.args[1]["decision"], "review-capacity")
+                worker.assert_not_called()
+
     def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
         with tempfile.TemporaryDirectory() as temp:
             folder = Path(temp)
