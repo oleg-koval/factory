@@ -30,7 +30,8 @@ before releasing the active slot. A draft can be handed off when the issue's aut
 covers opening that draft.
 
 Send the dispatcher's JSON stdout to the scheduler log. It rereads both queues on the next
-invocation. A failed queue read blocks the worker. A failed or interrupted worker leaves
+invocation. A failed queue read blocks the worker. If a successful handoff is still propagating, the next invocation checks it again before
+admitting work. A failed or interrupted worker leaves
 the issue in the `active` marker. Recover the existing run, or explicitly abandon it after
 confirming the worker stopped. If the run already handed off a PR, confirm it is in the
 review queue and remove the issue's eligibility before removing the marker. Use only this scheduler directory
