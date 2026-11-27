@@ -27,9 +27,9 @@ def snapshot(path):
         raise ValueError("approval worktree has no changes")
     patch = subprocess.check_output(
         ["git", "-C", str(path), "diff", "--binary", "--no-ext-diff", "--no-textconv",
-         "--no-renames", head, tree, "--"], timeout=60,
+         "--no-renames", "--ignore-submodules=none", head, tree, "--"], timeout=60,
     )
-    digest = hashlib.sha256(head.encode() + b"\0" + patch).hexdigest()
+    digest = hashlib.sha256(head.encode() + b"\0" + tree.encode() + b"\0" + patch).hexdigest()
     return head, tree, patch, digest
 
 

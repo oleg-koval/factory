@@ -118,6 +118,26 @@ class DispatcherTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "approval no longer matches"):
                 approval.publish(args, 7, {"worktree": str(path), "head": head, "digest": digest})
 
+    def test_approval_includes_gitlinks_even_when_git_config_ignores_submodules(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            git = dispatch.approval.git
+            git(path, "init")
+            git(path, "-c", "user.name=Factory Test", "-c", "user.email=test@example.invalid",
+                "commit", "--allow-empty", "-m", "test: approval base")
+            child = path / "component"
+            child.mkdir()
+            git(child, "init")
+            git(path, "config", "diff.ignoreSubmodules", "all")
+            previous = None
+            for message in ("first", "second"):
+                git(child, "-c", "user.name=Factory Test", "-c", "user.email=test@example.invalid",
+                    "commit", "--allow-empty", "-m", message)
+                _, _, patch, digest = dispatch.approval.snapshot(path)
+                self.assertIn(b"+Subproject commit ", patch)
+                self.assertNotEqual(digest, previous)
+                previous = digest
+
     def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
         with tempfile.TemporaryDirectory() as temp:
             folder = Path(temp)
