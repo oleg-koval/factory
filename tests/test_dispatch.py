@@ -101,6 +101,60 @@ class DispatcherTest(unittest.TestCase):
                 self.assertEqual(report.call_args.args[1]["decision"], "review-capacity")
                 worker.assert_not_called()
 
+    def test_approval_snapshot_includes_untracked_change_and_rejects_mutation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            approval = dispatch.approval
+            approval.git(path, "init")
+            approval.git(path, "-c", "user.name=Factory Test", "-c", "user.email=test@example.invalid",
+                         "commit", "--allow-empty", "-m", "test: approval base")
+            note = path / "pilot.txt"
+            note.write_text("first\n")
+            head, _, patch, digest = approval.snapshot(path)
+            self.assertIn(b"+first", patch)
+            self.assertEqual(approval.git(path, "status", "--porcelain"), "?? pilot.txt")
+            note.write_text("changed\n")
+            args = SimpleNamespace(resume_approval=digest, scheduler_dir=path)
+            with self.assertRaisesRegex(ValueError, "approval no longer matches"):
+                approval.publish(args, 7, {"worktree": str(path), "head": head, "base_head": head, "digest": digest})
+
+    def test_approval_snapshot_includes_committed_milestones(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            git = dispatch.approval.git
+            git(path, "init")
+            git(path, "config", "user.name", "Factory Test")
+            git(path, "config", "user.email", "test@example.invalid")
+            git(path, "commit", "--allow-empty", "-m", "test: approval base")
+            base = git(path, "rev-parse", "HEAD")
+            (path / "pilot.txt").write_text("milestone\n")
+            git(path, "add", "pilot.txt")
+            git(path, "commit", "-m", "test: completed milestone")
+            self.assertEqual(git(path, "status", "--porcelain"), "")
+            head, _, patch, _ = dispatch.approval.snapshot(path, base)
+            self.assertNotEqual(head, base)
+            self.assertIn(b"+milestone", patch)
+
+    def test_approval_includes_gitlinks_even_when_git_config_ignores_submodules(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            git = dispatch.approval.git
+            git(path, "init")
+            git(path, "-c", "user.name=Factory Test", "-c", "user.email=test@example.invalid",
+                "commit", "--allow-empty", "-m", "test: approval base")
+            child = path / "component"
+            child.mkdir()
+            git(child, "init")
+            git(path, "config", "diff.ignoreSubmodules", "all")
+            previous = None
+            for message in ("first", "second"):
+                git(child, "-c", "user.name=Factory Test", "-c", "user.email=test@example.invalid",
+                    "commit", "--allow-empty", "-m", message)
+                _, _, patch, digest = dispatch.approval.snapshot(path)
+                self.assertIn(b"+Subproject commit ", patch)
+                self.assertNotEqual(digest, previous)
+                previous = digest
+
     def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
         with tempfile.TemporaryDirectory() as temp:
             folder = Path(temp)

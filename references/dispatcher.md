@@ -72,3 +72,22 @@ Keep claim refs under sole dispatcher control. Keep the scheduler log and its pe
 for recovery. A labeled legacy PR without the expected branch identity blocks concurrent
 admission until resolved. Drain concurrent reservations and review handoffs before rolling back
 to single-worker mode and retiring the scheduler's concurrent marker.
+
+## Resumable human approval at cap 1
+
+Use `--enable --prepare-approval` with a local-only worker and the same scheduler directory.
+The worker runs Factory's local gates and writes the absolute isolated worktree root to
+`FACTORY_APPROVAL_WORKTREE_FILE` on successful completion. It leaves publication to the
+dispatcher. The worktree must descend from the repository's current default branch. The review patch
+includes milestone commits and local changes. Publication squashes the approved tree onto
+the recorded base, while local milestone commits remain in the worker's worktree.
+
+Review `approval.patch` in the scheduler directory. Ordinary enabled invocations report
+the pending checkpoint and keep its slot occupied. An operator authorizes the exact
+checkpoint digest by passing it as `--resume-approval DIGEST` in place of `--enable`
+and omitting the worker command. The scheduler checks the snapshot before committing
+and opens a review-ready draft. Retry with the same digest if queue visibility lags.
+
+If the diff or base changed, use `--refresh-approval` in place of `--enable` before publishing
+and review the new patch. If publication already started, recover the saved commit and
+draft instead of refreshing over them.
