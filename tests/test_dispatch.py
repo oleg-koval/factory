@@ -101,6 +101,23 @@ class DispatcherTest(unittest.TestCase):
                 self.assertEqual(report.call_args.args[1]["decision"], "review-capacity")
                 worker.assert_not_called()
 
+    def test_approval_snapshot_includes_untracked_change_and_rejects_mutation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            approval = dispatch.approval
+            approval.git(path, "init")
+            approval.git(path, "-c", "user.name=Factory Test", "-c", "user.email=test@example.invalid",
+                         "commit", "--allow-empty", "-m", "test: approval base")
+            note = path / "pilot.txt"
+            note.write_text("first\n")
+            head, _, patch, digest = approval.snapshot(path)
+            self.assertIn(b"+first", patch)
+            self.assertEqual(approval.git(path, "status", "--porcelain"), "?? pilot.txt")
+            note.write_text("changed\n")
+            args = SimpleNamespace(resume_approval=digest, scheduler_dir=path)
+            with self.assertRaisesRegex(ValueError, "approval no longer matches"):
+                approval.publish(args, 7, {"worktree": str(path), "head": head, "digest": digest})
+
     def test_worker_holds_scheduler_lock_and_failure_leaves_marker(self):
         with tempfile.TemporaryDirectory() as temp:
             folder = Path(temp)

@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 from urllib.parse import urlencode
 
+import approval
 import claims
 from live_delivery import read_gh
 
@@ -75,10 +76,18 @@ def dispatch(args, *, worker):
     handoff = args.scheduler_dir / "handoff.json"
     handoff.unlink(missing_ok=True)
     env = {**os.environ, "FACTORY_HANDOFF_FILE": str(handoff)}
+    if getattr(args, "prepare_approval", False):
+        worktree_file = args.scheduler_dir / "approval-worktree"
+        worktree_file.unlink(missing_ok=True)
+        env["FACTORY_APPROVAL_WORKTREE_FILE"] = str(worktree_file)
     completed = subprocess.run([*args.worker, url], env=env, pass_fds=(worker,))
     if completed.returncode:
         report(args.repo, {"decision": "recovery-required", "issue": issue, "exit": completed.returncode})
         return 1
+    if getattr(args, "prepare_approval", False):
+        digest = approval.prepare(args, issue, worktree_file.read_text().strip())
+        report(args.repo, {"decision": "approval-pending", "issue": issue, "digest": digest})
+        return 0
     succeeded.write_text(f"{args.repo}#{issue}\n")
     return reconcile_handoff(args, issue)
 
@@ -94,6 +103,7 @@ def reconcile_handoff(args, issue):
     except (OSError, ValueError, KeyError, TypeError) as error:
         report(args.repo, {"decision": "recovery-required", "issue": issue, "reason": str(error)})
         return 1
+    approval.checkpoint_path(args).unlink(missing_ok=True)
     (args.scheduler_dir / "active").unlink()
     (args.scheduler_dir / "worker-succeeded").unlink()
     handoff.unlink()
@@ -161,6 +171,7 @@ def main():
     parser.add_argument("--repo", required=True)
     parser.add_argument("--review-cap", type=int, required=True)
     parser.add_argument("--scheduler-dir", type=Path)
+    parser.add_argument("--prepare-approval", action="store_true")
     parser.add_argument("--concurrent", action="store_true")
     parser.add_argument("--claim-repo", type=Path)
     parser.add_argument("--abandon", type=int, metavar="ISSUE")
@@ -168,6 +179,8 @@ def main():
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--enable", action="store_true")
     mode.add_argument("--dry-run", action="store_true")
+    mode.add_argument("--resume-approval", metavar="DIGEST")
+    mode.add_argument("--refresh-approval", action="store_true")
     parser.add_argument("worker", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+", args.repo) or args.review_cap < 1:
@@ -178,11 +191,16 @@ def main():
         args.concurrent and args.enable and args.confirm_worker_stopped and args.abandon > 0
     ):
         parser.error("--abandon requires --concurrent --enable --confirm-worker-stopped and a positive issue")
+    approval_action = args.resume_approval is not None or args.refresh_approval
+    if (approval_action or args.prepare_approval) and (
+        args.concurrent or args.review_cap != 1 or (args.prepare_approval and not args.enable)
+    ):
+        parser.error("approval checkpoints require single-worker scheduling at cap 1")
     if args.dry_run:
         return dispatch_concurrent(args) if args.concurrent else dispatch(args, worker=None)
     if args.worker[:1] == ["--"]:
         args.worker = args.worker[1:]
-    if not args.scheduler_dir or not args.scheduler_dir.is_absolute() or (not args.worker and args.abandon is None):
+    if not args.scheduler_dir or not args.scheduler_dir.is_absolute() or (not args.worker and args.abandon is None and not approval_action):
         parser.error("--enable requires an absolute --scheduler-dir and a foreground worker command")
 
     try:
@@ -194,15 +212,37 @@ def main():
                 report(args.repo, {"decision": "scheduler-busy"})
                 return 0
             active = args.scheduler_dir / "active"
+            if approval_action and not active.exists():
+                raise ValueError("no active approval checkpoint")
             if active.exists():
                 marker = active.read_text().strip()
                 issue = re.fullmatch(re.escape(args.repo) + r"#([1-9][0-9]*)", marker)
                 succeeded = args.scheduler_dir / "worker-succeeded"
-                if args.concurrent or not issue or not succeeded.is_file() or succeeded.read_text().strip() != marker:
+                pending = approval.checkpoint_path(args)
+                successful = succeeded.is_file() and succeeded.read_text().strip() == marker
+                if pending.is_file() and not successful:
+                    record = json.loads(pending.read_text())
+                    if args.concurrent or not issue or (record["repo"], record["issue"]) != (args.repo, int(issue[1])):
+                        raise ValueError("approval checkpoint does not match the active run")
+                    if args.resume_approval is not None:
+                        approval.publish(args, int(issue[1]), record)
+                        succeeded.write_text(marker + "\n")
+                        return reconcile_handoff(args, int(issue[1]))
+                    if args.refresh_approval:
+                        if "commit" in record:
+                            raise ValueError("publication already started; recover the existing handoff")
+                        record["digest"] = approval.prepare(args, int(issue[1]), record["worktree"])
+                    report(args.repo, {"decision": "approval-pending", "issue": int(issue[1]),
+                                      "digest": record["digest"], "patch": str(args.scheduler_dir / "approval.patch")})
+                    return 0
+                if approval_action and not successful:
+                    raise ValueError("no resumable approval checkpoint")
+                if args.concurrent or not issue or not successful:
                     report(args.repo, {"decision": "recovery-required", "active": marker})
                     return 1
-                if reconcile_handoff(args, int(issue[1])):
-                    return 1
+                reconciled = reconcile_handoff(args, int(issue[1]))
+                if reconciled or approval_action:
+                    return reconciled
             concurrent_marker = args.scheduler_dir / "concurrent"
             if not args.concurrent and concurrent_marker.exists():
                 report(args.repo, {"decision": "concurrent-scheduler-required"})
@@ -211,7 +251,7 @@ def main():
                 concurrent_marker.touch(exist_ok=True)
                 return dispatch_concurrent(args)
             return dispatch(args, worker=lock.fileno())
-    except (OSError, ValueError) as error:
+    except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         report(args.repo, {"decision": "scheduler-unavailable", "reason": str(error)})
         return 1
 
