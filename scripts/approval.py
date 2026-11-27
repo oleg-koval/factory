@@ -16,20 +16,22 @@ def git(path, *args, env=None):
     return command("git", "-C", str(path), *args, env=env)
 
 
-def snapshot(path):
+def snapshot(path, base=None):
     head = git(path, "rev-parse", "HEAD")
+    base = head if base is None else base
+    git(path, "merge-base", "--is-ancestor", base, head)
     with tempfile.TemporaryDirectory() as directory:
         env = {**os.environ, "GIT_INDEX_FILE": str(Path(directory) / "index")}
         git(path, "read-tree", head, env=env)
         git(path, "add", "--all", "--", ".", env=env)
         tree = git(path, "write-tree", env=env)
-    if tree == git(path, "rev-parse", "HEAD^{tree}"):
+    if tree == git(path, "rev-parse", f"{base}^{{tree}}"):
         raise ValueError("approval worktree has no changes")
     patch = subprocess.check_output(
         ["git", "-C", str(path), "diff", "--binary", "--no-ext-diff", "--no-textconv",
-         "--no-renames", "--ignore-submodules=none", head, tree, "--"], timeout=60,
+         "--no-renames", "--ignore-submodules=none", base, tree, "--"], timeout=60,
     )
-    digest = hashlib.sha256(head.encode() + b"\0" + tree.encode() + b"\0" + patch).hexdigest()
+    digest = hashlib.sha256(base.encode() + b"\0" + head.encode() + b"\0" + tree.encode() + b"\0" + patch).hexdigest()
     return head, tree, patch, digest
 
 
@@ -59,19 +61,18 @@ def prepare(args, issue, path):
     repo = args.repo.lower()
     if remote.removesuffix(".git") not in {f"git@github.com:{repo}", f"https://github.com/{repo}"}:
         raise ValueError("approval worktree origin does not match the scheduler repository")
-    head, _, patch, digest = snapshot(path)
     base, remote_head = base_ref(path, args.repo)
-    if remote_head != head:
-        raise ValueError("worktree base does not match the remote default branch")
+    head, _, patch, digest = snapshot(path, remote_head)
     (args.scheduler_dir / "approval.patch").write_bytes(patch)
     save(checkpoint_path(args), dict(repo=args.repo, issue=issue, worktree=str(path.resolve()),
-                                    head=head, base=base, digest=digest))
+                                    head=head, base=base, base_head=remote_head, digest=digest))
     return digest
 
 
 def publish(args, issue, record):
     path = record["worktree"]
-    head, tree, patch, digest = snapshot(path)
+    base_head = record["base_head"]
+    head, tree, patch, digest = snapshot(path, base_head)
     if (args.resume_approval != record["digest"] or digest != record["digest"]
             or head != record["head"] or patch != (args.scheduler_dir / "approval.patch").read_bytes()):
         raise ValueError("approval no longer matches the worktree; review a refreshed checkpoint")
@@ -80,14 +81,14 @@ def publish(args, issue, record):
     remote = f"git@github.com:{args.repo}.git"
     commit = record.get("commit")
     if commit is None:
-        if base_ref(path, args.repo) != (record["base"], head):
+        if base_ref(path, args.repo) != (record["base"], base_head):
             raise ValueError("remote base changed; review a refreshed checkpoint")
         if git(path, "ls-remote", "--refs", remote, f"refs/heads/{branch}"):
             raise ValueError("approval branch already exists remotely")
-        commit = git(path, "commit-tree", tree, "-p", head, "-m", f"feat: address Factory issue #{issue}")
+        commit = git(path, "commit-tree", tree, "-p", base_head, "-m", f"feat: address Factory issue #{issue}")
         record["commit"] = commit
         save(checkpoint_path(args), record)
-    if git(path, "show", "-s", "--format=%T %P", commit) != f"{tree} {head}":
+    if git(path, "show", "-s", "--format=%T %P", commit) != f"{tree} {base_head}":
         raise ValueError("saved publication commit does not match the approved snapshot")
     git(path, "push", remote, f"{commit}:refs/heads/{branch}")
 

@@ -78,7 +78,9 @@ to single-worker mode and retiring the scheduler's concurrent marker.
 Use `--enable --prepare-approval` with a local-only worker and the same scheduler directory.
 The worker runs Factory's local gates and writes the absolute isolated worktree root to
 `FACTORY_APPROVAL_WORKTREE_FILE` on successful completion. It leaves publication to the
-dispatcher. The worktree must be based on the repository's current default branch.
+dispatcher. The worktree must descend from the repository's current default branch. The review patch
+includes milestone commits and local changes. Publication squashes the approved tree onto
+the recorded base, while local milestone commits remain in the worker's worktree.
 
 Review `approval.patch` in the scheduler directory. Ordinary enabled invocations report
 the pending checkpoint and keep its slot occupied. An operator authorizes the exact
